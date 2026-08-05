@@ -206,7 +206,7 @@ app.use((err, req, res, next) => {
 const SystemConfig = require('./models/SystemConfig');
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, '0.0.0.0', async () => {
+const server = app.listen(PORT, '0.0.0.0', async () => {
   console.log(`Server running on http://localhost:${PORT}`);
   try {
     await SystemConfig.initDefaults();
@@ -214,4 +214,21 @@ app.listen(PORT, '0.0.0.0', async () => {
   } catch (e) {
     console.error('Failed to init config defaults:', e.message);
   }
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM signal received: closing HTTP server');
+  server.close(() => {
+    console.log('HTTP server closed');
+  });
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  process.exit(1);
 });
