@@ -33,6 +33,10 @@
  *   - Request logging available via Morgan (if enabled)
  */
 
+console.log('=== SERVER STARTING ===');
+console.log('Node version:', process.version);
+console.log('Working directory:', process.cwd());
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -41,7 +45,9 @@ const dotenv = require('dotenv');
 const path = require('path');
 
 // Load environment variables from .env file
+console.log('Loading .env from:', path.join(__dirname, '.env'));
 dotenv.config({ path: path.join(__dirname, '.env') });
+console.log('Environment loaded. NODE_ENV:', process.env.NODE_ENV);
 
 const app = express();
 
@@ -215,16 +221,18 @@ process.on('uncaughtException', (error) => {
   process.exit(1);
 });
 
-// Start server
-const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-});
-
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('SIGTERM signal received: closing HTTP server');
-  server.close(() => {
-    console.log('HTTP server closed');
+// Start server with minimal logging
+try {
+  const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   });
-});
+
+  process.on('SIGTERM', () => {
+    console.log('SIGTERM received');
+    server.close(() => process.exit(0));
+  });
+} catch (error) {
+  console.error('Failed to start server:', error);
+  process.exit(1);
+}
