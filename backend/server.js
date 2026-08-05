@@ -221,18 +221,27 @@ process.on('uncaughtException', (error) => {
   process.exit(1);
 });
 
-// Start server with minimal logging
+// Start server
+console.log('Attempting to start server on port', PORT);
 try {
   const server = app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`SUCCESS: Server running on port ${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log('Server is ready to accept connections');
+  });
+
+  server.on('error', (err) => {
+    console.error('Server error:', err);
+    process.exit(1);
   });
 
   process.on('SIGTERM', () => {
     console.log('SIGTERM received');
     server.close(() => process.exit(0));
   });
+
+  console.log('Server listen initiated');
 } catch (error) {
-  console.error('Failed to start server:', error);
+  console.error('FAILED to start server:', error);
   process.exit(1);
 }
