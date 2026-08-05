@@ -1,3 +1,31 @@
+<!--
+  Data Management Page - FR-023 (Data Management)
+  ================================================
+  
+  SRS Reference: FR-023 (Data Management)
+  
+  Admin page for database operations: backup, restore, export, and statistics.
+  Provides a dashboard-style layout with action cards on the left and data
+  views on the right.
+  
+  Architecture:
+    - Two-column layout (actions | data views)
+    - Promise.all() for parallel data loading (backups + stats)
+    - File upload for restore (JSON format)
+    - Blob-based download for exports
+  
+  FR-023 Requirements Covered:
+    1. Perform regular data backups
+    2. Support data export for external systems
+    5. Support data migration between environments (backup/restore)
+  
+  Coding Principles:
+    - Parallel Loading: Promise.all() for independent API calls
+    - Destructuring: const [backupsRes, statsRes] = await Promise.all(...)
+    - Blob API: Client-side file download without server round-trip
+    - Confirmation Dialogs: confirm() before destructive operations
+    - Error Handling: Silent fallback on API failure (no crash)
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +37,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="../../assets/css/admin.css">
-    <style>.backup-item { background: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }</style>
+    <style>
+        /* Backup item card styling */
+        .backup-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
     <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
@@ -34,10 +73,14 @@
         </div>
         <div style="padding:20px;position:absolute;bottom:0;width:100%;"><button class="logout-btn w-100" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</button></div>
     </div>
+
     <div class="main-content">
         <div class="top-bar"><h4><i class="fas fa-database me-2"></i>Data Management</h4></div>
+
         <div class="row g-4 mb-4">
+            <!-- Left Column: Actions -->
             <div class="col-lg-6">
+                <!-- FR-023.1: Create Backup -->
                 <div class="card mb-4">
                     <div class="card-header">Create Backup</div>
                     <div class="card-body">
@@ -45,19 +88,25 @@
                         <button class="btn btn-success" onclick="createBackup()"><i class="fas fa-download me-2"></i>Create Backup</button>
                     </div>
                 </div>
+
+                <!-- FR-023.5: Restore from Backup -->
                 <div class="card mb-4">
                     <div class="card-header">Restore from Backup</div>
                     <div class="card-body">
                         <p class="text-muted">Restore system data from a backup file.</p>
+                        <!-- File input for JSON backup file -->
                         <input type="file" class="form-control mb-3" id="restoreFile" accept=".json">
                         <button class="btn btn-warning" onclick="restoreBackup()"><i class="fas fa-upload me-2"></i>Restore</button>
                     </div>
                 </div>
+
+                <!-- FR-023.2: Export Data -->
                 <div class="card">
                     <div class="card-header">Export Data</div>
                     <div class="card-body">
                         <p class="text-muted">Export specific data collections as JSON.</p>
                         <div class="row g-2">
+                            <!-- 6 export buttons for different collections -->
                             <div class="col-6"><button class="btn btn-outline-primary w-100" onclick="exportData('users')"><i class="fas fa-users me-1"></i>Users</button></div>
                             <div class="col-6"><button class="btn btn-outline-primary w-100" onclick="exportData('orders')"><i class="fas fa-shopping-cart me-1"></i>Orders</button></div>
                             <div class="col-6"><button class="btn btn-outline-primary w-100" onclick="exportData('products')"><i class="fas fa-box me-1"></i>Products</button></div>
@@ -68,13 +117,18 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Right Column: Data Views -->
             <div class="col-lg-6">
+                <!-- Recent backups list -->
                 <div class="card mb-4">
                     <div class="card-header">Recent Backups</div>
                     <div class="card-body">
                         <div id="backupsList"><p class="text-muted">Loading...</p></div>
                     </div>
                 </div>
+
+                <!-- Database statistics -->
                 <div class="card">
                     <div class="card-header">Database Statistics</div>
                     <div class="card-body">
@@ -84,43 +138,123 @@
             </div>
         </div>
     </div>
+
     <script src="../../assets/js/api.js"></script>
     <script src="../../assets/js/admin.js"></script>
     <script>
+        /**
+         * Load backups and database stats in parallel.
+         * 
+         * Principle: Parallel Data Fetching
+         * Promise.all() executes independent API calls concurrently,
+         * reducing total load time from sequential to parallel.
+         */
         async function loadData() {
-            const [backupsRes, statsRes] = await Promise.all([api.data.getBackups(), api.data.getStats()]);
+            const [backupsRes, statsRes] = await Promise.all([
+                api.data.getBackups(),
+                api.data.getStats()
+            ]);
             if (backupsRes.success) renderBackups(backupsRes.data);
             if (statsRes.success) renderStats(statsRes.data);
         }
+
+        /**
+         * Render recent backups list.
+         * Shows max 5 most recent backups with filename and date.
+         * 
+         * @param {Array} backups - Backup manifest objects
+         */
         function renderBackups(backups) {
             const el = document.getElementById('backupsList');
-            if (!backups.length) { el.innerHTML = '<p class="text-muted">No backups yet</p>'; return; }
-            el.innerHTML = backups.slice(0, 5).map(b => `<div class="backup-item"><div><strong>${escapeHtml(b.filename || 'Backup')}</strong><br><small class="text-muted">${b.createdAt ? new Date(b.createdAt).toLocaleString() : ''} - ${b.size || 'N/A'}</small></div><div><a href="/api/data/backup/${b._id}" class="btn btn-outline-success btn-sm"><i class="fas fa-download"></i></a></div></div>`).join('');
+            if (!backups.length) {
+                el.innerHTML = '<p class="text-muted">No backups yet</p>';
+                return;
+            }
+            el.innerHTML = backups.slice(0, 5).map(b => `
+                <div class="backup-item">
+                    <div>
+                        <strong>${escapeHtml(b.filename || 'Backup')}</strong><br>
+                        <small class="text-muted">${b.createdAt ? new Date(b.createdAt).toLocaleString() : ''} - ${b.size || 'N/A'}</small>
+                    </div>
+                    <div>
+                        <a href="/api/data/backup/${b._id}" class="btn btn-outline-success btn-sm"><i class="fas fa-download"></i></a>
+                    </div>
+                </div>
+            `).join('');
         }
+
+        /**
+         * Render database statistics.
+         * 
+         * Principle: Destructuring with Fallback
+         * const collections = stats.collections || stats handles both
+         * wrapped and unwrapped response formats.
+         * 
+         * @param {Object} stats - Collection name => count mapping
+         */
         function renderStats(stats) {
             const el = document.getElementById('dbStats');
             const collections = stats.collections || stats;
-            el.innerHTML = Object.entries(collections).map(([name, count]) => `<div class="d-flex justify-content-between mb-2"><span class="text-capitalize">${escapeHtml(name)}</span><strong>${count} records</strong></div>`).join('');
+            el.innerHTML = Object.entries(collections).map(([name, count]) => `
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-capitalize">${escapeHtml(name)}</span>
+                    <strong>${count} records</strong>
+                </div>
+            `).join('');
         }
+
+        /**
+         * Create a full system backup.
+         * Principle: User Feedback - alert on success
+         */
         async function createBackup() {
             const res = await api.data.createBackup();
-            if (res.success) { alert('Backup created!'); loadData(); }
+            if (res.success) {
+                alert('Backup created!');
+                loadData(); // Refresh the backups list
+            }
         }
+
+        /**
+         * Restore data from a backup file.
+         * 
+         * Principle: Confirmation for Destructive Actions
+         * confirm() dialog prevents accidental data overwrites.
+         */
         async function restoreBackup() {
             const file = document.getElementById('restoreFile').files[0];
             if (!file) { alert('Please select a backup file'); return; }
             if (!confirm('This will overwrite current data. Continue?')) return;
             const res = await api.data.restoreBackup(file.name);
-            if (res.success) { alert('Data restored!'); loadData(); }
+            if (res.success) {
+                alert('Data restored!');
+                loadData();
+            }
         }
+
+        /**
+         * Export a data collection as JSON and trigger browser download.
+         * 
+         * Principle: Client-Side Download via Blob API
+         * Creates a Blob from the response data, generates an object URL,
+         * and programmatically clicks a hidden anchor to trigger download.
+         * No server-side file generation needed.
+         * 
+         * @param {string} collection - Collection name to export
+         */
         async function exportData(collection) {
             const res = await api.data.exportData(collection);
             if (res.success) {
                 const blob = new Blob([JSON.stringify(res.data, null, 2)], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
-                const a = document.createElement('a'); a.href = url; a.download = collection + '-export.json'; a.click();
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = collection + '-export.json';
+                a.click();
             }
         }
+
+        // Initialize on page load
         loadData();
     </script>
 </body>

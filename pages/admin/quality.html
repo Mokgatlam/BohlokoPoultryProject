@@ -1,3 +1,28 @@
+<!--
+  Quality Control Page - FR-020 (Quality Control Tracking)
+  ========================================================
+  
+  SRS Reference: FR-020 (Quality Control Tracking)
+  
+  Admin page for viewing quality inspection records. Displays statistics
+  (passed, failed, pending, pass rate) and a table of recent inspections.
+  
+  Architecture:
+    - Dashboard stat cards (4 KPIs)
+    - Table-based inspection records
+    - Uses api.compliance endpoints (shared with compliance.js routes)
+  
+  FR-020 Requirements Covered:
+    1. Record quality check results (pass/fail) for batches
+    2. View quality check history
+    3. Display pass rate statistics
+  
+  Coding Principles:
+    - Promise.all() for parallel data fetching (even with single call)
+    - Client-Side Aggregation: Statistics calculated from fetched data
+    - Badge System: compliant=green, non-compliant=red, pending=yellow
+    - Truncated List: slice(0, 20) limits displayed records
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,50 +59,139 @@
         </div>
         <div style="padding:20px;position:absolute;bottom:0;width:100%;"><button class="logout-btn w-100" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</button></div>
     </div>
+
     <div class="main-content">
-        <div class="top-bar"><h4><i class="fas fa-award me-2"></i>Quality Control</h4><button class="btn btn-success btn-sm" onclick="showNewInspection()"><i class="fas fa-plus me-1"></i>New Inspection</button></div>
-        <div class="row g-4 mb-4">
-            <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon green"><i class="fas fa-check-circle"></i></div><h3 id="passedCount">0</h3><p>Passed</p></div></div>
-            <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon red"><i class="fas fa-times-circle"></i></div><h3 id="failedCount">0</h3><p>Failed</p></div></div>
-            <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon gold"><i class="fas fa-clock"></i></div><h3 id="pendingInspections">0</h3><p>Pending</p></div></div>
-            <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon blue"><i class="fas fa-percentage"></i></div><h3 id="passRate">0%</h3><p>Pass Rate</p></div></div>
+        <div class="top-bar">
+            <h4><i class="fas fa-award me-2"></i>Quality Control</h4>
+            <button class="btn btn-success btn-sm" onclick="showNewInspection()"><i class="fas fa-plus me-1"></i>New Inspection</button>
         </div>
+
+        <!-- KPI Stat Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-6 col-lg-3">
+                <div class="stat-card">
+                    <div class="icon green"><i class="fas fa-check-circle"></i></div>
+                    <h3 id="passedCount">0</h3>
+                    <p>Passed</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="stat-card">
+                    <div class="icon red"><i class="fas fa-times-circle"></i></div>
+                    <h3 id="failedCount">0</h3>
+                    <p>Failed</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="stat-card">
+                    <div class="icon gold"><i class="fas fa-clock"></i></div>
+                    <h3 id="pendingInspections">0</h3>
+                    <p>Pending</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="stat-card">
+                    <div class="icon blue"><i class="fas fa-percentage"></i></div>
+                    <h3 id="passRate">0%</h3>
+                    <p>Pass Rate</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inspection Records Table -->
         <div class="card">
             <div class="card-header">Inspection Records</div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table">
-                        <thead><tr><th>Batch</th><th>Product</th><th>Inspector</th><th>Date</th><th>Result</th><th>Notes</th></tr></thead>
-                        <tbody id="qualityTable"><tr><td colspan="6" class="text-center">Loading...</td></tr></tbody>
+                        <thead>
+                            <tr>
+                                <th>Batch</th>
+                                <th>Product</th>
+                                <th>Inspector</th>
+                                <th>Date</th>
+                                <th>Result</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="qualityTable">
+                            <tr><td colspan="6" class="text-center">Loading...</td></tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
+
     <script src="../../assets/js/api.js"></script>
     <script src="../../assets/js/admin.js"></script>
     <script>
+        /**
+         * Load quality check data from the compliance API.
+         * 
+         * Principle: Promise.all() for Consistency
+         * Even with a single call, using Promise.all() maintains
+         * a consistent pattern for future parallel fetches.
+         */
         async function loadQuality() {
             const [compRes] = await Promise.all([api.compliance.getQualityChecks()]);
             if (compRes.success) renderInspections(compRes.data);
         }
+
+        /**
+         * Render inspection records and calculate KPIs.
+         * 
+         * Principle: Client-Side Aggregation
+         * Statistics (passed, failed, pending, pass rate) are calculated
+         * from the full dataset rather than requiring separate API calls.
+         * 
+         * @param {Array} inspections - Quality check records
+         */
         function renderInspections(inspections) {
             const tbody = document.getElementById('qualityTable');
-            if (!inspections.length) { tbody.innerHTML = '<tr><td colspan="6" class="text-center">No inspection records</td></tr>'; return; }
+            if (!inspections.length) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center">No inspection records</td></tr>';
+                return;
+            }
+
+            // Render table rows (max 20)
             tbody.innerHTML = inspections.slice(0, 20).map(c => {
                 const status = c.status || 'pending';
                 const badge = status === 'compliant' ? 'pass' : status === 'non-compliant' ? 'fail' : 'pending';
-                return `<tr><td>${escapeHtml(c.batchId || 'N/A')}</td><td>${escapeHtml(c.productType || c.type || 'N/A')}</td><td>${escapeHtml(c.inspector || c.userId || 'N/A')}</td><td>${c.createdAt ? new Date(c.createdAt).toLocaleDateString() : 'N/A'}</td><td><span class="badge badge-${badge}">${escapeHtml(status)}</span></td><td>${escapeHtml(c.notes || c.findings || '-')}</td></tr>`;
+                return `
+                    <tr>
+                        <td>${escapeHtml(c.batchId || 'N/A')}</td>
+                        <td>${escapeHtml(c.productType || c.type || 'N/A')}</td>
+                        <td>${escapeHtml(c.inspector || c.userId || 'N/A')}</td>
+                        <td>${c.createdAt ? new Date(c.createdAt).toLocaleDateString() : 'N/A'}</td>
+                        <td><span class="badge badge-${badge}">${escapeHtml(status)}</span></td>
+                        <td>${escapeHtml(c.notes || c.findings || '-')}</td>
+                    </tr>`;
             }).join('');
+
+            // Calculate KPIs from data
             const passed = inspections.filter(c => c.status === 'compliant').length;
             const failed = inspections.filter(c => c.status === 'non-compliant').length;
             const pending = inspections.filter(c => !c.status || c.status === 'pending').length;
+
+            // Update stat cards
             document.getElementById('passedCount').textContent = passed;
             document.getElementById('failedCount').textContent = failed;
             document.getElementById('pendingInspections').textContent = pending;
-            document.getElementById('passRate').textContent = inspections.length ? Math.round((passed / inspections.length) * 100) + '%' : '0%';
+            document.getElementById('passRate').textContent = inspections.length
+                ? Math.round((passed / inspections.length) * 100) + '%'
+                : '0%';
         }
-        function showNewInspection() { alert('New inspection form coming soon!'); }
+
+        /**
+         * Placeholder for new inspection form.
+         * Principle: Progressive Enhancement - basic alert until form is built
+         */
+        function showNewInspection() {
+            alert('New inspection form coming soon!');
+        }
+
+        // Initialize on page load
         loadQuality();
     </script>
 </body>

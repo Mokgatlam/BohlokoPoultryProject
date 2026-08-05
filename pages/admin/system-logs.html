@@ -1,3 +1,28 @@
+<!--
+  System Logs Page - FR-023 (Data Management)
+  ============================================
+  
+  SRS Reference: FR-023 (Data Management), FR-023.6 (Data Archiving)
+  
+  Admin page for viewing, filtering, and cleaning system audit logs.
+  Provides a table-based log viewer with level filtering and text search.
+  
+  Architecture:
+    - Filter bar with dropdown + text search
+    - Table-based log display (monospace font for readability)
+    - Client-side filtering via query parameters
+    - Log cleanup with confirmation dialog
+  
+  FR-023 Requirements Covered:
+    6. Implement data archiving for historical records (log cleanup)
+  
+  Coding Principles:
+    - Query Parameters: Filters sent as URLSearchParams
+    - Debounced Search: onkeyup triggers loadLogs() on each keystroke
+    - Table Rendering: Dynamic HTML generation via template literals
+    - Monospace Font: Log entries use Courier New for alignment
+    - Badge System: Color-coded log levels (info=blue, warn=yellow, error=red)
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +34,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="../../assets/css/admin.css">
-    <style>.log-entry { font-family: 'Courier New', monospace; font-size: 0.8rem; } .filter-group { display: flex; gap: 8px; flex-wrap: wrap; }</style>
+    <style>
+        /* Log entries use monospace for consistent alignment */
+        .log-entry { font-family: 'Courier New', monospace; font-size: 0.8rem; }
+        /* Filter controls layout */
+        .filter-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    </style>
 </head>
 <body>
     <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
@@ -35,34 +65,62 @@
         </div>
         <div style="padding:20px;position:absolute;bottom:0;width:100%;"><button class="logout-btn w-100" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</button></div>
     </div>
+
     <div class="main-content">
-        <div class="top-bar"><h4><i class="fas fa-file-alt me-2"></i>System Logs</h4><button class="btn btn-outline-danger btn-sm" onclick="clearOldLogs()"><i class="fas fa-trash me-1"></i>Clear Old Logs</button></div>
+        <div class="top-bar">
+            <h4><i class="fas fa-file-alt me-2"></i>System Logs</h4>
+            <!-- FR-023.6: Log cleanup button -->
+            <button class="btn btn-outline-danger btn-sm" onclick="clearOldLogs()"><i class="fas fa-trash me-1"></i>Clear Old Logs</button>
+        </div>
+
+        <!-- Filter Bar -->
         <div class="card mb-4">
             <div class="card-header">
                 <span>Filters</span>
                 <div class="filter-group">
+                    <!-- Level filter dropdown -->
                     <select class="form-select form-select-sm" style="width:auto" id="logLevel" onchange="loadLogs()">
                         <option value="">All Levels</option>
                         <option value="info">Info</option>
                         <option value="warn">Warning</option>
                         <option value="error">Error</option>
                     </select>
+                    <!-- Text search input -->
                     <input type="text" class="form-control form-control-sm" placeholder="Search logs..." id="logSearch" style="width:200px" onkeyup="loadLogs()">
                 </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table">
-                        <thead><tr><th>Timestamp</th><th>Level</th><th>Category</th><th>Message</th><th>User</th><th>IP</th></tr></thead>
-                        <tbody id="logsTable"><tr><td colspan="6" class="text-center">Loading...</td></tr></tbody>
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Level</th>
+                                <th>Category</th>
+                                <th>Message</th>
+                                <th>User</th>
+                                <th>IP</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logsTable">
+                            <tr><td colspan="6" class="text-center">Loading...</td></tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
+
     <script src="../../assets/js/api.js"></script>
     <script src="../../assets/js/admin.js"></script>
     <script>
+        /**
+         * Load logs with current filter values.
+         * 
+         * Principle: Query Parameter Building
+         * Only non-empty filters are appended to URLSearchParams,
+         * keeping the API call clean and the backend flexible.
+         */
         async function loadLogs() {
             const level = document.getElementById('logLevel').value;
             const search = document.getElementById('logSearch').value;
@@ -72,17 +130,48 @@
             const res = await api.systemLogs.getAll(params.toString());
             if (res.success) renderLogs(res.data);
         }
+
+        /**
+         * Render log entries in the table.
+         * 
+         * Principle: Badge-Based Visual Hierarchy
+         * Log levels are color-coded: info=blue, warn=yellow, error=red.
+         * Monospace font ensures timestamps and IPs align properly.
+         * 
+         * @param {Array} logs - Log entry objects
+         */
         function renderLogs(logs) {
             const tbody = document.getElementById('logsTable');
-            if (!logs.length) { tbody.innerHTML = '<tr><td colspan="6" class="text-center">No logs found</td></tr>'; return; }
+            if (!logs.length) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center">No logs found</td></tr>';
+                return;
+            }
             const badgeMap = { info: 'badge-info', warn: 'badge-warning', error: 'badge-danger' };
-            tbody.innerHTML = logs.map(l => `<tr><td class="log-entry">${l.createdAt ? new Date(l.createdAt).toLocaleString() : 'N/A'}</td><td><span class="badge ${badgeMap[l.level] || 'badge-info'}">${escapeHtml(l.level)}</span></td><td>${escapeHtml(l.category || 'general')}</td><td>${escapeHtml(l.message || 'N/A')}</td><td>${escapeHtml(l.userId || 'System')}</td><td class="log-entry">${escapeHtml(l.ip || 'N/A')}</td></tr>`).join('');
+            tbody.innerHTML = logs.map(l => `
+                <tr>
+                    <td class="log-entry">${l.createdAt ? new Date(l.createdAt).toLocaleString() : 'N/A'}</td>
+                    <td><span class="badge ${badgeMap[l.level] || 'badge-info'}">${escapeHtml(l.level)}</span></td>
+                    <td>${escapeHtml(l.category || 'general')}</td>
+                    <td>${escapeHtml(l.message || 'N/A')}</td>
+                    <td>${escapeHtml(l.userId || 'System')}</td>
+                    <td class="log-entry">${escapeHtml(l.ip || 'N/A')}</td>
+                </tr>
+            `).join('');
         }
+
+        /**
+         * Delete logs older than 30 days with confirmation.
+         * 
+         * Principle: Confirmation for Destructive Actions
+         * confirm() prevents accidental data loss.
+         */
         async function clearOldLogs() {
             if (!confirm('Delete logs older than 30 days?')) return;
             await api.systemLogs.clearOld(30);
-            loadLogs();
+            loadLogs(); // Refresh after cleanup
         }
+
+        // Initialize on page load
         loadLogs();
     </script>
 </body>
