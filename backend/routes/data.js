@@ -1,8 +1,65 @@
+/**
+ * Data Management Routes
+ * =======================
+ * 
+ * SRS Reference: FR-023 (Data Management)
+ * 
+ * REST API endpoints for data backup, restore, export, validation, and
+ * integrity checking. Centralized module for all data operations.
+ * 
+ * Endpoints Summary (7 endpoints):
+ * 
+ *   POST /api/data/backup              - Create backup
+ *   GET  /api/data/backups             - List backups
+ *   POST /api/data/backup/restore/:fn  - Restore from backup
+ *   DELETE /api/data/backup/:filename  - Delete backup
+ *   GET  /api/data/export/:type        - Export data (JSON/CSV)
+ *   POST /api/data/validate            - Validate data against rules
+ *   GET  /api/data/validate/integrity  - Check referential integrity
+ *   GET  /api/data/stats               - Database statistics
+ * 
+ * Design Principles:
+ *   - Farm Manager only (all endpoints)
+ *   - Backup/restore with manifest tracking
+ *   - Export supports JSON and CSV formats
+ *   - Validation uses rule-based engine
+ *   - Integrity checks for orphaned references
+ * 
+ * FR-023 Requirements Covered:
+ *   1. Perform regular data backups
+ *   2. Support data export for external systems
+ *   3. Implement data validation rules
+ *   4. Maintain data integrity constraints
+ *   5. Support data migration between environments (backup/restore)
+ *   6. Implement data archiving for historical records (via cleanup)
+ */
+
 const express = require('express');
 const router = express.Router();
 const dataService = require('../services/DataService');
 const { protect, authorize } = require('../middleware/auth');
 
+// =========================================================================
+// BACKUP MANAGEMENT (FR-023.1, FR-023.5)
+// =========================================================================
+
+/**
+ * POST /api/data/backup
+ * Create a new backup of all database collections.
+ * 
+ * SRS: FR-023.1 - Perform regular data backups
+ * SRS: FR-023.5 - Support data migration between environments
+ * Access: Farm Manager only
+ * 
+ * Backup includes:
+ *   - All database collections
+ *   - Metadata (description, type, timestamp, size)
+ *   - Manifest file for restore
+ * 
+ * @param {string} [description] - Backup description
+ * @param {string} [type] - Backup type (manual, scheduled, pre-migration)
+ * @returns {Object} Backup manifest with filename and metadata
+ */
 router.post('/backup', protect, authorize('Farm Manager'), async (req, res) => {
   try {
     const manifest = await dataService.createBackup(req.body.description, req.body.type, req.user._id);
@@ -12,6 +69,15 @@ router.post('/backup', protect, authorize('Farm Manager'), async (req, res) => {
   }
 });
 
+/**
+ * GET /api/data/backups
+ * List all available backups.
+ * 
+ * SRS: FR-023.1 - View backup history
+ * Access: Farm Manager only
+ * 
+ * @returns {Array} Backup manifests sorted by date
+ */
 router.get('/backups', protect, authorize('Farm Manager'), async (req, res) => {
   try {
     const backups = await dataService.getBackups();
@@ -21,6 +87,24 @@ router.get('/backups', protect, authorize('Farm Manager'), async (req, res) => {
   }
 });
 
+/**
+ * POST /api/data/backup/restore/:filename
+ * Restore the database from a backup file.
+ * 
+ * SRS: FR-023.5 - Support data migration between environments
+ * Access: Farm Manager only
+ * 
+ * Process:
+ *   1. Locate backup file by filename
+ *   2. Validate backup integrity
+ *   3. Restore all collections from backup
+ *   4. Return restored record counts
+ * 
+ * Security: Path traversal prevention on filename parameter.
+ * 
+ * @param {string} filename - Backup filename
+ * @returns {Object} Restore result with record counts
+ */
 router.post('/backup/restore/:filename', protect, authorize('Farm Manager'), async (req, res) => {
   try {
     const result = await dataService.restoreBackup(req.params.filename);
@@ -32,6 +116,16 @@ router.post('/backup/restore/:filename', protect, authorize('Farm Manager'), asy
   }
 });
 
+/**
+ * DELETE /api/data/backup/:filename
+ * Delete a backup file.
+ * 
+ * SRS: FR-023.1 - Manage backups
+ * Access: Farm Manager only
+ * 
+ * @param {string} filename - Backup filename to delete
+ * @returns {Object} Success message
+ */
 router.delete('/backup/:filename', protect, authorize('Farm Manager'), async (req, res) => {
   try {
     await dataService.deleteBackup(req.params.filename);
@@ -41,6 +135,37 @@ router.delete('/backup/:filename', protect, authorize('Farm Manager'), async (re
   }
 });
 
+// =========================================================================
+// DATA EXPORT (FR-023.2)
+// =========================================================================
+
+/**
+ * GET /api/data/export/:type
+ * Export data in JSON or CSV format.
+ * 
+ * SRS: FR-023.2 - Support data export for external systems
+ * Access: Farm Manager only
+ * 
+ * Export types:
+ *   - users: User accounts (excludes passwords)
+ *   - orders: Order history
+ *   - inventory: Inventory records
+ *   - production: Production batches
+ *   - harvest: Harvest records
+ *   - payments: Payment records
+ * 
+ * Format:
+ *   - JSON: Standard JSON with success flag
+ *   - CSV: Headers + rows, proper escaping of special characters
+ * 
+ * Security:
+ *   - Passwords excluded from user export
+ *   - Content-Disposition header for download
+ * 
+ * @param {string} type - Data type to export
+ * @param {string} [format=json] - Export format (json or csv)
+ * @returns {File} Export file (JSON or CSV)
+ */
 router.get('/export/:type', protect, authorize('Farm Manager'), async (req, res) => {
   try {
     const { type } = req.params;
@@ -75,6 +200,37 @@ router.get('/export/:type', protect, authorize('Farm Manager'), async (req, res)
   }
 });
 
+// =========================================================================
+// DATA VALIDATION (FR-023.3, FR-023.4)
+// =========================================================================
+
+/**
+ * POST /api/data/validate
+ * Validate data against predefined rules for a collection.
+ * 
+ * SRS: FR-023.3 - Implement data validation rules
+ * Access: Farm Manager only
+ * 
+ * Supported Collections & Rules:
+ *   - users:
+ *     - email: Required, valid email format
+ *     - firstName: Required
+ *     - lastName: Required
+ *     - password: Required, min 8 characters
+ *   - orders:
+ *     - customer: Required
+ *     - items: Required
+ *     - total: Required, number, min 0
+ *   - inventory:
+ *     - productType: Required
+ *     - quantity: Required, number, min 0
+ *     - harvestDate: Required, valid date
+ *     - expiryDate: Required, valid date
+ * 
+ * @param {string} collection - Collection name
+ * @param {Object} data - Data to validate
+ * @returns {Object} { valid: boolean, errors: string[] }
+ */
 router.post('/validate', protect, authorize('Farm Manager'), async (req, res) => {
   try {
     const { collection, data } = req.body;
@@ -102,6 +258,24 @@ router.post('/validate', protect, authorize('Farm Manager'), async (req, res) =>
   }
 });
 
+/**
+ * GET /api/data/validate/integrity
+ * Check referential integrity across collections.
+ * 
+ * SRS: FR-023.4 - Maintain data integrity constraints
+ * Access: Farm Manager only
+ * 
+ * Checks Performed:
+ *   1. Orders with non-existent customer references (orphaned references)
+ *   2. Inventory with negative quantities (invalid data)
+ * 
+ * Returns:
+ *   - issues: Array of integrity violations
+ *   - checked: Timestamp of check
+ *   - passed: Boolean (true if no issues found)
+ * 
+ * @returns {Object} Integrity check results
+ */
 router.get('/validate/integrity', protect, authorize('Farm Manager'), async (req, res) => {
   try {
     const issues = [];
@@ -128,6 +302,18 @@ router.get('/validate/integrity', protect, authorize('Farm Manager'), async (req
   }
 });
 
+// =========================================================================
+// DATABASE STATISTICS
+// =========================================================================
+
+/**
+ * GET /api/data/stats
+ * Get database statistics for all collections.
+ * 
+ * Access: Farm Manager only
+ * 
+ * @returns {Object} Record counts per collection
+ */
 router.get('/stats', protect, authorize('Farm Manager'), async (req, res) => {
   try {
     const stats = await dataService.getStats();
