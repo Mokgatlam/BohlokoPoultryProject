@@ -1128,24 +1128,24 @@
     <script>
         let cart = JSON.parse(localStorage.getItem('cart') || '[]');
         const products = [
-            { id: 'whole-chicken', name: 'Whole Fresh Chicken', price: 89.99, unit: 'kg', category: 'whole', image: 'Images/products/whole-chicken.png' },
-            { id: 'chicken-breast', name: 'Chicken Breast Fillets', price: 129.99, unit: 'kg', category: 'portions', image: 'Images/products/chicken-breast.png' },
-            { id: 'chicken-thighs', name: 'Chicken Thighs', price: 79.99, unit: 'kg', category: 'portions', image: 'Images/products/chicken-thighs.png' },
-            { id: 'chicken-wings', name: 'Chicken Wings', price: 69.99, unit: 'kg', category: 'portions', image: 'Images/products/chicken-wings.png' },
-            { id: 'marinated-chicken', name: 'Marinated Chicken Pieces', price: 139.99, unit: 'kg', category: 'value-added', image: 'Images/products/marinated-chicken.png' },
-            { id: 'chicken-sausages', name: 'Chicken Sausages', price: 119.99, unit: 'kg', category: 'value-added', image: 'Images/products/chicken-sausages.png' },
-            { id: 'chicken-livers', name: 'Chicken Livers (500g)', price: 30.00, unit: '500g', category: 'byproducts', image: 'Images/products/chicken-livers.png' },
-            { id: 'chicken-gizzards', name: 'Chicken Gizzards (500g)', price: 30.00, unit: '500g', category: 'byproducts', image: 'Images/products/chicken-gizzards.png' },
-            { id: 'chicken-feet-cleaned', name: 'Chicken Feet (1kg) - Cleaned', price: 50.00, unit: '1kg', category: 'byproducts', image: 'Images/products/chicken-feet-cleaned.png' },
-            { id: 'chicken-hearts', name: 'Chicken Hearts (500g)', price: 25.00, unit: '500g', category: 'byproducts', image: 'Images/products/chicken-hearts.png' },
-            { id: 'chicken-necks', name: 'Chicken Necks (1kg)', price: 35.00, unit: '1kg', category: 'byproducts', image: 'Images/products/chicken-necks.png' },
-            { id: 'malana', name: 'Malana (1kg)', price: 25.00, unit: '1kg', category: 'byproducts', image: 'Images/products/chicken-malana.png' },
-            { id: 'soup-packs', name: 'Soup Packs (1kg)', price: 30.00, unit: '1kg', category: 'byproducts', image: 'Images/products/chicken-soup-pack.png' },
-            { id: 'chicken-feet-uncleaned', name: 'Chicken Feet (1kg) - Uncleaned', price: 50.00, unit: '1kg', category: 'byproducts', image: 'Images/products/chicken-feet-uncleaned.png' },
-            { id: 'mixed-pack-2kg', name: '2kg Mixed Chicken Portions', price: 169.99, unit: 'pack', category: 'portions', image: 'Images/products/chicken-mixed-2kg.png' },
-            { id: 'mixed-pack-3kg', name: '3kg Chicken Portions', price: 249.99, unit: 'pack', category: 'portions', image: 'Images/products/chicken-mixed-3kg.png' },
-            { id: 'mixed-pack-5kg', name: '5kg Chicken Portions', price: 399.99, unit: 'pack', category: 'portions', image: 'Images/products/chicken-mixed-5kg.png' },
-            { id: 'mixed-pack-8kg', name: '8kg Chicken Portions', price: 629.99, unit: 'pack', category: 'portions', image: 'Images/products/chicken-mixed-8kg.png' }
+            { id: 'whole-chicken', name: 'Whole Fresh Chicken', price: 89.99, unit: 'kg', category: 'whole', image: '../../assets/images/products/whole-chicken.png' },
+            { id: 'chicken-breast', name: 'Chicken Breast Fillets', price: 129.99, unit: 'kg', category: 'portions', image: '../../assets/images/products/chicken-breast.png' },
+            { id: 'chicken-thighs', name: 'Chicken Thighs', price: 79.99, unit: 'kg', category: 'portions', image: '../../assets/images/products/chicken-thighs.png' },
+            { id: 'chicken-wings', name: 'Chicken Wings', price: 69.99, unit: 'kg', category: 'portions', image: '../../assets/images/products/chicken-wings.png' },
+            { id: 'marinated-chicken', name: 'Marinated Chicken Pieces', price: 139.99, unit: 'kg', category: 'value-added', image: '../../assets/images/products/marinated-chicken.png' },
+            { id: 'chicken-sausages', name: 'Chicken Sausages', price: 119.99, unit: 'kg', category: 'value-added', image: '../../assets/images/products/chicken-sausages.png' },
+            { id: 'chicken-livers', name: 'Chicken Livers (500g)', price: 30.00, unit: '500g', category: 'byproducts', image: '../../assets/images/products/chicken-livers.png' },
+            { id: 'chicken-gizzards', name: 'Chicken Gizzards (500g)', price: 30.00, unit: '500g', category: 'byproducts', image: '../../assets/images/products/chicken-gizzards.png' },
+            { id: 'chicken-feet-cleaned', name: 'Chicken Feet (1kg) - Cleaned', price: 50.00, unit: '1kg', category: 'byproducts', image: '../../assets/images/products/chicken-feet-cleaned.png' },
+            { id: 'chicken-hearts', name: 'Chicken Hearts (500g)', price: 25.00, unit: '500g', category: 'byproducts', image: '../../assets/images/products/chicken-hearts.png' },
+            { id: 'chicken-necks', name: 'Chicken Necks (1kg)', price: 35.00, unit: '1kg', category: 'byproducts', image: '../../assets/images/products/chicken-necks.png' },
+            { id: 'malana', name: 'Malana (1kg)', price: 25.00, unit: '1kg', category: 'byproducts', image: '../../assets/images/products/chicken-malana.png' },
+            { id: 'soup-packs', name: 'Soup Packs (1kg)', price: 30.00, unit: '1kg', category: 'byproducts', image: '../../assets/images/products/chicken-soup-pack.png' },
+            { id: 'chicken-feet-uncleaned', name: 'Chicken Feet (1kg) - Uncleaned', price: 50.00, unit: '1kg', category: 'byproducts', image: '../../assets/images/products/chicken-feet-uncleaned.png' },
+            { id: 'mixed-pack-2kg', name: '2kg Mixed Chicken Portions', price: 169.99, unit: 'pack', category: 'portions', image: '../../assets/images/products/chicken-mixed-2kg.png' },
+            { id: 'mixed-pack-3kg', name: '3kg Chicken Portions', price: 249.99, unit: 'pack', category: 'portions', image: '../../assets/images/products/chicken-mixed-3kg.png' },
+            { id: 'mixed-pack-5kg', name: '5kg Chicken Portions', price: 399.99, unit: 'pack', category: 'portions', image: '../../assets/images/products/chicken-mixed-5kg.png' },
+            { id: 'mixed-pack-8kg', name: '8kg Chicken Portions', price: 629.99, unit: 'pack', category: 'portions', image: '../../assets/images/products/chicken-mixed-8kg.png' }
         ];
 
         function filterProducts(category) {
@@ -1311,7 +1311,7 @@
                 if (result.success) {
                     bootstrap.Modal.getInstance(document.getElementById('checkoutModal')).hide();
                     document.getElementById('confirmOrderNumber').textContent = 'Order #: ' + result.data.orderNumber;
-                    document.getElementById('viewInvoiceBtn').href = 'invoice.html?id=' + result.data._id;
+                    document.getElementById('viewInvoiceBtn').href = '../admin/invoice.html?id=' + result.data._id;
                     new bootstrap.Modal(document.getElementById('confirmationModal')).show();
                     clearCart();
                 } else {
