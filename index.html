@@ -1,11 +1,30 @@
 <!DOCTYPE html>
+<!--
+  Root Redirect — Homepage Routing (NFR-017.1)
+  ==============================================
+  NFR-017.1: Server entry point redirect
+    When users access the root URL (e.g., http://localhost:5000/),
+    this page immediately redirects them to the public homepage.
+    Uses meta http-equiv="refresh" for zero-JavaScript redirect.
+
+  NFR-015 (Browser Compatibility):
+    - Graceful degradation: works without JavaScript
+    - Includes a visible link fallback for screen readers and slow connections
+    - Standard HTML5 doctype for cross-browser compatibility
+
+  NFR-014 (Device Compatibility):
+    - Lightweight (11 lines) for fast load on low-bandwidth connections
+    - No external resources required
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- Immediate redirect to public homepage -->
   <meta http-equiv="refresh" content="0; url=/pages/public/index.html">
   <title>Redirecting...</title>
 </head>
 <body>
+  <!-- Fallback link for users with JavaScript disabled or slow connections -->
   <p>Redirecting to <a href="/pages/public/index.html">homepage</a>...</p>
 </body>
 </html>

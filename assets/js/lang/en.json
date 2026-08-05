@@ -98,3 +98,34 @@
     "hours": "Business Hours"
   }
 }
+<!--
+  English Translation File — NFR-009.3 (Bilingual Support)
+  ==========================================================
+  NFR-009.3: English language translation strings
+    This JSON file contains all English text strings used across
+    the public-facing frontend. Translated to Sesotho in st.json.
+
+  Structure:
+    - nav: Navigation menu items
+    - hero: Homepage hero section content
+    - why: "Why Choose Us" feature descriptions
+    - products: Product category names
+    - how: "How It Works" step descriptions
+    - testimonials: Testimonial section title
+    - cta: Call-to-action section text
+    - footer: Footer section text
+    - auth: Login/signup form labels
+    - shop: Shopping cart and checkout labels
+    - contact: Contact form labels
+
+  Usage:
+    - lang.js reads this file and applies translations based on data-i18n attributes
+    - Language selection persisted in localStorage (key: 'lang')
+    - Toggle button calls toggleLanguage() to switch between en.json and st.json
+
+  NFR-009.3 Design Notes:
+    - Hierarchical JSON structure mirrors DOM structure for easy mapping
+    - Keys use dot notation (e.g., "hero.badge") matching data-i18n="hero.badge"
+    - All translatable UI text included; no hardcoded strings in HTML
+    - Fallback: if translation key missing, original HTML text is preserved
+-->

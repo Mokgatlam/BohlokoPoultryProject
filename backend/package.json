@@ -26,3 +26,40 @@
     "nodemon": "^3.0.1"
   }
 }
+<!--
+  NFR-017 (Deployment Compatibility) — package.json
+  ==================================================
+  NFR-017.1: npm scripts for deployment lifecycle
+    - "start": Production entry point — runs server.js with Node
+    - "dev": Development mode — auto-restarts on file changes (nodemon)
+    - "seed": Database seeding — populates default admin and test data
+    - "test": Test runner — Jest with --passWithNoTests for CI/CD pipelines
+
+  NFR-017.2: Security & middleware dependencies
+    - bcryptjs: Password hashing (10 rounds salt)
+    - cors: Cross-origin request control
+    - dotenv: Environment variable loading from .env
+    - express-rate-limit: API abuse prevention (3 tiers)
+    - express-validator: Input validation middleware
+    - helmet: HTTP security headers (X-Frame, HSTS, etc.)
+    - jsonwebtoken: JWT-based authentication
+
+  NFR-017.3: Environment configuration
+    - dotenv: Loads PORT, JWT_SECRET, SMTP credentials from .env
+    - No hardcoded secrets in source code
+
+  NFR-018 (Monitoring & Logging):
+    - Jest: Test framework for code quality assurance
+    - nodemon: Development server with auto-restart on errors
+
+  NFR-014/015 (Browser/Device Compatibility):
+    - nedb-promises: File-based database (no external DB server required)
+      Enables single-server deployment on low-resource environments
+    - uuid: Unique ID generation for distributed records
+
+  Key Design Decisions:
+    - NeDB chosen over MongoDB for zero-config deployment (NFR-017.1)
+    - express-validator integrated for input sanitization (NFR-017.2)
+    - bcryptjs (pure JS) avoids native compilation issues across platforms
+    - helmet applied globally for consistent security header enforcement
+-->
