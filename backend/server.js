@@ -66,6 +66,11 @@ const allowedOrigins = [
   'http://127.0.0.1:3000'
 ];
 
+// Add Render.com domain in production
+if (process.env.NODE_ENV === 'production' && process.env.BASE_URL) {
+  allowedOrigins.push(process.env.BASE_URL);
+}
+
 const corsOptions = {
   origin: function(origin, callback) {
     // Allow requests with no origin (mobile apps, Postman, server-to-server)
@@ -139,6 +144,12 @@ app.use('/api', apiLimiter);
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/forgot-password', authLimiter);
 app.use('/api/contact', contactLimiter);
+
+// ---------------------------------------------------------------------------
+// Health Check — Monitoring Endpoint (NFR-018)
+// No authentication required for health checks
+// ---------------------------------------------------------------------------
+app.use('/api', require('./routes/health'));
 
 // ---------------------------------------------------------------------------
 // API Routes — 18 RESTful Modules (NFR-016.1)
