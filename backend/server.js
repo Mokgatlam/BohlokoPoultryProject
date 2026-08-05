@@ -203,48 +203,28 @@ app.use((err, req, res, next) => {
 // Binds to 0.0.0.0 for Docker/network access. Initializes default system
 // config on first run. Logs startup status to console.
 // ---------------------------------------------------------------------------
-const SystemConfig = require('./models/SystemConfig');
-
 const PORT = process.env.PORT || 5000;
 
-// Start server with error handling
-const startServer = async () => {
-  try {
-    const server = app.listen(PORT, '0.0.0.0', async () => {
-      console.log(`Server running on http://localhost:${PORT}`);
-      console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-      
-      // Initialize system config (non-blocking)
-      try {
-        await SystemConfig.initDefaults();
-        console.log('System config defaults initialized');
-      } catch (e) {
-        console.error('Failed to init config defaults:', e.message);
-      }
-    });
+// Error handlers
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
 
-    // Graceful shutdown
-    process.on('SIGTERM', () => {
-      console.log('SIGTERM signal received: closing HTTP server');
-      server.close(() => {
-        console.log('HTTP server closed');
-      });
-    });
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  process.exit(1);
+});
 
-    process.on('unhandledRejection', (reason, promise) => {
-      console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-    });
+// Start server
+const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+});
 
-    process.on('uncaughtException', (error) => {
-      console.error('Uncaught Exception:', error);
-      process.exit(1);
-    });
-
-  } catch (error) {
-    console.error('Failed to start server:', error);
-    process.exit(1);
-  }
-};
-
-// Start the server
-startServer();
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM signal received: closing HTTP server');
+  server.close(() => {
+    console.log('HTTP server closed');
+  });
+});
