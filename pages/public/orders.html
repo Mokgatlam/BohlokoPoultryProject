@@ -218,7 +218,7 @@
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <div>
                             <h6 class="mb-1">Order #${order.orderNumber}</h6>
-                            <small class="text-muted">${new Date(order.orderDate).toLocaleDateString()}</small>
+                            <small class="text-muted">${new Date(order.created_at).toLocaleDateString()}</small>
                         </div>
                         <span class="badge-status badge-${order.status.toLowerCase()}">${order.status}</span>
                     </div>
@@ -229,7 +229,7 @@
                                     <strong>${item.productName || 'Product'}</strong><br>
                                     <small class="text-muted">Qty: ${item.quantity} ${item.unit || 'kg'}</small>
                                 </div>
-                                <span>R${(item.price || 0).toFixed(2)}</span>
+                                <span>R${(item.pricePerUnit || item.price || 0).toFixed(2)}</span>
                             </div>
                         `).join('')}
                     </div>
@@ -237,7 +237,7 @@
                         <div>
                             <small class="text-muted">Payment: ${order.paymentStatus || 'Pending'}</small>
                         </div>
-                        <strong>Total: R${(order.totalAmount || 0).toFixed(2)}</strong>
+                        <strong>Total: R${(order.total || 0).toFixed(2)}</strong>
                     </div>
                 </div>
             `).join('');

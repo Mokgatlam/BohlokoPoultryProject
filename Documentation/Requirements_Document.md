@@ -27,7 +27,7 @@ The system encompasses the complete poultry production, processing, inventory ma
 #### FR-001: User Registration
 **Description**: The system shall allow new users to register for accounts via the public registration form.
 **Requirements**:
-1. Support multiple user types: Consumer, Restaurant, Retailer, Distributor, Farm Gate, Institution
+1. Support multiple user types: Consumer, Restaurant, Retailer, Distributor, Farm Gate worker, Institution
 2. Collect business registration details for commercial users (business name required; registration number and tax ID validated for format)
 3. Validate email uniqueness and format
 4. Store user credentials securely (hashed passwords with bcrypt; min 8 characters, uppercase, lowercase, number, and special character)

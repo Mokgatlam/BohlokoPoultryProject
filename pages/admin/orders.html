@@ -74,13 +74,13 @@
                 <tr>
                     <td><strong>${escapeHtml(o.orderNumber)}</strong></td>
                     <td>${escapeHtml(o.customerName || o.customer || 'N/A')}</td>
-                    <td>${o.orderDate ? new Date(o.orderDate).toLocaleDateString() : 'N/A'}</td>
+                    <td>${o.created_at ? new Date(o.created_at).toLocaleDateString() : 'N/A'}</td>
                     <td>${(o.items || []).length} items</td>
-                    <td><strong>R ${(o.totalAmount || o.total || 0).toFixed(2)}</strong></td>
+                    <td><strong>R ${(o.total || o.total || 0).toFixed(2)}</strong></td>
                     <td><span class="badge-status badge-${(o.status || 'pending').toLowerCase()}">${escapeHtml(o.status || 'Pending')}</span></td>
                     <td>${escapeHtml(o.paymentStatus || 'Unpaid')}</td>
                     <td>
-                        <select class="form-select form-select-sm" style="width:auto" onchange="updateStatus('${o._id}', this.value)">
+                        <select class="form-select form-select-sm" style="width:auto" onchange="updateStatus('${o.id}', this.value)">
                             ${['Pending','Confirmed','Processing','Shipped','Delivered','Cancelled'].map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}
                         </select>
                     </td>

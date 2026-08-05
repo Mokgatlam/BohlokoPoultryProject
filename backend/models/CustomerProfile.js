@@ -145,7 +145,7 @@ class CustomerProfile {
    * @returns {Array} Matching profiles
    */
   static async find(query = {}) {
-    return await db.customerProfiles.find(query).sort({ createdAt: -1 }).exec();
+    return await db.customerProfiles.find(query, { sort: { createdAt: -1 } });
   }
 
   /**
@@ -181,7 +181,7 @@ class CustomerProfile {
         { email: regex },
         { phone: regex }
       ]
-    }).exec();
+    });
   }
 
   /**

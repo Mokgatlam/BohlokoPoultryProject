@@ -82,10 +82,7 @@ class BaseRepository {
    * @returns {Array} Matching documents
    */
   async find(query = {}, options = {}) {
-    let cursor = this.collection.find(query);
-    if (options.sort) cursor = cursor.sort(options.sort);
-    if (options.limit) cursor = cursor.limit(options.limit);
-    return await cursor.exec();
+    return await this.collection.find(query, options);
   }
 
   /**

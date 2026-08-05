@@ -151,6 +151,7 @@
     </div>
 
     <script src="../../assets/js/api.js"></script>
+    <script src="../../assets/js/admin.js"></script>
     <script>
         async function loadInvoice() {
             const params = new URLSearchParams(window.location.search);
@@ -170,9 +171,9 @@
 
                 const order = result.data;
                 
-                document.getElementById('invoiceNumber').textContent = order.orderNumber || 'INV-' + order._id.slice(-6).toUpperCase();
-                document.getElementById('invoiceDate').textContent = new Date(order.createdAt).toLocaleDateString('en-ZA');
-                document.getElementById('invDate').textContent = new Date(order.createdAt).toLocaleDateString('en-ZA');
+                document.getElementById('invoiceNumber').textContent = order.orderNumber || 'INV-' + order.id.slice(-6).toUpperCase();
+                document.getElementById('invoiceDate').textContent = new Date(order.created_at).toLocaleDateString('en-ZA');
+                document.getElementById('invDate').textContent = new Date(order.created_at).toLocaleDateString('en-ZA');
                 document.getElementById('orderNumber').textContent = order.orderNumber;
                 document.getElementById('payRef').textContent = order.orderNumber;
                 
@@ -180,10 +181,10 @@
                 statusEl.textContent = order.paymentStatus;
                 statusEl.className = 'status-badge status-' + order.paymentStatus.toLowerCase();
                 
-                document.getElementById('paymentMethod').textContent = order.paymentMethod.replace('_', ' ').toUpperCase();
-                document.getElementById('deliveryOption').textContent = order.deliveryOption.replace('_', ' ').toUpperCase();
+                document.getElementById('paymentMethod').textContent = (order.paymentMethod || '').replaceAll('_', ' ').toUpperCase();
+                document.getElementById('deliveryOption').textContent = (order.deliveryOption || '').replaceAll('_', ' ').toUpperCase();
                 
-                document.getElementById('customerName').textContent = order.customer || 'Customer';
+                document.getElementById('customerName').textContent = order.customerName || order.customerEmail || 'Customer';
                 
                 const tbody = document.getElementById('invoiceItems');
                 tbody.innerHTML = (order.items || []).map((item, i) => `

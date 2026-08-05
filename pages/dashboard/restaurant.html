@@ -91,19 +91,19 @@
             const filter = document.getElementById('orderFilter').value;
             const filtered = filter ? allOrders.filter(o => o.status === filter) : allOrders;
             document.getElementById('totalOrders').textContent = allOrders.length;
-            document.getElementById('pendingOrders').textContent = allOrders.filter(o => o.status === 'pending').length;
-            document.getElementById('completedOrders').textContent = allOrders.filter(o => o.status === 'delivered').length;
-            document.getElementById('totalSpent').textContent = 'R' + allOrders.reduce((s, o) => s + (o.totalAmount || o.total || 0), 0).toLocaleString();
+            document.getElementById('pendingOrders').textContent = allOrders.filter(o => o.status === 'Pending').length;
+            document.getElementById('completedOrders').textContent = allOrders.filter(o => o.status === 'Delivered').length;
+            document.getElementById('totalSpent').textContent = 'R' + allOrders.reduce((s, o) => s + (parseFloat(o.total) || 0), 0).toLocaleString();
             renderOrders(filtered.slice(0, 10));
         }
         function renderOrders(orders) {
             const el = document.getElementById('ordersList');
             if (!orders.length) { el.innerHTML = '<p class="text-muted">No orders found</p>'; return; }
-            el.innerHTML = orders.map(o => `<div class="order-card"><div class="order-header"><div><strong>#${o.orderNumber || o._id?.substring(0, 8)}</strong><br><small class="text-muted">${o.createdAt ? new Date(o.createdAt).toLocaleDateString() : ''}</small></div><span class="badge badge-${o.status || 'pending'}">${o.status || 'pending'}</span></div><div class="d-flex justify-content-between"><span>${(o.items || []).length} item(s)</span><strong>R${(o.totalAmount || o.total || 0).toFixed(2)}</strong></div></div>`).join('');
+            el.innerHTML = orders.map(o => `<div class="order-card"><div class="order-header"><div><strong>#${o.orderNumber || o.id?.substring(0, 8)}</strong><br><small class="text-muted">${o.created_at ? new Date(o.created_at).toLocaleDateString() : ''}</small></div><span class="badge badge-${(o.status || 'pending').toLowerCase()}">${o.status || 'Pending'}</span></div><div class="d-flex justify-content-between"><span>${(o.items || []).length} item(s)</span><strong>R${parseFloat(o.total || 0).toFixed(2)}</strong></div></div>`).join('');
         }
         function renderPopular(products) {
             const el = document.getElementById('popularItems');
-            el.innerHTML = products.map(p => `<div class="d-flex justify-content-between align-items-center mb-2"><span>${p.name || p.productType}</span><button class="btn btn-outline-success btn-sm" onclick="quickOrder('${p._id}')"><i class="fas fa-plus"></i></button></div>`).join('');
+            el.innerHTML = products.map(p => `<div class="d-flex justify-content-between align-items-center mb-2"><span>${p.name}</span><button class="btn btn-outline-success btn-sm" onclick="quickOrder('${p.id}')"><i class="fas fa-plus"></i></button></div>`).join('');
         }
         function quickOrder(id) { window.location.href = '../public/shop.html?product=' + id; }
         loadDashboard();

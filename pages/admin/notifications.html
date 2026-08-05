@@ -131,7 +131,7 @@
                                 <div>
                                     <strong>${escapeHtml(n.title || 'Notification')}</strong>
                                     <p class="mb-0 mt-1 text-muted">${escapeHtml(n.message || '')}</p>
-                                    <small class="text-muted">${n.createdAt ? new Date(n.createdAt).toLocaleString() : ''}</small>
+                                    <small class="text-muted">${n.created_at ? new Date(n.created_at).toLocaleString() : ''}</small>
                                 </div>
                                 <div>${n.read ? '' : '<span class="badge badge-unread">New</span>'}</div>
                             </div>

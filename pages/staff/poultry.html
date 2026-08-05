@@ -174,7 +174,7 @@
             const titles = { dailyLog: 'Daily Log', healthCheck: 'Health Check', medication: 'Log Medication', weight: 'Record Weight', feed: 'Log Feed', environment: 'Environment' };
             document.getElementById('modalTitle').textContent = titles[type] || 'Form';
             
-            const cycleOptions = allCycles.map(c => `<option value="${c._id}">${c.cycleName}</option>`).join('');
+            const cycleOptions = allCycles.map(c => `<option value="${c.id}">${c.cycleName}</option>`).join('');
             const today = new Date().toISOString().split('T')[0];
 
             const forms = {
@@ -344,7 +344,7 @@
 
                 let recentHtml = '';
                 for (const cycle of allCycles.slice(0, 3)) {
-                    const logs = await api.production.getDailyLogs(cycle._id);
+                    const logs = await api.production.getDailyLogs(cycle.id);
                     if (logs.success && logs.data.length) {
                         logs.data.slice(0, 3).forEach(l => {
                             recentHtml += `<div class="d-flex justify-content-between align-items-center py-2 border-bottom">
@@ -358,7 +358,7 @@
 
                 let vaccHtml = '';
                 for (const cycle of allCycles) {
-                    const vaccs = await api.production.getVaccinations(cycle._id);
+                    const vaccs = await api.production.getVaccinations(cycle.id);
                     if (vaccs.success) {
                         vaccs.data.filter(v => v.status !== 'Completed').slice(0, 3).forEach(v => {
                             vaccHtml += `<div class="d-flex justify-content-between align-items-center py-2 border-bottom">

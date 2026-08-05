@@ -109,13 +109,13 @@
                     <td>${escapeHtml(u.userType || 'N/A')}</td>
                     <td>${escapeHtml(u.role || 'N/A')}</td>
                     <td><span class="badge badge-${(u.status || 'pending').toLowerCase()}">${escapeHtml(u.status || 'Pending')}</span></td>
-                    <td>${u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A'}</td>
+                    <td>${u.created_at ? new Date(u.created_at).toLocaleDateString() : 'N/A'}</td>
                     <td>
-                        <button class="btn btn-outline-primary btn-sm me-1" onclick="editUser('${u._id}')" title="Edit"><i class="fas fa-edit"></i></button>
-                        ${u.status === 'pending' ? `<button class="btn btn-outline-success btn-sm" onclick="approveUser('${u._id}')" title="Approve"><i class="fas fa-check"></i></button>` : ''}
-                        ${u.status === 'approved' ? `<button class="btn btn-outline-warning btn-sm" onclick="suspendUser('${u._id}')" title="Suspend"><i class="fas fa-pause"></i></button>` : ''}
-                        ${u.status === 'suspended' ? `<button class="btn btn-outline-success btn-sm" onclick="approveUser('${u._id}')" title="Reactivate"><i class="fas fa-undo"></i></button>` : ''}
-                        <button class="btn btn-outline-danger btn-sm" onclick="deleteUser('${u._id}')" title="Delete"><i class="fas fa-trash"></i></button>
+                        <button class="btn btn-outline-primary btn-sm me-1" onclick="editUser('${u.id}')" title="Edit"><i class="fas fa-edit"></i></button>
+                        ${u.status === 'pending' ? `<button class="btn btn-outline-success btn-sm" onclick="approveUser('${u.id}')" title="Approve"><i class="fas fa-check"></i></button>` : ''}
+                        ${u.status === 'approved' ? `<button class="btn btn-outline-warning btn-sm" onclick="suspendUser('${u.id}')" title="Suspend"><i class="fas fa-pause"></i></button>` : ''}
+                        ${u.status === 'suspended' ? `<button class="btn btn-outline-success btn-sm" onclick="approveUser('${u.id}')" title="Reactivate"><i class="fas fa-undo"></i></button>` : ''}
+                        <button class="btn btn-outline-danger btn-sm" onclick="deleteUser('${u.id}')" title="Delete"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
@@ -141,7 +141,7 @@
         }
 
         function editUser(id) {
-            const user = allUsers.find(u => u._id === id);
+            const user = allUsers.find(u => u.id === id);
             if (!user) return;
             editingUserId = id;
             document.getElementById('userModalTitle').textContent = 'Edit User';

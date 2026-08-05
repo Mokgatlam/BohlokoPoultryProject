@@ -1,28 +1,3 @@
-<!--
-  Quality Control Page - FR-020 (Quality Control Tracking)
-  ========================================================
-  
-  SRS Reference: FR-020 (Quality Control Tracking)
-  
-  Admin page for viewing quality inspection records. Displays statistics
-  (passed, failed, pending, pass rate) and a table of recent inspections.
-  
-  Architecture:
-    - Dashboard stat cards (4 KPIs)
-    - Table-based inspection records
-    - Uses api.compliance endpoints (shared with compliance.js routes)
-  
-  FR-020 Requirements Covered:
-    1. Record quality check results (pass/fail) for batches
-    2. View quality check history
-    3. Display pass rate statistics
-  
-  Coding Principles:
-    - Promise.all() for parallel data fetching (even with single call)
-    - Client-Side Aggregation: Statistics calculated from fetched data
-    - Badge System: compliant=green, non-compliant=red, pending=yellow
-    - Truncated List: slice(0, 20) limits displayed records
--->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,99 +38,106 @@
     <div class="main-content">
         <div class="top-bar">
             <h4><i class="fas fa-award me-2"></i>Quality Control</h4>
-            <button class="btn btn-success btn-sm" onclick="showNewInspection()"><i class="fas fa-plus me-1"></i>New Inspection</button>
+            <div>
+                <button class="btn btn-success btn-sm" onclick="showNewInspection()"><i class="fas fa-plus me-1"></i>New Inspection</button>
+                <button class="btn btn-outline-primary btn-sm ms-1" onclick="showNewAudit()"><i class="fas fa-clipboard-check me-1"></i>New Audit</button>
+            </div>
         </div>
 
-        <!-- KPI Stat Cards -->
         <div class="row g-4 mb-4">
-            <div class="col-6 col-lg-3">
-                <div class="stat-card">
-                    <div class="icon green"><i class="fas fa-check-circle"></i></div>
-                    <h3 id="passedCount">0</h3>
-                    <p>Passed</p>
-                </div>
-            </div>
-            <div class="col-6 col-lg-3">
-                <div class="stat-card">
-                    <div class="icon red"><i class="fas fa-times-circle"></i></div>
-                    <h3 id="failedCount">0</h3>
-                    <p>Failed</p>
-                </div>
-            </div>
-            <div class="col-6 col-lg-3">
-                <div class="stat-card">
-                    <div class="icon gold"><i class="fas fa-clock"></i></div>
-                    <h3 id="pendingInspections">0</h3>
-                    <p>Pending</p>
-                </div>
-            </div>
-            <div class="col-6 col-lg-3">
-                <div class="stat-card">
-                    <div class="icon blue"><i class="fas fa-percentage"></i></div>
-                    <h3 id="passRate">0%</h3>
-                    <p>Pass Rate</p>
-                </div>
-            </div>
+            <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon green"><i class="fas fa-check-circle"></i></div><h3 id="passedCount">0</h3><p>Passed</p></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon red"><i class="fas fa-times-circle"></i></div><h3 id="failedCount">0</h3><p>Failed</p></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon gold"><i class="fas fa-clock"></i></div><h3 id="pendingInspections">0</h3><p>Pending</p></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon blue"><i class="fas fa-percentage"></i></div><h3 id="passRate">0%</h3><p>Pass Rate</p></div></div>
         </div>
 
-        <!-- Inspection Records Table -->
-        <div class="card">
+        <ul class="nav nav-tabs mb-3">
+            <li class="nav-item"><a class="nav-link active" href="#" onclick="showTab('inspections')">Inspections</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="showTab('audits')">Audits</a></li>
+        </ul>
+
+        <div class="card" id="inspectionsTab">
             <div class="card-header">Inspection Records</div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Batch</th>
-                                <th>Product</th>
-                                <th>Inspector</th>
-                                <th>Date</th>
-                                <th>Result</th>
-                                <th>Notes</th>
-                            </tr>
-                        </thead>
-                        <tbody id="qualityTable">
-                            <tr><td colspan="6" class="text-center">Loading...</td></tr>
-                        </tbody>
+                        <thead><tr><th>Batch</th><th>Product</th><th>Inspector</th><th>Date</th><th>Result</th><th>Notes</th><th>Actions</th></tr></thead>
+                        <tbody id="qualityTable"><tr><td colspan="7" class="text-center">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card d-none" id="auditsTab">
+            <div class="card-header">Audit Records</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead><tr><th>Audit Type</th><th>Auditor</th><th>Date</th><th>Score</th><th>Status</th><th>Findings</th><th>Actions</th></tr></thead>
+                        <tbody id="auditsTable"><tr><td colspan="7" class="text-center">No audits found</td></tr></tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- New Inspection Modal -->
+    <div class="modal fade" id="inspectionModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title">New Quality Inspection</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body"><form id="inspectionForm">
+            <div class="mb-3"><label class="form-label">Batch ID *</label><input type="text" class="form-control" id="inspBatch" required></div>
+            <div class="mb-3"><label class="form-label">Product Type *</label><select class="form-select" id="inspProduct"><option>Whole Chicken</option><option>Breast</option><option>Thighs</option><option>Wings</option><option>Drumsticks</option><option>Sausages</option><option>Marinated</option><option>Offal Pack</option><option>Soup Pack</option></select></div>
+            <div class="mb-3"><label class="form-label">Check Type *</label><select class="form-select" id="inspType"><option>Temperature Check</option><option>Visual Inspection</option><option>Weight Verification</option><option>Hygiene Check</option><option>Packaging Integrity</option><option>Label Accuracy</option><option>Microbiological</option></select></div>
+            <div class="mb-3"><label class="form-label">Result *</label><select class="form-select" id="inspResult"><option value="compliant">Pass (Compliant)</option><option value="non-compliant">Fail (Non-Compliant)</option><option value="pending">Pending</option></select></div>
+            <div class="mb-3"><label class="form-label">Temperature (C)</label><input type="number" class="form-control" id="inspTemp" step="0.1"></div>
+            <div class="mb-3"><label class="form-label">Inspector Name</label><input type="text" class="form-control" id="inspInspector"></div>
+            <div class="mb-3"><label class="form-label">Findings / Notes</label><textarea class="form-control" id="inspNotes" rows="3" placeholder="Describe findings..."></textarea></div>
+        </form></div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-success" onclick="submitInspection()">Submit</button></div>
+    </div></div></div>
+
+    <!-- New Audit Modal -->
+    <div class="modal fade" id="auditModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title">New Compliance Audit</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body"><form id="auditForm">
+            <div class="mb-3"><label class="form-label">Audit Type *</label><select class="form-select" id="auditType"><option>Internal Audit</option><option>External Audit</option><option>Regulatory Inspection</option><option>Customer Complaint</option><option>Routine Check</option></select></div>
+            <div class="mb-3"><label class="form-label">Area / Scope *</label><input type="text" class="form-control" id="auditScope" required placeholder="e.g., Processing Floor, Cold Storage"></div>
+            <div class="mb-3"><label class="form-label">Score (0-100)</label><input type="number" class="form-control" id="auditScore" min="0" max="100"></div>
+            <div class="mb-3"><label class="form-label">Status *</label><select class="form-select" id="auditStatus"><option value="pass">Pass</option><option value="fail">Fail</option><option value="conditional">Conditional Pass</option></select></div>
+            <div class="mb-3"><label class="form-label">Auditor Name</label><input type="text" class="form-control" id="auditAuditor"></div>
+            <div class="mb-3"><label class="form-label">Findings</label><textarea class="form-control" id="auditFindings" rows="3" placeholder="Describe audit findings..."></textarea></div>
+            <div class="mb-3"><label class="form-label">Corrective Actions Required</label><textarea class="form-control" id="auditActions" rows="2" placeholder="List corrective actions..."></textarea></div>
+        </form></div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-success" onclick="submitAudit()">Submit</button></div>
+    </div></div></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../assets/js/api.js"></script>
     <script src="../../assets/js/admin.js"></script>
     <script>
-        /**
-         * Load quality check data from the compliance API.
-         * 
-         * Principle: Promise.all() for Consistency
-         * Even with a single call, using Promise.all() maintains
-         * a consistent pattern for future parallel fetches.
-         */
-        async function loadQuality() {
-            const [compRes] = await Promise.all([api.compliance.getQualityChecks()]);
-            if (compRes.success) renderInspections(compRes.data);
+        let allInspections = [];
+        let allAudits = [];
+
+        function showTab(tab) {
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('inspectionsTab').classList.toggle('d-none', tab !== 'inspections');
+            document.getElementById('auditsTab').classList.toggle('d-none', tab !== 'audits');
         }
 
-        /**
-         * Render inspection records and calculate KPIs.
-         * 
-         * Principle: Client-Side Aggregation
-         * Statistics (passed, failed, pending, pass rate) are calculated
-         * from the full dataset rather than requiring separate API calls.
-         * 
-         * @param {Array} inspections - Quality check records
-         */
+        async function loadQuality() {
+            const [compRes, auditRes] = await Promise.all([
+                api.compliance.getQualityChecks(),
+                api.compliance.getAudits()
+            ]);
+            if (compRes.success) { allInspections = compRes.data; renderInspections(allInspections); }
+            if (auditRes.success) { allAudits = auditRes.data; renderAudits(allAudits); }
+        }
+
         function renderInspections(inspections) {
             const tbody = document.getElementById('qualityTable');
-            if (!inspections.length) {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center">No inspection records</td></tr>';
-                return;
-            }
-
-            // Render table rows (max 20)
-            tbody.innerHTML = inspections.slice(0, 20).map(c => {
+            if (!inspections.length) { tbody.innerHTML = '<tr><td colspan="7" class="text-center">No inspection records</td></tr>'; return; }
+            tbody.innerHTML = inspections.slice(0, 30).map(c => {
                 const status = c.status || 'pending';
                 const badge = status === 'compliant' ? 'pass' : status === 'non-compliant' ? 'fail' : 'pending';
                 return `
@@ -163,35 +145,88 @@
                         <td>${escapeHtml(c.batchId || 'N/A')}</td>
                         <td>${escapeHtml(c.productType || c.type || 'N/A')}</td>
                         <td>${escapeHtml(c.inspector || c.userId || 'N/A')}</td>
-                        <td>${c.createdAt ? new Date(c.createdAt).toLocaleDateString() : 'N/A'}</td>
+                        <td>${c.created_at ? new Date(c.created_at).toLocaleDateString() : 'N/A'}</td>
                         <td><span class="badge badge-${badge}">${escapeHtml(status)}</span></td>
                         <td>${escapeHtml(c.notes || c.findings || '-')}</td>
+                        <td><button class="btn btn-outline-danger btn-sm" onclick="deleteInspection('${c.id || ''}')"><i class="fas fa-trash"></i></button></td>
                     </tr>`;
             }).join('');
 
-            // Calculate KPIs from data
             const passed = inspections.filter(c => c.status === 'compliant').length;
             const failed = inspections.filter(c => c.status === 'non-compliant').length;
             const pending = inspections.filter(c => !c.status || c.status === 'pending').length;
-
-            // Update stat cards
             document.getElementById('passedCount').textContent = passed;
             document.getElementById('failedCount').textContent = failed;
             document.getElementById('pendingInspections').textContent = pending;
-            document.getElementById('passRate').textContent = inspections.length
-                ? Math.round((passed / inspections.length) * 100) + '%'
-                : '0%';
+            document.getElementById('passRate').textContent = inspections.length ? Math.round((passed / inspections.length) * 100) + '%' : '0%';
         }
 
-        /**
-         * Placeholder for new inspection form.
-         * Principle: Progressive Enhancement - basic alert until form is built
-         */
-        function showNewInspection() {
-            alert('New inspection form coming soon!');
+        function renderAudits(audits) {
+            const tbody = document.getElementById('auditsTable');
+            if (!audits.length) { tbody.innerHTML = '<tr><td colspan="7" class="text-center">No audits found</td></tr>'; return; }
+            tbody.innerHTML = audits.slice(0, 20).map(a => {
+                const status = a.status || 'pending';
+                const badge = status === 'pass' ? 'pass' : status === 'fail' ? 'fail' : status === 'conditional' ? 'warning' : 'pending';
+                return `
+                    <tr>
+                        <td>${escapeHtml(a.auditType || a.type || 'N/A')}</td>
+                        <td>${escapeHtml(a.auditor || a.userId || 'N/A')}</td>
+                        <td>${a.created_at ? new Date(a.created_at).toLocaleDateString() : 'N/A'}</td>
+                        <td>${a.score != null ? a.score + '/100' : 'N/A'}</td>
+                        <td><span class="badge badge-${badge}">${escapeHtml(status)}</span></td>
+                        <td>${escapeHtml(a.findings || '-')}</td>
+                        <td><button class="btn btn-outline-danger btn-sm" onclick="deleteAudit('${a.id || ''}')"><i class="fas fa-trash"></i></button></td>
+                    </tr>`;
+            }).join('');
         }
 
-        // Initialize on page load
+        function showNewInspection() { document.getElementById('inspectionForm').reset(); new bootstrap.Modal(document.getElementById('inspectionModal')).show(); }
+        function showNewAudit() { document.getElementById('auditForm').reset(); new bootstrap.Modal(document.getElementById('auditModal')).show(); }
+
+        async function submitInspection() {
+            try {
+                await api.compliance.createQualityCheck({
+                    batchId: document.getElementById('inspBatch').value,
+                    productType: document.getElementById('inspProduct').value,
+                    checkType: document.getElementById('inspType').value,
+                    status: document.getElementById('inspResult').value,
+                    temperature: parseFloat(document.getElementById('inspTemp').value) || null,
+                    inspector: document.getElementById('inspInspector').value,
+                    notes: document.getElementById('inspNotes').value
+                });
+                bootstrap.Modal.getInstance(document.getElementById('inspectionModal')).hide();
+                loadQuality();
+            } catch (e) { alert('Error submitting inspection'); }
+        }
+
+        async function submitAudit() {
+            try {
+                await api.compliance.createAudit({
+                    auditType: document.getElementById('auditType').value,
+                    scope: document.getElementById('auditScope').value,
+                    score: parseInt(document.getElementById('auditScore').value) || null,
+                    status: document.getElementById('auditStatus').value,
+                    auditor: document.getElementById('auditAuditor').value,
+                    findings: document.getElementById('auditFindings').value,
+                    correctiveActions: document.getElementById('auditActions').value
+                });
+                bootstrap.Modal.getInstance(document.getElementById('auditModal')).hide();
+                loadQuality();
+            } catch (e) { alert('Error submitting audit'); }
+        }
+
+        async function deleteInspection(id) {
+            if (!id) return;
+            if (!confirm('Delete this inspection record?')) return;
+            try { await api.compliance.deleteQualityCheck(id); loadQuality(); } catch (e) { alert('Error deleting'); }
+        }
+
+        async function deleteAudit(id) {
+            if (!id) return;
+            if (!confirm('Delete this audit record?')) return;
+            try { await api.compliance.deleteAudit(id); loadQuality(); } catch (e) { alert('Error deleting'); }
+        }
+
         loadQuality();
     </script>
 </body>

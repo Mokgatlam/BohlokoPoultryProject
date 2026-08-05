@@ -70,7 +70,7 @@
         function renderPayments(payments) {
             const tbody = document.getElementById('paymentsTable');
             if (!payments.length) { tbody.innerHTML = '<tr><td colspan="7" class="text-center">No payments found</td></tr>'; return; }
-            tbody.innerHTML = payments.map(p => `<tr><td><strong>${escapeHtml(p.paymentNumber || 'N/A')}</strong></td><td>${p.orderId ? p.orderId.substring(0, 8) + '...' : 'N/A'}</td><td>R${(p.amount || 0).toFixed(2)}</td><td>${escapeHtml(p.method)}</td><td><span class="badge badge-${(p.status || 'pending').toLowerCase()}">${escapeHtml(p.status || 'Pending')}</span></td><td>${p.createdAt ? new Date(p.createdAt).toLocaleDateString() : 'N/A'}</td><td>${p.status === 'Pending' ? `<button class="btn btn-outline-success btn-sm" onclick="processPayment('${p._id}')"><i class="fas fa-check"></i></button>` : ''}</td></tr>`).join('');
+            tbody.innerHTML = payments.map(p => `<tr><td><strong>${escapeHtml(p.paymentNumber || 'N/A')}</strong></td><td>${p.orderId ? p.orderId.substring(0, 8) + '...' : 'N/A'}</td><td>R${(p.amount || 0).toFixed(2)}</td><td>${escapeHtml(p.method)}</td><td><span class="badge badge-${(p.status || 'pending').toLowerCase()}">${escapeHtml(p.status || 'Pending')}</span></td><td>${p.created_at ? new Date(p.created_at).toLocaleDateString() : 'N/A'}</td><td>${p.status === 'Pending' ? `<button class="btn btn-outline-success btn-sm" onclick="processPayment('${p.id}')"><i class="fas fa-check"></i></button>` : ''}</td></tr>`).join('');
         }
         async function processPayment(id) { if (confirm('Process this payment?')) { await api.payments.process(id); loadPayments(); } }
         loadPayments();

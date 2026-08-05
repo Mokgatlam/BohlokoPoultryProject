@@ -92,7 +92,7 @@ class Feedback {
    * @returns {Array} Matching feedback records
    */
   static async find(query = {}) {
-    return await db.feedbackComplaints.find(query).sort({ createdAt: -1 }).exec();
+    return await db.feedbackComplaints.find(query, { sort: { createdAt: -1 } });
   }
 
   /**

@@ -83,6 +83,10 @@
         </div>
 
         <h6 style="font-weight:600;margin-bottom:12px;">Quick Actions</h6>
+        <button class="quick-action" onclick="openModal('newHarvest')">
+            <div class="icon" style="background:rgba(212,168,67,0.1);color:var(--accent);"><i class="fas fa-feather-alt"></i></div>
+            <div><h6>New Harvest Batch</h6><small>Create a new harvest batch from production cycle</small></div>
+        </button>
         <button class="quick-action" onclick="openModal('addStep')">
             <div class="icon" style="background:rgba(27,67,50,0.1);color:var(--primary);"><i class="fas fa-plus-circle"></i></div>
             <div><h6>Add Processing Step</h6><small>Record slaughter, cut, package, etc.</small></div>
@@ -157,13 +161,23 @@
         }
 
         function openModal(type) {
-            const titles = { addStep: 'Add Processing Step', qualityCheck: 'Quality Check', recordYield: 'Record Yield', completeBatch: 'Complete Batch' };
+            const titles = { newHarvest: 'New Harvest Batch', addStep: 'Add Processing Step', qualityCheck: 'Quality Check', recordYield: 'Record Yield', completeBatch: 'Complete Batch' };
             document.getElementById('modalTitle').textContent = titles[type];
             
-            const batchOptions = allProcessingBatches.filter(b => b.status === 'Processing').map(b => `<option value="${b._id}">${b.batchNumber} - ${b.productType}</option>`).join('');
+            const batchOptions = allProcessingBatches.filter(b => b.status === 'Processing').map(b => `<option value="${b.id}">${b.batchNumber} - ${b.productType}</option>`).join('');
             const today = new Date().toISOString().split('T')[0];
 
             const forms = {
+                newHarvest: `
+                    <div class="mb-3"><label class="form-label">Production Cycle *</label><input type="text" class="form-control" id="fCycleId" placeholder="e.g., Cycle-001" required></div>
+                    <div class="mb-3"><label class="form-label">Product Type *</label>
+                        <select class="form-select" id="fProductType"><option>Whole Chicken</option><option>Breast</option><option>Thighs</option><option>Wings</option><option>Drumsticks</option><option>Sausages</option><option>Marinated</option><option>Offal Pack</option><option>Soup Pack</option></select></div>
+                    <div class="mb-3"><label class="form-label">Number of Birds *</label><input type="number" class="form-control" id="fBirds" min="1" required></div>
+                    <div class="mb-3"><label class="form-label">Live Weight (kg) *</label><input type="number" class="form-control" id="fLiveWeight" step="0.1" min="0" required></div>
+                    <div class="mb-3"><label class="form-label">Harvest Date *</label><input type="date" class="form-control" id="fHarvestDate" value="${today}"></div>
+                    <div class="mb-3"><label class="form-label">Shift</label><select class="form-select" id="fShift"><option>Morning</option><option>Afternoon</option><option>Night</option></select></div>
+                    <div class="mb-3"><label class="form-label">Notes</label><input type="text" class="form-control" id="fHarvestNotes" placeholder="e.g., Good condition"></div>
+                    <button class="btn btn-main" onclick="submitHarvest()">Create Harvest Batch</button>`,
                 addStep: `
                     <div class="mb-3"><label class="form-label">Processing Batch *</label><select class="form-select" id="fBatch">${batchOptions || '<option>No active batches</option>'}</select></div>
                     <div class="mb-3"><label class="form-label">Step Type *</label>
@@ -200,6 +214,23 @@
             };
             document.getElementById('modalBody').innerHTML = forms[type];
             new bootstrap.Modal(document.getElementById('formModal')).show();
+        }
+
+        async function submitHarvest() {
+            try {
+                await api.harvest.createHarvestBatch({
+                    cycleId: document.getElementById('fCycleId').value,
+                    productType: document.getElementById('fProductType').value,
+                    birds: parseInt(document.getElementById('fBirds').value),
+                    liveWeight: parseFloat(document.getElementById('fLiveWeight').value),
+                    harvestDate: document.getElementById('fHarvestDate').value,
+                    shift: document.getElementById('fShift').value,
+                    notes: document.getElementById('fHarvestNotes').value
+                });
+                bootstrap.Modal.getInstance(document.getElementById('formModal')).hide();
+                loadData();
+                alert('Harvest batch created!');
+            } catch (e) { alert('Error creating harvest batch'); }
         }
 
         async function submitStep() {

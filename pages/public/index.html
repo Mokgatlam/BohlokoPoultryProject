@@ -126,30 +126,170 @@
         </div>
     </nav>
 
-    <!-- Hero Section — Primary CTA and brand introduction (NFR-010.1) -->
-    <section class="hero">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6 hero-content mb-5 mb-lg-0">
-                    <span data-i18n="hero.badge" class="hero-badge">
-                        <i class="fas fa-egg me-1"></i> 100% Free State Farm Fresh
-                    </span>
-                    <h1 class="mb-3"><span data-i18n="hero.title1">Raised with Care,</span><br><span data-i18n="hero.title2">Served with Pride</span></h1>
-                    <p data-i18n="hero.subtitle" class="mb-4">From our family farm in Bloemfontein to your table - premium chickens raised naturally on open land, fed quality grain, and processed fresh daily. Taste the difference of real farm poultry.</p>
-                    <div class="d-flex gap-3 flex-wrap">
-                        <a href="shop.html" class="btn-primary-custom">
-                            <i class="fas fa-shopping-basket me-2"></i><span data-i18n="hero.shop_now">Shop Fresh Chicken</span>
-                        </a>
-                        <a href="about.html" class="btn-outline-light-custom">
-                            <i class="fas fa-leaf me-2"></i><span data-i18n="hero.learn_more">Our Farm Story</span>
-                        </a>
+    <!-- Hero Section — Sliding Carousel with Promotions -->
+    <section class="hero-carousel-wrapper">
+        <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+            <!-- Carousel Indicators -->
+            <div class="carousel-indicators hero-indicators">
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="3"></button>
+            </div>
+
+            <!-- Slides -->
+            <div class="carousel-inner">
+                <!-- Slide 1: Main Brand -->
+                <div class="carousel-item active hero-slide" style="background: linear-gradient(135deg, #081C15 0%, #1B4332 50%, #2D6A4F 100%);">
+                    <div class="hero-slide-bg" style="background-image: url('https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=1600&q=80');"></div>
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-lg-7">
+                                <span class="hero-badge"><i class="fas fa-egg me-1"></i> 100% Free State Farm Fresh</span>
+                                <h1 class="hero-slide-title">Raised with Care,<br>Served with Pride</h1>
+                                <p class="hero-slide-text">From our family farm in Bloemfontein to your table - premium chickens raised naturally on open land, fed quality grain, and processed fresh daily.</p>
+                                <div class="d-flex gap-3 flex-wrap">
+                                    <a href="shop.html" class="btn-hero-primary"><i class="fas fa-shopping-basket me-2"></i>Shop Fresh Chicken</a>
+                                    <a href="about.html" class="btn-hero-outline"><i class="fas fa-leaf me-2"></i>Our Farm Story</a>
+                                </div>
+                            </div>
+                            <div class="col-lg-5 text-center d-none d-lg-block">
+                                <img src="https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=600&h=500&fit=crop&q=80" alt="Fresh Chicken" class="hero-slide-img" onerror="this.src='../../assets/images/products/whole-chicken.png';this.style.maxHeight='380px';this.style.objectFit='contain';">
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-6 hero-image text-center">
-                    <img src="https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=600&h=500&fit=crop&q=80" 
-                         alt="Chickens at Bohloko Family Farm" 
-                         class="img-fluid rounded-4 shadow-lg hero-img"
-                         onerror="this.src='../../assets/images/products/whole-chicken.png';this.style.maxHeight='450px';this.style.objectFit='contain';">
+
+                <!-- Slide 2: Weekly Special -->
+                <div class="carousel-item hero-slide" style="background: linear-gradient(135deg, #7F1D1D 0%, #991B1B 50%, #B91C1C 100%);">
+                    <div class="hero-slide-bg" style="background-image: url('https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=1600&q=80');"></div>
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-lg-7">
+                                <span class="hero-badge hero-badge-red"><i class="fas fa-fire me-1"></i> Weekly Special</span>
+                                <h1 class="hero-slide-title">Marinated Chicken<br>Only R139.99/kg</h1>
+                                <p class="hero-slide-text">Ready-to-cook marinated chicken pieces infused with traditional African spices. Peri-Peri, BBQ, Lemon & Herb, and Mild Curry flavours available.</p>
+                                <div class="d-flex gap-3 flex-wrap">
+                                    <a href="shop.html" class="btn-hero-primary"><i class="fas fa-tag me-2"></i>Order Now</a>
+                                    <span class="hero-price-strike">Was R159.99</span>
+                                </div>
+                            </div>
+                            <div class="col-lg-5 text-center d-none d-lg-block">
+                                <img src="https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=600&h=500&fit=crop&q=80" alt="Marinated Chicken" class="hero-slide-img" onerror="this.src='../../assets/images/products/marinated-chicken.png';this.style.maxHeight='380px';this.style.objectFit='contain';">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 3: Bulk Deals -->
+                <div class="carousel-item hero-slide" style="background: linear-gradient(135deg, #1E3A5F 0%, #2563EB 50%, #3B82F6 100%);">
+                    <div class="hero-slide-bg" style="background-image: url('https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=1600&q=80');"></div>
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-lg-7">
+                                <span class="hero-badge hero-badge-blue"><i class="fas fa-boxes me-1"></i> Bulk Orders</span>
+                                <h1 class="hero-slide-title">5kg Pack for R399.99<br>Save 5% Today</h1>
+                                <p class="hero-slide-text">Perfect for large families, restaurants, and catering. Includes breast, thighs, drumsticks, wings, and back pieces. The more you buy, the more you save.</p>
+                                <div class="d-flex gap-3 flex-wrap">
+                                    <a href="shop.html" class="btn-hero-primary"><i class="fas fa-weight-hanging me-2"></i>View Bulk Prices</a>
+                                </div>
+                            </div>
+                            <div class="col-lg-5 text-center d-none d-lg-block">
+                                <div class="hero-slide-deals">
+                                    <div class="deal-card">
+                                        <div class="deal-weight">2kg</div>
+                                        <div class="deal-price">R169.99</div>
+                                        <div class="deal-save">Save 3%</div>
+                                    </div>
+                                    <div class="deal-card deal-featured">
+                                        <div class="deal-weight">5kg</div>
+                                        <div class="deal-price">R399.99</div>
+                                        <div class="deal-save">Save 5%</div>
+                                    </div>
+                                    <div class="deal-card">
+                                        <div class="deal-weight">8kg</div>
+                                        <div class="deal-price">R629.99</div>
+                                        <div class="deal-save">Save 10%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 4: Delivery Promo -->
+                <div class="carousel-item hero-slide" style="background: linear-gradient(135deg, #065F46 0%, #059669 50%, #10B981 100%);">
+                    <div class="hero-slide-bg" style="background-image: url('https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1600&q=80');"></div>
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-lg-7">
+                                <span class="hero-badge hero-badge-green"><i class="fas fa-truck me-1"></i> Free Delivery</span>
+                                <h1 class="hero-slide-title">Free Farm Gate<br>Collection Daily</h1>
+                                <p class="hero-slide-text">Pick up fresh from our Bloemfontein farm - or get same-day delivery across the city for just R50. Fresh to your door while it's still warm.</p>
+                                <div class="d-flex gap-3 flex-wrap">
+                                    <a href="contact.html" class="btn-hero-primary"><i class="fas fa-phone me-2"></i>Call to Order</a>
+                                    <a href="shop.html" class="btn-hero-outline"><i class="fas fa-map-marker-alt me-2"></i>Find Us</a>
+                                </div>
+                            </div>
+                            <div class="col-lg-5 text-center d-none d-lg-block">
+                                <div class="hero-delivery-badge">
+                                    <div class="delivery-circle">
+                                        <i class="fas fa-truck"></i>
+                                    </div>
+                                    <div class="delivery-text">
+                                        <div class="delivery-free">FREE</div>
+                                        <div class="delivery-sub">Farm Gate Pickup</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carousel Controls -->
+            <button class="carousel-control-prev hero-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next hero-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Promotional Strip Below Carousel -->
+    <section class="promo-strip">
+        <div class="container">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <a href="shop.html" class="promo-strip-card promo-strip-red">
+                        <div class="promo-strip-icon"><i class="fas fa-fire"></i></div>
+                        <div class="promo-strip-content">
+                            <div class="promo-strip-title">Weekly Special</div>
+                            <div class="promo-strip-text">Marinated Chicken R139.99/kg</div>
+                        </div>
+                        <i class="fas fa-arrow-right promo-strip-arrow"></i>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="shop.html" class="promo-strip-card promo-strip-blue">
+                        <div class="promo-strip-icon"><i class="fas fa-boxes"></i></div>
+                        <div class="promo-strip-content">
+                            <div class="promo-strip-title">Bulk & Save</div>
+                            <div class="promo-strip-text">5kg+ packs up to 10% off</div>
+                        </div>
+                        <i class="fas fa-arrow-right promo-strip-arrow"></i>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="shop.html" class="promo-strip-card promo-strip-green">
+                        <div class="promo-strip-icon"><i class="fas fa-truck"></i></div>
+                        <div class="promo-strip-content">
+                            <div class="promo-strip-title">Free Collection</div>
+                            <div class="promo-strip-text">Farm gate pickup daily</div>
+                        </div>
+                        <i class="fas fa-arrow-right promo-strip-arrow"></i>
+                    </a>
                 </div>
             </div>
         </div>

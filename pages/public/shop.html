@@ -2,10 +2,10 @@
 <html lang="en">
 
 <head>
-    <title>Products & Pricing - Bohloko Family Farm</title>
+    <title>Shop Fresh Poultry - Bohloko Family Farm</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="View our full range of fresh poultry products and pricing. Whole chickens, portions, marinated products, and more.">
+    <meta name="description" content="Shop fresh poultry products from Bohloko Family Farm. Whole chickens, portions, marinated products, sausages and more. Order online for delivery in Bloemfontein.">
     <link rel="shortcut icon" type="image/x-icon" href="../../assets/images/icons/favicon.png">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
@@ -47,520 +47,74 @@
                     <li class="nav-item"><a class="nav-link active" href="shop.html">Products</a></li>
                     <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
                 </ul>
-                <div class="d-flex align-items-center gap-2">
-                    <a href="login.html" class="btn-primary-custom btn-sm" style="padding:10px 20px;font-size:0.9rem;border-radius:50px;">
-                        <i class="fas fa-sign-in-alt me-1"></i> Login
-                    </a>
-                    <a href="signup.html" class="btn-primary-custom btn-sm" style="padding:10px 20px;font-size:0.9rem;border-radius:50px;">
-                        <i class="fas fa-user-plus me-1"></i> Sign Up
-                    </a>
-                    <a href="shop.html" class="btn-primary-custom btn-sm" style="padding:10px 20px;font-size:0.9rem;border-radius:50px;">
-                        <i class="fas fa-shopping-cart me-1"></i> Order
-                    </a>
+                <div class="nav-auth-area d-flex align-items-center gap-2">
+                    <a href="login.html" class="btn-primary-custom btn-sm nav-btn"><i class="fas fa-sign-in-alt me-1"></i> Login</a>
+                    <a href="signup.html" class="btn-primary-custom btn-sm nav-btn"><i class="fas fa-user-plus me-1"></i> Sign Up</a>
+                    <button class="cart-nav-btn" onclick="toggleCart()" aria-label="Open cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge" id="navCartCount">0</span>
+                    </button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Shop Hero -->
+    <!-- Shop Hero with Search -->
     <section class="shop-hero">
         <div class="container shop-hero-content">
-            <h1 class="display-5 text-white mb-3" style="font-weight:700;">Products & Pricing</h1>
-            <p class="lead text-white" style="opacity:0.85;">Fresh poultry products at competitive prices. All prices in ZAR (South African Rand).</p>
+            <h1 class="display-5 text-white mb-3" style="font-weight:700;">Fresh Poultry Products</h1>
+            <p class="lead text-white mb-4" style="opacity:0.85;">Farm-fresh quality at competitive prices. All prices in ZAR.</p>
+            <div class="shop-search-wrapper">
+                <div class="shop-search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="productSearch" class="shop-search-input" placeholder="Search products (e.g. whole chicken, wings, sausages...)" oninput="searchProducts(this.value)">
+                    <button class="search-clear-btn" id="searchClearBtn" onclick="clearSearch()" style="display:none;"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- Filter Bar -->
+    <!-- Filter & Products -->
     <section class="section-padding">
         <div class="container">
-            <div class="filter-bar text-center">
-                <button class="filter-btn active" onclick="filterProducts('all')">All Products</button>
-                <button class="filter-btn" onclick="filterProducts('whole')">Whole Birds</button>
-                <button class="filter-btn" onclick="filterProducts('portions')">Portions</button>
-                <button class="filter-btn" onclick="filterProducts('value-added')">Value-Added</button>
-                <button class="filter-btn" onclick="filterProducts('byproducts')">By-Products</button>
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-bar-inner">
+                    <button class="filter-btn active" onclick="filterProducts('all', this)">
+                        <i class="fas fa-th-large me-1"></i> All
+                    </button>
+                    <button class="filter-btn" onclick="filterProducts('whole', this)">
+                        <i class="fas fa-drumstick-bite me-1"></i> Whole Birds
+                    </button>
+                    <button class="filter-btn" onclick="filterProducts('portions', this)">
+                        <i class="fas fa-weight-hanging me-1"></i> Portions
+                    </button>
+                    <button class="filter-btn" onclick="filterProducts('value-added', this)">
+                        <i class="fas fa-pepper-hot me-1"></i> Value-Added
+                    </button>
+                    <button class="filter-btn" onclick="filterProducts('byproducts', this)">
+                        <i class="fas fa-shoe-prints me-1"></i> By-Products
+                    </button>
+                </div>
+                <div class="filter-results" id="filterResults"></div>
             </div>
 
             <!-- Products Grid -->
-            <div class="row g-4">
-
-                <!-- Whole Fresh Chicken -->
-                <div class="col-md-6 col-lg-4 product-item" data-category="whole">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../../assets/images/products/whole-chicken.png" alt="Whole Fresh Chicken" onerror="this.src='../../assets/images/logo.png'">
-                            <span class="product-badge">Best Seller</span>
-                            <i class="fas fa-drumstick-bite product-icon-fallback"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5>Whole Fresh Chicken</h5>
-                            <div class="product-sku">SKU: CHK-WHOLE-001</div>
-                            <p>Fresh whole broiler chicken, perfect for roasting, boiling, or braai.</p>
-                            <table class="price-table">
-                                <tr><td>Consumer</td><td>R89.99/kg</td></tr>
-                                <tr><td>Restaurant</td><td>R75.99/kg</td></tr>
-                                <tr><td>Retailer</td><td>R65.99/kg</td></tr>
-                                <tr><td>Distributor</td><td>R55.99/kg</td></tr>
-                            </table>
-                            <div class="d-flex align-items-center gap-2 mt-2">
-                                <input type="number" class="form-control form-control-sm" id="qty-whole-chicken" value="1" min="1" style="width:70px;">
-                                <button class="btn btn-sm flex-grow-1" style="background:var(--primary);color:white;" onclick="addToCart('whole-chicken')"><i class="fas fa-cart-plus me-1"></i>Add</button>
-                            </div>
-                            <span class="product-badge-tag mt-2"><i class="fas fa-check me-1"></i>Antibiotic Free</span>
-                        </div>
+            <div class="row g-4" id="productsGrid">
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="visually-hidden">Loading products...</span>
                     </div>
+                    <p class="mt-3 text-muted">Loading products...</p>
                 </div>
+            </div>
 
-                <!-- Chicken Breast Fillets -->
-                <div class="col-md-6 col-lg-4 product-item" data-category="portions">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../../assets/images/products/chicken-breast.png" alt="Chicken Breast Fillets" onerror="this.src='../../assets/images/logo.png'">
-                            <span class="product-badge">Popular</span>
-                            <i class="fas fa-cut product-icon-fallback"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5>Chicken Breast Fillets</h5>
-                            <div class="product-sku">SKU: CHK-BREAST-002</div>
-                            <p>Premium boneless, skinless chicken breast fillets. Lean, tender, and versatile — perfect for grilling, stir-fry, sandwiches, salads, and healthy meal prep. Low in fat, high in protein. Sourced from free-range broilers raised without antibiotics.</p>
-                            <table class="price-table">
-                                <tr><td>Consumer</td><td>R129.99/kg</td></tr>
-                                <tr><td>Restaurant</td><td>R110.99/kg</td></tr>
-                                <tr><td>Retailer</td><td>R95.99/kg</td></tr>
-                                <tr><td>Distributor</td><td>R85.99/kg</td></tr>
-                            </table>
-                            <div class="d-flex align-items-center gap-2 mt-2">
-                                <input type="number" class="form-control form-control-sm" id="qty-chicken-breast" value="1" min="1" style="width:70px;">
-                                <button class="btn btn-sm flex-grow-1" style="background:var(--primary);color:white;" onclick="addToCart('chicken-breast')"><i class="fas fa-cart-plus me-1"></i>Add</button>
-                            </div>
-                            <span class="product-badge-tag mt-2"><i class="fas fa-check me-1"></i>Antibiotic Free</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Chicken Thighs -->
-                <div class="col-md-6 col-lg-4 product-item" data-category="portions">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../../assets/images/products/chicken-thighs.png" alt="Chicken Thighs" onerror="this.src='../../assets/images/logo.png'">
-                            <i class="fas fa-drumstick-bite product-icon-fallback"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5>Chicken Thighs</h5>
-                            <div class="product-sku">SKU: CHK-THIGH-003</div>
-                            <p>Juicy, flavourful bone-in chicken thighs with skin. Perfect for braai, curries, stews, and slow-cooking. Rich in flavour and tender when cooked. Available boneless or bone-in. Great value cut for family meals and restaurants.</p>
-                            <table class="price-table">
-                                <tr><td>Consumer</td><td>R79.99/kg</td></tr>
-                                <tr><td>Restaurant</td><td>R65.99/kg</td></tr>
-                                <tr><td>Retailer</td><td>R55.99/kg</td></tr>
-                                <tr><td>Distributor</td><td>R45.99/kg</td></tr>
-                            </table>
-                            <div class="d-flex align-items-center gap-2 mt-2">
-                                <input type="number" class="form-control form-control-sm" id="qty-chicken-thighs" value="1" min="1" style="width:70px;">
-                                <button class="btn btn-sm flex-grow-1" style="background:var(--primary);color:white;" onclick="addToCart('chicken-thighs')"><i class="fas fa-cart-plus me-1"></i>Add</button>
-                            </div>
-                            <span class="product-badge-tag mt-2"><i class="fas fa-check me-1"></i>Antibiotic Free</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Chicken Wings -->
-                <div class="col-md-6 col-lg-4 product-item" data-category="portions">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../../assets/images/products/chicken-wings.png" alt="Chicken Wings" onerror="this.src='../../assets/images/logo.png'">
-                            <i class="fas fa-feather-alt product-icon-fallback"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5>Chicken Wings</h5>
-                            <div class="product-sku">SKU: CHK-WINGS-004</div>
-                            <p>Fresh whole chicken wings and wing portions. Ideal for braai, deep-frying, oven-baking, or buffalo wings. Crispy skin with tender meat. Party favourite and restaurant bestseller. Available whole or cut into drumettes and flats.</p>
-                            <table class="price-table">
-                                <tr><td>Consumer</td><td>R69.99/kg</td></tr>
-                                <tr><td>Restaurant</td><td>R55.99/kg</td></tr>
-                                <tr><td>Retailer</td><td>R45.99/kg</td></tr>
-                                <tr><td>Distributor</td><td>R35.99/kg</td></tr>
-                            </table>
-                            <div class="d-flex align-items-center gap-2 mt-2">
-                                <input type="number" class="form-control form-control-sm" id="qty-chicken-wings" value="1" min="1" style="width:70px;">
-                                <button class="btn btn-sm flex-grow-1" style="background:var(--primary);color:white;" onclick="addToCart('chicken-wings')"><i class="fas fa-cart-plus me-1"></i>Add</button>
-                            </div>
-                            <span class="product-badge-tag mt-2"><i class="fas fa-check me-1"></i>Hormone Free</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Marinated Chicken -->
-                <div class="col-md-6 col-lg-4 product-item" data-category="value-added">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../../assets/images/products/marinated-chicken.png" alt="Marinated Chicken" onerror="this.src='../../assets/images/logo.png'">
-                            <span class="product-badge">New</span>
-                            <i class="fas fa-pepper-hot product-icon-fallback"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5>Marinated Chicken Pieces</h5>
-                            <div class="product-sku">SKU: CHK-MARIN-005</div>
-                            <p>Ready-to-cook marinated chicken pieces infused with traditional African spices and herbs. Available in Peri-Peri, BBQ, Lemon & Herb, and Mild Curry flavours. No artificial preservatives — just fresh chicken and real spices. Perfect for quick weeknight dinners.</p>
-                            <table class="price-table">
-                                <tr><td>Consumer</td><td>R139.99/kg</td></tr>
-                                <tr><td>Restaurant</td><td>R120.99/kg</td></tr>
-                                <tr><td>Retailer</td><td>R105.99/kg</td></tr>
-                                <tr><td>Distributor</td><td>R95.99/kg</td></tr>
-                            </table>
-                            <div class="d-flex align-items-center gap-2 mt-2">
-                                <input type="number" class="form-control form-control-sm" id="qty-marinated-chicken" value="1" min="1" style="width:70px;">
-                                <button class="btn btn-sm flex-grow-1" style="background:var(--primary);color:white;" onclick="addToCart('marinated-chicken')"><i class="fas fa-cart-plus me-1"></i>Add</button>
-                            </div>
-                            <span class="product-badge-tag mt-2"><i class="fas fa-check me-1"></i>No Artificial Preservatives</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Chicken Sausages -->
-                <div class="col-md-6 col-lg-4 product-item" data-category="value-added">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../../assets/images/products/chicken-sausages.png" alt="Chicken Sausages" onerror="this.src='../../assets/images/logo.png'">
-                            <i class="fas fa-hotdog product-icon-fallback"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5>Chicken Sausages</h5>
-                            <div class="product-sku">SKU: CHK-SAUS-006</div>
-                            <p>Premium chicken sausages made from quality chicken mince with natural spices. No MSG, no artificial fillers. Available in Original, Spicy, and Garlic & Herb varieties. Perfect for braai, breakfast, or quick meals. Low in fat compared to beef sausages.</p>
-                            <table class="price-table">
-                                <tr><td>Consumer</td><td>R119.99/kg</td></tr>
-                                <tr><td>Restaurant</td><td>R100.99/kg</td></tr>
-                                <tr><td>Retailer</td><td>R85.99/kg</td></tr>
-                                <tr><td>Distributor</td><td>R75.99/kg</td></tr>
-                            </table>
-                            <div class="d-flex align-items-center gap-2 mt-2">
-                                <input type="number" class="form-control form-control-sm" id="qty-chicken-sausages" value="1" min="1" style="width:70px;">
-                                <button class="btn btn-sm flex-grow-1" style="background:var(--primary);color:white;" onclick="addToCart('chicken-sausages')"><i class="fas fa-cart-plus me-1"></i>Add</button>
-                            </div>
-                            <span class="product-badge-tag mt-2"><i class="fas fa-check me-1"></i>No MSG Added</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Chicken Livers -->
-                <div class="col-md-6 col-lg-4 product-item" data-category="byproducts">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../../assets/images/products/chicken-livers.png" alt="Chicken Livers (500g)" onerror="this.src='../../assets/images/logo.png'">
-                            <i class="fas fa-heart product-icon-fallback"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5>Chicken Livers (500g)</h5>
-                            <div class="product-sku">SKU: CHK-LIVER-013</div>
-                            <p>Fresh, clean chicken livers. Rich in iron, vitamin A, and B12. Perfect for traditional dishes, pâté, stir-fry, and gravies. A nutritious and affordable protein source.</p>
-                            <table class="price-table">
-                                <tr><td>Consumer</td><td>R30.00/500g</td></tr>
-                                <tr><td>Restaurant</td><td>R25.00/500g</td></tr>
-                                <tr><td>Retailer</td><td>R22.00/500g</td></tr>
-                                <tr><td>Distributor</td><td>R18.00/500g</td></tr>
-                            </table>
-                            <div class="d-flex align-items-center gap-2 mt-2">
-                                <input type="number" class="form-control form-control-sm" id="qty-chicken-livers" value="1" min="1" style="width:70px;">
-                                <button class="btn btn-sm flex-grow-1" style="background:var(--primary);color:white;" onclick="addToCart('chicken-livers')"><i class="fas fa-cart-plus me-1"></i>Add</button>
-                            </div>
-                            <span class="product-badge-tag mt-2"><i class="fas fa-check me-1"></i>Rich in Iron</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Chicken Gizzards -->
-                <div class="col-md-6 col-lg-4 product-item" data-category="byproducts">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../../assets/images/products/chicken-gizzards.png" alt="Chicken Gizzards (500g)" onerror="this.src='../../assets/images/logo.png'">
-                            <i class="fas fa-drumstick-bite product-icon-fallback"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5>Chicken Gizzards (500g)</h5>
-                            <div class="product-sku">SKU: CHK-GIZZ-014</div>
-                            <p>Fresh, cleaned chicken gizzards. High in protein and low in fat. Perfect for stews, curries, braais, and traditional South African dishes. Tender and flavourful when cooked properly.</p>
-                            <table class="price-table">
-                                <tr><td>Consumer</td><td>R30.00/500g</td></tr>
-                                <tr><td>Restaurant</td><td>R25.00/500g</td></tr>
-                                <tr><td>Retailer</td><td>R22.00/500g</td></tr>
-                                <tr><td>Distributor</td><td>R18.00/500g</td></tr>
-                            </table>
-                            <div class="d-flex align-items-center gap-2 mt-2">
-                                <input type="number" class="form-control form-control-sm" id="qty-chicken-gizzards" value="1" min="1" style="width:70px;">
-                                <button class="btn btn-sm flex-grow-1" style="background:var(--primary);color:white;" onclick="addToCart('chicken-gizzards')"><i class="fas fa-cart-plus me-1"></i>Add</button>
-                            </div>
-                            <span class="product-badge-tag mt-2"><i class="fas fa-check me-1"></i>High Protein</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Chicken Feet (Cleaned) -->
-                <div class="col-md-6 col-lg-4 product-item" data-category="byproducts">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../../assets/images/products/chicken-feet-cleaned.png" alt="Chicken Feet (1kg) Cleaned" onerror="this.src='../../assets/images/logo.png'">
-                            <span class="product-badge">Popular</span>
-                            <i class="fas fa-shoe-prints product-icon-fallback"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5>Chicken Feet (1kg) - Cleaned</h5>
-                            <div class="product-sku">SKU: CHK-FEET-015</div>
-                            <p>Cleaned and trimmed chicken feet. Rich in collagen and gelatin. Perfect for making rich, flavourful stock, traditional dishes, and dim sum. Ready to cook.</p>
-                            <table class="price-table">
-                                <tr><td>Consumer</td><td>R50.00/1kg</td></tr>
-                                <tr><td>Restaurant</td><td>R42.00/1kg</td></tr>
-                                <tr><td>Retailer</td><td>R35.00/1kg</td></tr>
-                                <tr><td>Distributor</td><td>R28.00/1kg</td></tr>
-                            </table>
-                            <div class="d-flex align-items-center gap-2 mt-2">
-                                <input type="number" class="form-control form-control-sm" id="qty-chicken-feet-cleaned" value="1" min="1" style="width:70px;">
-                                <button class="btn btn-sm flex-grow-1" style="background:var(--primary);color:white;" onclick="addToCart('chicken-feet-cleaned')"><i class="fas fa-cart-plus me-1"></i>Add</button>
-                            </div>
-                            <span class="product-badge-tag mt-2"><i class="fas fa-check me-1"></i>Cleaned & Ready</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Chicken Hearts -->
-                <div class="col-md-6 col-lg-4 product-item" data-category="byproducts">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../../assets/images/products/chicken-hearts.png" alt="Chicken Hearts (500g)" onerror="this.src='../../assets/images/logo.png'">
-                            <i class="fas fa-heart product-icon-fallback"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5>Chicken Hearts (500g)</h5>
-                            <div class="product-sku">SKU: CHK-HEART-016</div>
-                            <p>Fresh chicken hearts. Lean, protein-rich organ meat. Perfect for skewers, stir-fry, stews, and braai. A delicacy in many cultures. Affordable and nutritious.</p>
-                            <table class="price-table">
-                                <tr><td>Consumer</td><td>R25.00/500g</td></tr>
-                                <tr><td>Restaurant</td><td>R20.00/500g</td></tr>
-                                <tr><td>Retailer</td><td>R18.00/500g</td></tr>
-                                <tr><td>Distributor</td><td>R15.00/500g</td></tr>
-                            </table>
-                            <div class="d-flex align-items-center gap-2 mt-2">
-                                <input type="number" class="form-control form-control-sm" id="qty-chicken-hearts" value="1" min="1" style="width:70px;">
-                                <button class="btn btn-sm flex-grow-1" style="background:var(--primary);color:white;" onclick="addToCart('chicken-hearts')"><i class="fas fa-cart-plus me-1"></i>Add</button>
-                            </div>
-                            <span class="product-badge-tag mt-2"><i class="fas fa-check me-1"></i>Lean Protein</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Chicken Necks -->
-                <div class="col-md-6 col-lg-4 product-item" data-category="byproducts">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../../assets/images/products/chicken-necks.png" alt="Chicken Necks (1kg)" onerror="this.src='../../assets/images/logo.png'">
-                            <i class="fas fa-bone product-icon-fallback"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5>Chicken Necks (1kg)</h5>
-                            <div class="product-sku">SKU: CHK-NECK-017</div>
-                            <p>Fresh chicken necks with meat. Perfect for soups, stews, stocks, and traditional dishes. Rich in flavour and collagen. Great value for money.</p>
-                            <table class="price-table">
-                                <tr><td>Consumer</td><td>R35.00/1kg</td></tr>
-                                <tr><td>Restaurant</td><td>R30.00/1kg</td></tr>
-                                <tr><td>Retailer</td><td>R25.00/1kg</td></tr>
-                                <tr><td>Distributor</td><td>R20.00/1kg</td></tr>
-                            </table>
-                            <div class="d-flex align-items-center gap-2 mt-2">
-                                <input type="number" class="form-control form-control-sm" id="qty-chicken-necks" value="1" min="1" style="width:70px;">
-                                <button class="btn btn-sm flex-grow-1" style="background:var(--primary);color:white;" onclick="addToCart('chicken-necks')"><i class="fas fa-cart-plus me-1"></i>Add</button>
-                            </div>
-                            <span class="product-badge-tag mt-2"><i class="fas fa-check me-1"></i>Great for Stock</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Malana (Intestines) -->
-                <div class="col-md-6 col-lg-4 product-item" data-category="byproducts">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../../assets/images/products/chicken-malana.png" alt="Malana (1kg)" onerror="this.src='../../assets/images/logo.png'">
-                            <i class="fas fa-utensils product-icon-fallback"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5>Malana (1kg)</h5>
-                            <div class="product-sku">SKU: CHK-MALN-018</div>
-                            <p>Cleaned chicken intestines (malana). A traditional favourite in South African cuisine. Perfect for braai, stews, and traditional dishes. Cleaned and prepared for cooking.</p>
-                            <table class="price-table">
-                                <tr><td>Consumer</td><td>R25.00/1kg</td></tr>
-                                <tr><td>Restaurant</td><td>R20.00/1kg</td></tr>
-                                <tr><td>Retailer</td><td>R18.00/1kg</td></tr>
-                                <tr><td>Distributor</td><td>R15.00/1kg</td></tr>
-                            </table>
-                            <div class="d-flex align-items-center gap-2 mt-2">
-                                <input type="number" class="form-control form-control-sm" id="qty-malana" value="1" min="1" style="width:70px;">
-                                <button class="btn btn-sm flex-grow-1" style="background:var(--primary);color:white;" onclick="addToCart('malana')"><i class="fas fa-cart-plus me-1"></i>Add</button>
-                            </div>
-                            <span class="product-badge-tag mt-2"><i class="fas fa-check me-1"></i>Traditional Favourite</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Soup Packs -->
-                <div class="col-md-6 col-lg-4 product-item" data-category="byproducts">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../../assets/images/products/chicken-soup-pack.png" alt="Soup Packs (1kg)" onerror="this.src='../../assets/images/logo.png'">
-                            <span class="product-badge">Value</span>
-                            <i class="fas fa-soup product-icon-fallback"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5>Soup Packs (1kg)</h5>
-                            <div class="product-sku">SKU: CHK-SOUP-019</div>
-                            <p>Mixed chicken pieces perfect for soups and stews. Includes backs, wings, necks, and feet. Great for making rich, flavourful chicken soup. Economical and delicious.</p>
-                            <table class="price-table">
-                                <tr><td>Consumer</td><td>R30.00/1kg</td></tr>
-                                <tr><td>Restaurant</td><td>R25.00/1kg</td></tr>
-                                <tr><td>Retailer</td><td>R22.00/1kg</td></tr>
-                                <tr><td>Distributor</td><td>R18.00/1kg</td></tr>
-                            </table>
-                            <div class="d-flex align-items-center gap-2 mt-2">
-                                <input type="number" class="form-control form-control-sm" id="qty-soup-packs" value="1" min="1" style="width:70px;">
-                                <button class="btn btn-sm flex-grow-1" style="background:var(--primary);color:white;" onclick="addToCart('soup-packs')"><i class="fas fa-cart-plus me-1"></i>Add</button>
-                            </div>
-                            <span class="product-badge-tag mt-2"><i class="fas fa-check me-1"></i>Perfect for Soup</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Feet (Uncleaned) -->
-                <div class="col-md-6 col-lg-4 product-item" data-category="byproducts">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../../assets/images/products/chicken-feet-uncleaned.png" alt="Chicken Feet (1kg) Uncleaned" onerror="this.src='../../assets/images/logo.png'">
-                            <i class="fas fa-shoe-prints product-icon-fallback"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5>Chicken Feet (1kg) - Uncleaned</h5>
-                            <div class="product-sku">SKU: CHK-FEET-020</div>
-                            <p>Fresh uncleaned chicken feet. For customers who prefer to prepare them at home. Perfect for traditional recipes and rich stock. More affordable option.</p>
-                            <table class="price-table">
-                                <tr><td>Consumer</td><td>R50.00/1kg</td></tr>
-                                <tr><td>Restaurant</td><td>R42.00/1kg</td></tr>
-                                <tr><td>Retailer</td><td>R35.00/1kg</td></tr>
-                                <tr><td>Distributor</td><td>R28.00/1kg</td></tr>
-                            </table>
-                            <div class="d-flex align-items-center gap-2 mt-2">
-                                <input type="number" class="form-control form-control-sm" id="qty-chicken-feet-uncleaned" value="1" min="1" style="width:70px;">
-                                <button class="btn btn-sm flex-grow-1" style="background:var(--primary);color:white;" onclick="addToCart('chicken-feet-uncleaned')"><i class="fas fa-cart-plus me-1"></i>Add</button>
-                            </div>
-                            <span class="product-badge-tag mt-2"><i class="fas fa-check me-1"></i>Budget Friendly</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2kg Mixed Portions -->
-                <div class="col-md-6 col-lg-4 product-item" data-category="portions">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../../assets/images/products/chicken-mixed-2kg.png" alt="2kg Mixed Chicken Portions" onerror="this.src='../../assets/images/logo.png'">
-                            <span class="product-badge">Value Pack</span>
-                            <i class="fas fa-weight-hanging product-icon-fallback"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5>2kg Mixed Chicken Portions</h5>
-                            <div class="product-sku">SKU: CHK-MIX2-009</div>
-                            <p>Convenient 2kg mixed pack with a variety of chicken cuts including breast, thighs, wings, and drumsticks. Perfect for small families or meal prep. Great value — saves time and money. Pre-packed and ready to cook.</p>
-                            <table class="price-table">
-                                <tr><td>Consumer</td><td>R169.99/pack</td></tr>
-                                <tr><td>Restaurant</td><td>R149.99/pack</td></tr>
-                                <tr><td>Retailer</td><td>R129.99/pack</td></tr>
-                                <tr><td>Distributor</td><td>R109.99/pack</td></tr>
-                            </table>
-                            <div class="d-flex align-items-center gap-2 mt-2">
-                                <input type="number" class="form-control form-control-sm" id="qty-mixed-pack-2kg" value="1" min="1" style="width:70px;">
-                                <button class="btn btn-sm flex-grow-1" style="background:var(--primary);color:white;" onclick="addToCart('mixed-pack-2kg')"><i class="fas fa-cart-plus me-1"></i>Add</button>
-                            </div>
-                            <span class="product-badge-tag mt-2"><i class="fas fa-check me-1"></i>Best Value</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 3kg Chicken Portions -->
-                <div class="col-md-6 col-lg-4 product-item" data-category="portions">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../../assets/images/products/chicken-mixed-3kg.png" alt="3kg Chicken Portions" onerror="this.src='../../assets/images/logo.png'">
-                            <span class="product-badge">Family Pack</span>
-                            <i class="fas fa-weight-hanging product-icon-fallback"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5>3kg Chicken Portions</h5>
-                            <div class="product-sku">SKU: CHK-MIX3-010</div>
-                            <p>Generous 3kg family pack with mixed chicken portions. Includes a balance of breast, thighs, drumsticks, and wings. Ideal for medium-sized families, meal prep, or small gatherings. Hygienically packed and labelled.</p>
-                            <table class="price-table">
-                                <tr><td>Consumer</td><td>R249.99/pack</td></tr>
-                                <tr><td>Restaurant</td><td>R219.99/pack</td></tr>
-                                <tr><td>Retailer</td><td>R189.99/pack</td></tr>
-                                <tr><td>Distributor</td><td>R159.99/pack</td></tr>
-                            </table>
-                            <div class="d-flex align-items-center gap-2 mt-2">
-                                <input type="number" class="form-control form-control-sm" id="qty-mixed-pack-3kg" value="1" min="1" style="width:70px;">
-                                <button class="btn btn-sm flex-grow-1" style="background:var(--primary);color:white;" onclick="addToCart('mixed-pack-3kg')"><i class="fas fa-cart-plus me-1"></i>Add</button>
-                            </div>
-                            <span class="product-badge-tag mt-2"><i class="fas fa-check me-1"></i>Family Favourite</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 5kg Chicken Portions -->
-                <div class="col-md-6 col-lg-4 product-item" data-category="portions">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../../assets/images/products/chicken-mixed-5kg.png" alt="5kg Chicken Portions" onerror="this.src='../../assets/images/logo.png'">
-                            <span class="product-badge">Bulk Deal</span>
-                            <i class="fas fa-weight-hanging product-icon-fallback"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5>5kg Chicken Portions</h5>
-                            <div class="product-sku">SKU: CHK-MIX5-011</div>
-                            <p>Large 5kg bulk pack of mixed chicken portions. Perfect for large families, restaurants, and catering. Includes breast, thighs, drumsticks, wings, and back pieces. Cost-effective way to buy fresh chicken. Save more per kilogram.</p>
-                            <table class="price-table">
-                                <tr><td>Consumer</td><td>R399.99/pack</td></tr>
-                                <tr><td>Restaurant</td><td>R349.99/pack</td></tr>
-                                <tr><td>Retailer</td><td>R299.99/pack</td></tr>
-                                <tr><td>Distributor</td><td>R259.99/pack</td></tr>
-                            </table>
-                            <div class="d-flex align-items-center gap-2 mt-2">
-                                <input type="number" class="form-control form-control-sm" id="qty-mixed-pack-5kg" value="1" min="1" style="width:70px;">
-                                <button class="btn btn-sm flex-grow-1" style="background:var(--primary);color:white;" onclick="addToCart('mixed-pack-5kg')"><i class="fas fa-cart-plus me-1"></i>Add</button>
-                            </div>
-                            <span class="product-badge-tag mt-2"><i class="fas fa-check me-1"></i>5% Discount Applied</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 8kg Chicken Portions -->
-                <div class="col-md-6 col-lg-4 product-item" data-category="portions">
-                    <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="../../assets/images/products/chicken-mixed-8kg.png" alt="8kg Chicken Portions" onerror="this.src='../../assets/images/logo.png'">
-                            <span class="product-badge">Wholesale</span>
-                            <i class="fas fa-weight-hanging product-icon-fallback"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5>8kg Chicken Portions</h5>
-                            <div class="product-sku">SKU: CHK-MIX8-012</div>
-                            <p>Wholesale 8kg bulk pack for restaurants, caterers, and retailers. Full range of chicken cuts including breast, thighs, wings, drumsticks, and back pieces. Maximum savings on bulk orders. Custom cuts available on request.</p>
-                            <table class="price-table">
-                                <tr><td>Consumer</td><td>R629.99/pack</td></tr>
-                                <tr><td>Restaurant</td><td>R549.99/pack</td></tr>
-                                <tr><td>Retailer</td><td>R469.99/pack</td></tr>
-                                <tr><td>Distributor</td><td>R399.99/pack</td></tr>
-                            </table>
-                            <div class="d-flex align-items-center gap-2 mt-2">
-                                <input type="number" class="form-control form-control-sm" id="qty-mixed-pack-8kg" value="1" min="1" style="width:70px;">
-                                <button class="btn btn-sm flex-grow-1" style="background:var(--primary);color:white;" onclick="addToCart('mixed-pack-8kg')"><i class="fas fa-cart-plus me-1"></i>Add</button>
-                            </div>
-                            <span class="product-badge-tag mt-2"><i class="fas fa-check me-1"></i>10% Discount Applied</span>
-                        </div>
-                    </div>
-                </div>
-
+            <!-- No Results State -->
+            <div class="no-results" id="noResults" style="display:none;">
+                <i class="fas fa-search"></i>
+                <h4>No products found</h4>
+                <p>Try adjusting your search or filter criteria.</p>
+                <button class="btn-primary-custom" onclick="clearSearch()">Clear Search</button>
             </div>
         </div>
     </section>
@@ -571,104 +125,29 @@
             <div class="text-center mb-5">
                 <h2 class="section-title">Bulk Order Discounts</h2>
                 <div class="section-accent"></div>
-                <p style="color:var(--text-muted);">The more you order, the more you save. Volume discounts for all customer types.</p>
+                <p style="color:var(--text-muted);">The more you order, the more you save.</p>
             </div>
             <div class="row g-4">
                 <div class="col-md-4">
                     <div class="discount-card">
                         <div class="discount-number">5%</div>
                         <h5>100+ kg Orders</h5>
-                        <p>Orders over 100 kilograms receive a 5% discount on total order value.</p>
+                        <p>Orders over 100kg receive a 5% discount on total order value.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="discount-card">
+                    <div class="discount-card featured">
+                        <div class="discount-ribbon">Popular</div>
                         <div class="discount-number">10%</div>
                         <h5>500+ kg Orders</h5>
-                        <p>Orders over 500 kilograms receive a 10% discount on total order value.</p>
+                        <p>Orders over 500kg receive a 10% discount on total order value.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="discount-card">
                         <div class="discount-number">15%</div>
                         <h5>1000+ kg Orders</h5>
-                        <p>Orders over 1000 kilograms receive a 15% discount on total order value.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Min Orders & Delivery -->
-    <section class="section-padding">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-lg-6">
-                    <div class="info-card">
-                        <h4><i class="fas fa-shopping-cart"></i>Minimum Order Quantities</h4>
-                        <table class="table table-bordered mb-0" style="font-size:0.9rem;">
-                            <thead style="background:var(--primary);color:var(--white);">
-                                <tr><th>Customer Type</th><th>Min. Order per Product</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr><td>Consumer</td><td>1 kg</td></tr>
-                                <tr><td>Restaurant</td><td>5 kg</td></tr>
-                                <tr><td>Retailer</td><td>10 kg</td></tr>
-                                <tr><td>Distributor</td><td>50 kg</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="info-card">
-                        <h4><i class="fas fa-truck"></i>Delivery & Payment</h4>
-                        <ul class="list-unstyled mb-3">
-                            <li><i class="fas fa-check-circle"></i><strong>Farm Gate Pickup:</strong> Free (Bloemfontein)</li>
-                            <li><i class="fas fa-check-circle"></i><strong>Local Delivery:</strong> R50 (Bloemfontein area)</li>
-                            <li><i class="fas fa-check-circle"></i><strong>Regional:</strong> Quote based on distance</li>
-                        </ul>
-                        <h4 class="mt-4"><i class="fas fa-credit-card"></i>Payment Terms</h4>
-                        <ul class="list-unstyled mb-0">
-                            <li><i class="fas fa-money-bill-wave"></i><strong>Cash on Delivery</strong> - Local orders</li>
-                            <li><i class="fas fa-university"></i><strong>Bank Transfer (EFT)</strong> - 50% deposit</li>
-                            <li><i class="fas fa-file-invoice"></i><strong>Credit Terms</strong> - 30 days (established clients)</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Product Specs -->
-    <section class="section-padding" style="background:var(--white)">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">Product Specifications</h2>
-                <div class="section-accent"></div>
-            </div>
-            <div class="row g-4">
-                <div class="col-md-6">
-                    <div class="spec-card">
-                        <h4><i class="fas fa-snowflake"></i>Fresh Chicken Products</h4>
-                        <ul class="list-unstyled">
-                            <li><i class="fas fa-thermometer-half"></i>Storage Temperature: 0-4&deg;C</li>
-                            <li><i class="fas fa-clock"></i>Shelf Life: 3-7 days</li>
-                            <li><i class="fas fa-box"></i>Packaging: Vacuum sealed / modified atmosphere</li>
-                            <li><i class="fas fa-certificate"></i>Antibiotic Free</li>
-                            <li><i class="fas fa-ban"></i>Antibiotic Free & Hormone Free</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="spec-card">
-                        <h4><i class="fas fa-pepper-hot"></i>Value-Added Products</h4>
-                        <ul class="list-unstyled">
-                            <li><i class="fas fa-thermometer-half"></i>Storage Temperature: 0-4&deg;C</li>
-                            <li><i class="fas fa-clock"></i>Shelf Life: 4-7 days</li>
-                            <li><i class="fas fa-box"></i>Packaging: Vacuum sealed with product label</li>
-                            <li><i class="fas fa-certificate"></i>Antibiotic Free</li>
-                            <li><i class="fas fa-ban"></i>No Artificial Preservatives or MSG</li>
-                        </ul>
+                        <p>Orders over 1000kg receive a 15% discount on total order value.</p>
                     </div>
                 </div>
             </div>
@@ -676,269 +155,42 @@
     </section>
 
     <!-- How to Order -->
-    <section class="section-padding" style="background:var(--white)">
+    <section class="section-padding">
         <div class="container">
             <div class="text-center mb-5">
                 <h2 class="section-title">How to Order</h2>
                 <div class="section-accent"></div>
-                <p style="color:var(--text-muted);">Simple steps to get fresh poultry delivered to your door.</p>
             </div>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div style="text-align:center;padding:30px 20px;">
-                        <div style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:var(--white);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:1.6rem;"><i class="fas fa-phone"></i></div>
-                        <h5 style="color:var(--primary-dark);font-size:1.05rem;">1. Contact Us</h5>
-                        <p style="color:var(--text-muted);font-size:0.9rem;">Call, WhatsApp, or email us with your product requirements and quantities.</p>
+            <div class="steps-container">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h5>Browse & Select</h5>
+                        <p>Explore our products and add items to your cart with desired quantities.</p>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div style="text-align:center;padding:30px 20px;">
-                        <div style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:var(--white);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:1.6rem;"><i class="fas fa-file-invoice"></i></div>
-                        <h5 style="color:var(--primary-dark);font-size:1.05rem;">2. Get a Quote</h5>
-                        <p style="color:var(--text-muted);font-size:0.9rem;">We'll provide a detailed quote with pricing, bulk discounts, and delivery options.</p>
+                <div class="step-connector"><i class="fas fa-chevron-right"></i></div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h5>Review Cart</h5>
+                        <p>Check your selections, adjust quantities, or remove items as needed.</p>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div style="text-align:center;padding:30px 20px;">
-                        <div style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:var(--white);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:1.6rem;"><i class="fas fa-check-circle"></i></div>
-                        <h5 style="color:var(--primary-dark);font-size:1.05rem;">3. Confirm & Pay</h5>
-                        <p style="color:var(--text-muted);font-size:0.9rem;">Confirm your order and choose payment: cash on delivery, EFT, or credit terms.</p>
+                <div class="step-connector"><i class="fas fa-chevron-right"></i></div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h5>Checkout</h5>
+                        <p>Enter delivery details and choose your payment method.</p>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div style="text-align:center;padding:30px 20px;">
-                        <div style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:var(--white);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:1.6rem;"><i class="fas fa-box"></i></div>
-                        <h5 style="color:var(--primary-dark);font-size:1.05rem;">4. We Prepare</h5>
-                        <p style="color:var(--text-muted);font-size:0.9rem;">Your order is freshly processed, vacuum-sealed, and packaged with care.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div style="text-align:center;padding:30px 20px;">
-                        <div style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:var(--white);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:1.6rem;"><i class="fas fa-truck"></i></div>
-                        <h5 style="color:var(--primary-dark);font-size:1.05rem;">5. Delivery</h5>
-                        <p style="color:var(--text-muted);font-size:0.9rem;">We deliver to your location or you collect from our Bloemfontein farm gate.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div style="text-align:center;padding:30px 20px;">
-                        <div style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:var(--primary-dark);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:1.6rem;"><i class="fas fa-heart"></i></div>
-                        <h5 style="color:var(--primary-dark);font-size:1.05rem;">6. Enjoy!</h5>
-                        <p style="color:var(--text-muted);font-size:0.9rem;">Cook and enjoy fresh, quality poultry. Reorder anytime for ongoing supply.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Recipe Ideas -->
-    <section class="section-padding">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">Recipe Ideas</h2>
-                <div class="section-accent"></div>
-                <p style="color:var(--text-muted);">Get inspired with these delicious ways to prepare our products.</p>
-            </div>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="product-card" style="border:none;">
-                        <div class="product-img-wrap" style="height:180px;background:linear-gradient(135deg,#D4A843,#E8C96A);">
-                            <i class="fas fa-drumstick-bite product-icon-fallback" style="font-size:3.5rem;color:var(--primary-dark);"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5 style="font-size:1.05rem;">South African Braai Chicken</h5>
-                            <p style="font-size:0.85rem;">Marinate whole chicken with lemon, garlic, and your favourite spices. Grill over medium coals for 45-60 minutes, basting frequently.</p>
-                            <span style="color:var(--accent);font-weight:600;font-size:0.82rem;"><i class="fas fa-utensils me-1"></i>Best with: Whole Chicken</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="product-card" style="border:none;">
-                        <div class="product-img-wrap" style="height:180px;background:linear-gradient(135deg,#2D6A4F,#1B4332);">
-                            <i class="fas fa-pepper-hot product-icon-fallback" style="font-size:3.5rem;color:var(--white);"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5 style="font-size:1.05rem;">Spicy Chicken Curry</h5>
-                            <p style="font-size:0.85rem;">Use chicken thighs for a rich, flavourful curry. Slow cook with onions, tomatoes, curry powder, and potatoes for a hearty family meal.</p>
-                            <span style="color:var(--accent);font-weight:600;font-size:0.82rem;"><i class="fas fa-utensils me-1"></i>Best with: Thighs or Drumsticks</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="product-card" style="border:none;">
-                        <div class="product-img-wrap" style="height:180px;background:linear-gradient(135deg,#8B4513,#A0522D);">
-                            <i class="fas fa-fire product-icon-fallback" style="font-size:3.5rem;color:var(--white);"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5 style="font-size:1.05rem;">Grilled Chicken Wings</h5>
-                            <p style="font-size:0.85rem;">Toss wings in your favourite sauce and grill until crispy. Perfect for game days, parties, or a quick family dinner.</p>
-                            <span style="color:var(--accent);font-weight:600;font-size:0.82rem;"><i class="fas fa-utensils me-1"></i>Best with: Chicken Wings</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="product-card" style="border:none;">
-                        <div class="product-img-wrap" style="height:180px;background:linear-gradient(135deg,#D4A843,#C49A30);">
-                            <i class="fas fa-salad product-icon-fallback" style="font-size:3.5rem;color:var(--primary-dark);"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5 style="font-size:1.05rem;">Chicken Breast Salad</h5>
-                            <p style="font-size:0.85rem;">Grill or pan-fry breast fillets and serve over fresh greens with avocado, cherry tomatoes, and a lemon dressing.</p>
-                            <span style="color:var(--accent);font-weight:600;font-size:0.82rem;"><i class="fas fa-utensils me-1"></i>Best with: Breast Fillets</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="product-card" style="border:none;">
-                        <div class="product-img-wrap" style="height:180px;background:linear-gradient(135deg,#1B4332,#2D6A4F);">
-                            <i class="fas fa-hotdog product-icon-fallback" style="font-size:3.5rem;color:var(--white);"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5 style="font-size:1.05rem;">Breakfast Sausages</h5>
-                            <p style="font-size:0.85rem;">Pan-fry chicken sausages until golden. Serve with eggs, toast, and grilled tomatoes for a hearty breakfast.</p>
-                            <span style="color:var(--accent);font-weight:600;font-size:0.82rem;"><i class="fas fa-utensils me-1"></i>Best with: Chicken Sausages</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="product-card" style="border:none;">
-                        <div class="product-img-wrap" style="height:180px;background:linear-gradient(135deg,#A0522D,#8B4513);">
-                            <i class="fas fa-fire-alt product-icon-fallback" style="font-size:3.5rem;color:var(--white);"></i>
-                        </div>
-                        <div class="product-body">
-                            <h5 style="font-size:1.05rem;">Chicken Feet Soup</h5>
-                            <p style="font-size:0.85rem;">Slow-cook chicken feet with vegetables and herbs for a nutritious, collagen-rich broth. Great for traditional meals.</p>
-                            <span style="color:var(--accent);font-weight:600;font-size:0.82rem;"><i class="fas fa-utensils me-1"></i>Best with: Chicken Feet</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Customer Reviews -->
-    <section class="section-padding" style="background:var(--white)">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">Customer Reviews</h2>
-                <div class="section-accent"></div>
-            </div>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div style="background:var(--cream);border-radius:16px;padding:28px;height:100%;">
-                        <div class="d-flex align-items-center mb-3">
-                            <div style="width:45px;height:45px;border-radius:50%;background:var(--primary);color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;">SL</div>
-                            <div class="ms-3">
-                                <h6 style="margin:0;font-family:'Inter',sans-serif;font-size:0.9rem;">Sipho Lekota</h6>
-                                <small style="color:var(--text-muted);">Verified Buyer</small>
-                            </div>
-                        </div>
-                        <div style="color:var(--accent);font-size:0.8rem;margin-bottom:10px;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                        <p style="color:var(--text-muted);font-size:0.88rem;line-height:1.6;margin:0;">"The whole chicken is always fresh and well-sized. My family loves the taste. Best poultry in Bloem!"</p>
-                        <small style="color:var(--text-muted);font-size:0.78rem;">Product: Whole Fresh Chicken</small>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div style="background:var(--cream);border-radius:16px;padding:28px;height:100%;">
-                        <div class="d-flex align-items-center mb-3">
-                            <div style="width:45px;height:45px;border-radius:50%;background:var(--accent);color:var(--primary-dark);display:flex;align-items:center;justify-content:center;font-weight:700;">KN</div>
-                            <div class="ms-3">
-                                <h6 style="margin:0;font-family:'Inter',sans-serif;font-size:0.9rem;">Kabelo Nkosi</h6>
-                                <small style="color:var(--text-muted);">Restaurant Owner</small>
-                            </div>
-                        </div>
-                        <div style="color:var(--accent);font-size:0.8rem;margin-bottom:10px;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                        <p style="color:var(--text-muted);font-size:0.88rem;line-height:1.6;margin:0;">"We order 200kg weekly. The consistency and quality have never let us down. Great wholesale partner."</p>
-                        <small style="color:var(--text-muted);font-size:0.78rem;">Product: Breast Fillets & Wings</small>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div style="background:var(--cream);border-radius:16px;padding:28px;height:100%;">
-                        <div class="d-flex align-items-center mb-3">
-                            <div style="width:45px;height:45px;border-radius:50%;background:var(--primary-light);color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;">PM</div>
-                            <div class="ms-3">
-                                <h6 style="margin:0;font-family:'Inter',sans-serif;font-size:0.9rem;">Precious Mokoena</h6>
-                                <small style="color:var(--text-muted);">Home Cook</small>
-                            </div>
-                        </div>
-                        <div style="color:var(--accent);font-size:0.8rem;margin-bottom:10px;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
-                        <p style="color:var(--text-muted);font-size:0.88rem;line-height:1.6;margin:0;">"The marinated chicken pieces save me so much time. Just open, cook, and enjoy. The spice blend is perfect!"</p>
-                        <small style="color:var(--text-muted);font-size:0.78rem;">Product: Marinated Chicken Pieces</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Product FAQ -->
-    <section class="section-padding">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">Product FAQ</h2>
-                <div class="section-accent"></div>
-            </div>
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="accordion" id="productFaq">
-                        <div class="accordion-item border-0 mb-3" style="border-radius:12px !important;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.04);">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#pf1" style="font-family:'Playfair Display',serif;font-weight:600;color:var(--primary-dark);">
-                                    How should I store fresh chicken?
-                                </button>
-                            </h2>
-                            <div id="pf1" class="accordion-collapse collapse show" data-bs-parent="#productFaq">
-                                <div class="accordion-body" style="color:var(--text-muted);font-size:0.95rem;">
-                                    Store fresh chicken in the refrigerator at 0-4&deg;C. Keep it in its original packaging or a sealed container on the bottom shelf to prevent cross-contamination. Use within 3-7 days of purchase. For longer storage, freeze at -18&deg;C for up to 3 months.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item border-0 mb-3" style="border-radius:12px !important;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.04);">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pf2" style="font-family:'Playfair Display',serif;font-weight:600;color:var(--primary-dark);">
-                                    What makes your chicken different from supermarket chicken?
-                                </button>
-                            </h2>
-                            <div id="pf2" class="accordion-collapse collapse" data-bs-parent="#productFaq">
-                                <div class="accordion-body" style="color:var(--text-muted);font-size:0.95rem;">
-                                    Our chickens are raised locally in the Free State with no antibiotics or hormones. They are processed fresh daily (not frozen and thawed), and delivered directly from farm to you. You're getting farm-fresh quality at competitive prices.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item border-0 mb-3" style="border-radius:12px !important;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.04);">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pf3" style="font-family:'Playfair Display',serif;font-weight:600;color:var(--primary-dark);">
-                                    Can I request custom cuts or special packaging?
-                                </button>
-                            </h2>
-                            <div id="pf3" class="accordion-collapse collapse" data-bs-parent="#productFaq">
-                                <div class="accordion-body" style="color:var(--text-muted);font-size:0.95rem;">
-                                    Yes! For bulk orders (restaurants, retailers, institutions), we offer custom cutting, portioning, and labelling. Contact us to discuss your specific requirements and we'll do our best to accommodate.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item border-0 mb-3" style="border-radius:12px !important;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.04);">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pf4" style="font-family:'Playfair Display',serif;font-weight:600;color:var(--primary-dark);">
-                                    How do I know the chicken is fresh?
-                                </button>
-                            </h2>
-                            <div id="pf4" class="accordion-collapse collapse" data-bs-parent="#productFaq">
-                                <div class="accordion-body" style="color:var(--text-muted);font-size:0.95rem;">
-                                    Fresh chicken should have a pinkish colour, firm texture, and no strong odour. Our products are processed the same day they're delivered. Each package is labelled with the processing date and use-by date for your reference.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item border-0" style="border-radius:12px !important;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.04);">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pf5" style="font-family:'Playfair Display',serif;font-weight:600;color:var(--primary-dark);">
-                                    Do you supply frozen products?
-                                </button>
-                            </h2>
-                            <div id="pf5" class="accordion-collapse collapse" data-bs-parent="#productFaq">
-                                <div class="accordion-body" style="color:var(--text-muted);font-size:0.95rem;">
-                                    Our primary focus is fresh products processed daily. However, we can arrange frozen supply for bulk orders upon request. Contact us to discuss your frozen product needs.
-                                </div>
-                            </div>
-                        </div>
+                <div class="step-connector"><i class="fas fa-chevron-right"></i></div>
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h5>Receive Fresh</h5>
+                        <p>We prepare and deliver your fresh poultry to your door.</p>
                     </div>
                 </div>
             </div>
@@ -948,19 +200,21 @@
     <!-- CTA -->
     <section class="cta-section section-padding">
         <div class="container text-center cta-content">
-            <h2 style="color:var(--white);font-size:2.2rem;margin-bottom:15px;">Ready to Place an Order?</h2>
-            <p style="color:rgba(255,255,255,0.8);font-size:1.1rem;margin-bottom:30px;max-width:600px;margin-left:auto;margin-right:auto;">Contact us today for fresh poultry products. Wholesale and bulk orders welcome.</p>
+            <h2 style="color:var(--white);font-size:2.2rem;margin-bottom:15px;">Need Help with Your Order?</h2>
+            <p style="color:rgba(255,255,255,0.8);font-size:1.1rem;margin-bottom:30px;max-width:600px;margin-left:auto;margin-right:auto;">Contact us for bulk orders, custom cuts, or any questions about our products.</p>
             <a href="contact.html" class="btn-primary-custom me-3"><i class="fas fa-envelope me-2"></i>Contact Us</a>
             <a href="tel:+27511234567" class="btn-outline-light-custom"><i class="fas fa-phone me-2"></i>+27 51 123 4567</a>
         </div>
     </section>
 
+    <!-- Toast Notification -->
+    <div id="toastContainer" class="toast-container"></div>
+
     <!-- WhatsApp Floating Button -->
     <a href="https://wa.me/27511234567?text=Hi%20Bohloko%20Farm%2C%20I%27d%20like%20to%20enquire%20about%20your%20products." 
        target="_blank" 
-       style="position:fixed;bottom:30px;right:30px;width:60px;height:60px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:1.8rem;box-shadow:0 4px 20px rgba(37,211,102,0.4);z-index:1000;text-decoration:none;transition:transform 0.3s;"
-       onmouseover="this.style.transform='scale(1.1)'"
-       onmouseout="this.style.transform='scale(1)'">
+       class="whatsapp-float"
+       aria-label="Contact us on WhatsApp">
         <i class="fab fa-whatsapp"></i>
     </a>
 
@@ -995,107 +249,176 @@
         <div class="footer-bottom"><div class="container text-center"><p>&copy; 2026 Bohloko Family Farm. All rights reserved. | Poultry Department. Developed by Mokgatla Musapelo</p></div></div>
     </footer>
 
+    <!-- Cart Sidebar Overlay -->
+    <div id="cartOverlay" class="cart-overlay" onclick="toggleCart()"></div>
+
     <!-- Cart Sidebar -->
-    <div id="cartSidebar" style="position:fixed;right:-400px;top:0;width:380px;max-width:100vw;height:100vh;background:white;box-shadow:-5px 0 15px rgba(0,0,0,0.1);z-index:9999;transition:right 0.3s;overflow-y:auto;">
-        <div style="padding:20px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;">
-            <h5 style="margin:0;color:var(--primary);"><i class="fas fa-shopping-cart me-2"></i>Your Cart</h5>
-            <button onclick="toggleCart()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
+    <div id="cartSidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <div class="cart-header-left">
+                <i class="fas fa-shopping-cart"></i>
+                <h5>Your Cart</h5>
+                <span class="cart-item-count" id="cartItemCount">0 items</span>
+            </div>
+            <button class="cart-close-btn" onclick="toggleCart()" aria-label="Close cart">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        <div id="cartItems" style="padding:20px;"></div>
-        <div style="padding:20px;border-top:1px solid #eee;position:sticky;bottom:0;background:white;">
-            <div class="d-flex justify-content-between mb-2"><span>Subtotal:</span><span id="cartSubtotal">R 0.00</span></div>
-            <div class="d-flex justify-content-between mb-2"><span>VAT (15%):</span><span id="cartVat">R 0.00</span></div>
-            <div class="d-flex justify-content-between mb-3" style="font-weight:700;font-size:1.1rem;"><span>Total:</span><span id="cartTotal">R 0.00</span></div>
-            <button class="btn w-100 mb-2" style="background:var(--primary);color:white;" onclick="openCheckout()" id="checkoutBtn">Proceed to Checkout</button>
-            <button class="btn btn-outline-secondary w-100" onclick="clearCart()">Clear Cart</button>
+
+        <div class="cart-body" id="cartItems">
+            <!-- Cart items rendered here -->
+        </div>
+
+        <div class="cart-empty" id="cartEmpty">
+            <div class="cart-empty-icon">
+                <i class="fas fa-shopping-basket"></i>
+            </div>
+            <h4>Your cart is empty</h4>
+            <p>Browse our fresh products and add items to get started.</p>
+            <button class="btn-primary-custom" onclick="toggleCart()">Start Shopping</button>
+        </div>
+
+        <div class="cart-footer" id="cartFooter" style="display:none;">
+            <div class="cart-summary">
+                <div class="cart-summary-row">
+                    <span>Subtotal</span>
+                    <span id="cartSubtotal">R 0.00</span>
+                </div>
+                <div class="cart-summary-row">
+                    <span>VAT (15%)</span>
+                    <span id="cartVat">R 0.00</span>
+                </div>
+                <div class="cart-summary-row total">
+                    <span>Total</span>
+                    <span id="cartTotal">R 0.00</span>
+                </div>
+            </div>
+            <div class="cart-actions">
+                <button class="btn-checkout" onclick="openCheckout()" id="checkoutBtn">
+                    <i class="fas fa-lock me-2"></i>Proceed to Checkout
+                </button>
+                <button class="btn-clear-cart" onclick="clearCart()">
+                    <i class="fas fa-trash-alt me-1"></i> Clear Cart
+                </button>
+            </div>
         </div>
     </div>
-    <div id="cartOverlay" onclick="toggleCart()" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9998;display:none;"></div>
 
-    <!-- Cart Button -->
-    <button onclick="toggleCart()" style="position:fixed;bottom:30px;right:30px;width:60px;height:60px;border-radius:50%;background:var(--primary);color:white;border:none;box-shadow:0 4px 15px rgba(0,0,0,0.2);z-index:999;font-size:1.3rem;cursor:pointer;">
-        <i class="fas fa-shopping-cart"></i>
-        <span id="cartCount" style="position:absolute;top:-5px;right:-5px;background:var(--accent);color:var(--primary-dark);width:22px;height:22px;border-radius:50%;font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;">0</span>
-    </button>
+    <!-- Mobile Cart Bottom Bar -->
+    <div class="mobile-cart-bar" id="mobileCartBar">
+        <div class="mobile-cart-info">
+            <div class="mobile-cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="mobile-cart-badge" id="mobileCartCount">0</span>
+            </div>
+            <div class="mobile-cart-details">
+                <span class="mobile-cart-items" id="mobileCartItems">0 items</span>
+                <span class="mobile-cart-total" id="mobileCartTotal">R 0.00</span>
+            </div>
+        </div>
+        <button class="mobile-cart-btn" onclick="toggleCart()">
+            View Cart <i class="fas fa-arrow-right ms-1"></i>
+        </button>
+    </div>
 
     <!-- Checkout Modal -->
     <div class="modal fade" id="checkoutModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header" style="background:var(--primary);color:white;">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content checkout-modal">
+                <div class="checkout-modal-header">
                     <h5 class="modal-title"><i class="fas fa-lock me-2"></i>Secure Checkout</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <h6 class="mb-3">Delivery Information</h6>
-                            <div class="mb-2">
-                                <label class="form-label">Full Name</label>
-                                <input type="text" class="form-control" id="checkName">
-                            </div>
-                            <div class="mb-2">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control" id="checkEmail">
-                            </div>
-                            <div class="mb-2">
-                                <label class="form-label">Phone</label>
-                                <input type="tel" class="form-control" id="checkPhone">
-                            </div>
-                            <div class="mb-2">
-                                <label class="form-label">Delivery Option</label>
-                                <select class="form-select" id="checkDelivery">
-                                    <option value="pickup">Pickup at Farm</option>
-                                    <option value="farm_gate">Farm Gate Collection</option>
-                                    <option value="local_delivery">Local Delivery (+R50)</option>
-                                </select>
-                            </div>
-                            <div id="addressFields" style="display:none;">
-                                <div class="mb-2">
-                                    <label class="form-label">Street Address</label>
-                                    <input type="text" class="form-control" id="checkStreet">
+                            <div class="checkout-section">
+                                <h6><i class="fas fa-truck me-2"></i>Delivery Information</h6>
+                                <div class="form-group">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="checkName" placeholder="Enter your full name">
                                 </div>
-                                <div class="row">
-                                    <div class="col-6 mb-2">
-                                        <label class="form-label">City</label>
-                                        <input type="text" class="form-control" id="checkCity" value="Bloemfontein">
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="checkEmail" placeholder="your@email.com">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone</label>
+                                    <input type="tel" class="form-control" id="checkPhone" placeholder="+27 XX XXX XXXX">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Delivery Option</label>
+                                    <select class="form-select" id="checkDelivery">
+                                        <option value="pickup">Pickup at Farm (Free)</option>
+                                        <option value="farm_gate">Farm Gate Collection (Free)</option>
+                                        <option value="local_delivery">Local Delivery (+R50)</option>
+                                    </select>
+                                </div>
+                                <div id="addressFields" class="address-fields" style="display:none;">
+                                    <div class="form-group">
+                                        <label class="form-label">Street Address</label>
+                                        <input type="text" class="form-control" id="checkStreet" placeholder="Street address">
                                     </div>
-                                    <div class="col-6 mb-2">
-                                        <label class="form-label">Postal Code</label>
-                                        <input type="text" class="form-control" id="checkPostal">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label class="form-label">City</label>
+                                                <input type="text" class="form-control" id="checkCity" value="Bloemfontein">
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label class="form-label">Postal Code</label>
+                                                <input type="text" class="form-control" id="checkPostal" placeholder="Postal code">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <h6 class="mb-3">Payment Method</h6>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="payment" id="payCash" value="cash" checked>
-                                <label class="form-check-label" for="payCash"><i class="fas fa-money-bill me-2"></i>Cash on Delivery</label>
+                            <div class="checkout-section">
+                                <h6><i class="fas fa-credit-card me-2"></i>Payment Method</h6>
+                                <div class="payment-options">
+                                    <label class="payment-option active">
+                                        <input type="radio" name="payment" id="payCash" value="cash" checked onchange="selectPayment(this)">
+                                        <div class="payment-option-content">
+                                            <i class="fas fa-money-bill-wave"></i>
+                                            <span>Cash on Delivery</span>
+                                        </div>
+                                    </label>
+                                    <label class="payment-option">
+                                        <input type="radio" name="payment" id="payEFT" value="bank_transfer" onchange="selectPayment(this)">
+                                        <div class="payment-option-content">
+                                            <i class="fas fa-university"></i>
+                                            <span>Bank Transfer / EFT</span>
+                                        </div>
+                                    </label>
+                                    <label class="payment-option">
+                                        <input type="radio" name="payment" id="payMobile" value="mobile_money" onchange="selectPayment(this)">
+                                        <div class="payment-option-content">
+                                            <i class="fas fa-mobile-alt"></i>
+                                            <span>Mobile Money</span>
+                                        </div>
+                                    </label>
+                                </div>
                             </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="payment" id="payEFT" value="bank_transfer">
-                                <label class="form-check-label" for="payEFT"><i class="fas fa-university me-2"></i>Bank Transfer / EFT</label>
-                            </div>
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="radio" name="payment" id="payMobile" value="mobile_money">
-                                <label class="form-check-label" for="payMobile"><i class="fas fa-mobile-alt me-2"></i>Mobile Money</label>
-                            </div>
-                            
-                            <h6 class="mb-3">Order Summary</h6>
-                            <div id="checkoutSummary" style="max-height:200px;overflow-y:auto;"></div>
-                            <div class="border-top pt-2 mt-2">
-                                <div class="d-flex justify-content-between"><span>Subtotal:</span><span id="checkSubtotal">R 0.00</span></div>
-                                <div class="d-flex justify-content-between"><span>VAT:</span><span id="checkVat">R 0.00</span></div>
-                                <div class="d-flex justify-content-between"><span>Shipping:</span><span id="checkShipping">R 0.00</span></div>
-                                <div class="d-flex justify-content-between fw-bold fs-5"><span>Total:</span><span id="checkTotal">R 0.00</span></div>
+                            <div class="checkout-section">
+                                <h6><i class="fas fa-receipt me-2"></i>Order Summary</h6>
+                                <div id="checkoutSummary" class="checkout-summary"></div>
+                                <div class="checkout-totals">
+                                    <div class="checkout-total-row"><span>Subtotal</span><span id="checkSubtotal">R 0.00</span></div>
+                                    <div class="checkout-total-row"><span>VAT (15%)</span><span id="checkVat">R 0.00</span></div>
+                                    <div class="checkout-total-row"><span>Shipping</span><span id="checkShipping">R 0.00</span></div>
+                                    <div class="checkout-total-row grand-total"><span>Total</span><span id="checkTotal">R 0.00</span></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div class="checkout-modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success" onclick="placeOrder()" id="placeOrderBtn">
+                    <button type="button" class="btn-checkout" onclick="placeOrder()" id="placeOrderBtn">
                         <i class="fas fa-check me-2"></i>Place Order
                     </button>
                 </div>
@@ -1105,18 +428,18 @@
 
     <!-- Order Confirmation Modal -->
     <div class="modal fade" id="confirmationModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content confirmation-modal">
                 <div class="modal-body text-center py-5">
-                    <div style="width:80px;height:80px;border-radius:50%;background:#d1fae5;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
-                        <i class="fas fa-check" style="font-size:2.5rem;color:#065f46;"></i>
+                    <div class="confirmation-icon">
+                        <i class="fas fa-check"></i>
                     </div>
-                    <h4 style="color:var(--primary);">Order Placed Successfully!</h4>
+                    <h4>Order Placed Successfully!</h4>
                     <p class="text-muted" id="confirmOrderNumber"></p>
                     <p class="text-muted">Thank you for your order. We'll contact you soon.</p>
                     <div class="d-flex gap-2 justify-content-center">
-                        <a href="#" id="viewInvoiceBtn" class="btn btn-outline-success"><i class="fas fa-file-invoice me-1"></i>View Invoice</a>
-                        <button class="btn btn-success" data-bs-dismiss="modal">Continue Shopping</button>
+                        <a href="#" id="viewInvoiceBtn" class="btn-primary-custom"><i class="fas fa-file-invoice me-1"></i>View Invoice</a>
+                        <button class="btn-primary-custom" data-bs-dismiss="modal" onclick="window.location.reload()">Continue Shopping</button>
                     </div>
                 </div>
             </div>
@@ -1126,69 +449,296 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../assets/js/api.js"></script>
     <script>
+        // =========================================================================
+        // SHOP STATE
+        // =========================================================================
         let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-        const products = [
-            { id: 'whole-chicken', name: 'Whole Fresh Chicken', price: 89.99, unit: 'kg', category: 'whole', image: '../../assets/images/products/whole-chicken.png' },
-            { id: 'chicken-breast', name: 'Chicken Breast Fillets', price: 129.99, unit: 'kg', category: 'portions', image: '../../assets/images/products/chicken-breast.png' },
-            { id: 'chicken-thighs', name: 'Chicken Thighs', price: 79.99, unit: 'kg', category: 'portions', image: '../../assets/images/products/chicken-thighs.png' },
-            { id: 'chicken-wings', name: 'Chicken Wings', price: 69.99, unit: 'kg', category: 'portions', image: '../../assets/images/products/chicken-wings.png' },
-            { id: 'marinated-chicken', name: 'Marinated Chicken Pieces', price: 139.99, unit: 'kg', category: 'value-added', image: '../../assets/images/products/marinated-chicken.png' },
-            { id: 'chicken-sausages', name: 'Chicken Sausages', price: 119.99, unit: 'kg', category: 'value-added', image: '../../assets/images/products/chicken-sausages.png' },
-            { id: 'chicken-livers', name: 'Chicken Livers (500g)', price: 30.00, unit: '500g', category: 'byproducts', image: '../../assets/images/products/chicken-livers.png' },
-            { id: 'chicken-gizzards', name: 'Chicken Gizzards (500g)', price: 30.00, unit: '500g', category: 'byproducts', image: '../../assets/images/products/chicken-gizzards.png' },
-            { id: 'chicken-feet-cleaned', name: 'Chicken Feet (1kg) - Cleaned', price: 50.00, unit: '1kg', category: 'byproducts', image: '../../assets/images/products/chicken-feet-cleaned.png' },
-            { id: 'chicken-hearts', name: 'Chicken Hearts (500g)', price: 25.00, unit: '500g', category: 'byproducts', image: '../../assets/images/products/chicken-hearts.png' },
-            { id: 'chicken-necks', name: 'Chicken Necks (1kg)', price: 35.00, unit: '1kg', category: 'byproducts', image: '../../assets/images/products/chicken-necks.png' },
-            { id: 'malana', name: 'Malana (1kg)', price: 25.00, unit: '1kg', category: 'byproducts', image: '../../assets/images/products/chicken-malana.png' },
-            { id: 'soup-packs', name: 'Soup Packs (1kg)', price: 30.00, unit: '1kg', category: 'byproducts', image: '../../assets/images/products/chicken-soup-pack.png' },
-            { id: 'chicken-feet-uncleaned', name: 'Chicken Feet (1kg) - Uncleaned', price: 50.00, unit: '1kg', category: 'byproducts', image: '../../assets/images/products/chicken-feet-uncleaned.png' },
-            { id: 'mixed-pack-2kg', name: '2kg Mixed Chicken Portions', price: 169.99, unit: 'pack', category: 'portions', image: '../../assets/images/products/chicken-mixed-2kg.png' },
-            { id: 'mixed-pack-3kg', name: '3kg Chicken Portions', price: 249.99, unit: 'pack', category: 'portions', image: '../../assets/images/products/chicken-mixed-3kg.png' },
-            { id: 'mixed-pack-5kg', name: '5kg Chicken Portions', price: 399.99, unit: 'pack', category: 'portions', image: '../../assets/images/products/chicken-mixed-5kg.png' },
-            { id: 'mixed-pack-8kg', name: '8kg Chicken Portions', price: 629.99, unit: 'pack', category: 'portions', image: '../../assets/images/products/chicken-mixed-8kg.png' }
-        ];
+        let allProducts = [];
+        let currentFilter = 'all';
+        let currentSearch = '';
 
-        function filterProducts(category) {
-            document.querySelectorAll('.product-item').forEach(item => {
-                item.style.display = (category === 'all' || item.dataset.category === category) ? 'block' : 'none';
-            });
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+        const categoryIcons = {
+            'whole': 'fa-drumstick-bite',
+            'portions': 'fa-weight-hanging',
+            'value-added': 'fa-pepper-hot',
+            'byproducts': 'fa-shoe-prints'
+        };
+
+        // =========================================================================
+        // PRODUCT LOADING
+        // =========================================================================
+        async function loadProducts() {
+            const grid = document.getElementById('productsGrid');
+            try {
+                const result = await api.products.getActive();
+                if (result.success && result.data.length > 0) {
+                    allProducts = result.data;
+                    renderProducts(allProducts);
+                } else {
+                    grid.innerHTML = '<div class="col-12 text-center py-5"><div class="empty-state"><i class="fas fa-box-open"></i><h4>No products available</h4><p>Check back soon for new products.</p></div></div>';
+                }
+            } catch (e) {
+                grid.innerHTML = '<div class="col-12 text-center py-5"><div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h4>Unable to load products</h4><p>Please check your connection and try again.</p><button class="btn-primary-custom" onclick="loadProducts()">Retry</button></div></div>';
+            }
         }
 
-        function addToCart(productId) {
-            const product = products.find(p => p.id === productId);
+        // =========================================================================
+        // PRODUCT RENDERING
+        // =========================================================================
+        function renderProducts(products) {
+            const grid = document.getElementById('productsGrid');
+            const noResults = document.getElementById('noResults');
+            const filterResults = document.getElementById('filterResults');
+
+            if (products.length === 0) {
+                grid.innerHTML = '';
+                noResults.style.display = 'block';
+                filterResults.textContent = '';
+                return;
+            }
+
+            noResults.style.display = 'none';
+            filterResults.textContent = `Showing ${products.length} product${products.length !== 1 ? 's' : ''}`;
+
+            grid.innerHTML = products.map((p, index) => {
+                const icon = p.fallback_icon || categoryIcons[p.category] || 'fa-drumstick-bite';
+                const badgeHtml = p.badge ? `<span class="product-badge">${p.badge}</span>` : '';
+                const pid = p.id || p._id;
+                const inCart = cart.find(item => item.slug === p.slug || item.id === pid || item.id === p.id || item.id === p._id);
+                const cartQty = inCart ? inCart.quantity : 0;
+                
+                return `
+                <div class="col-md-6 col-lg-4 product-item" data-category="${p.category || ''}" data-name="${(p.name || '').toLowerCase()}" style="animation-delay: ${index * 0.05}s;">
+                    <div class="product-card ${inCart ? 'in-cart' : ''}">
+                        <div class="product-img-wrap">
+                            <img src="${p.image || '../../assets/images/logo.png'}" alt="${p.name}" loading="lazy" onerror="this.src='../../assets/images/logo.png'">
+                            ${badgeHtml}
+                            <div class="product-img-overlay">
+                                <button class="quick-view-btn" onclick="quickView('${p.slug || pid}')" title="Quick view">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-body">
+                            <div class="product-header">
+                                <h5>${p.name}</h5>
+                                ${p.sku ? `<span class="product-sku">SKU: ${p.sku}</span>` : ''}
+                            </div>
+                            <p class="product-desc">${p.description || ''}</p>
+                            <div class="price-tiers">
+                                <div class="price-tier"><span>Consumer</span><strong>R${parseFloat(p.price_consumer || p.price).toFixed(2)}/<small>${p.unit}</small></strong></div>
+                                <div class="price-tier"><span>Restaurant</span><strong>R${parseFloat(p.price_restaurant || p.price).toFixed(2)}/<small>${p.unit}</small></strong></div>
+                                <div class="price-tier"><span>Retailer</span><strong>R${parseFloat(p.price_retailer || p.price).toFixed(2)}/<small>${p.unit}</small></strong></div>
+                                <div class="price-tier"><span>Distributor</span><strong>R${parseFloat(p.price_distributor || p.price).toFixed(2)}/<small>${p.unit}</small></strong></div>
+                            </div>
+                            <div class="product-actions">
+                                <div class="quantity-control">
+                                    <button class="qty-btn" onclick="changeQty('${p.slug || pid}', -1)" aria-label="Decrease quantity">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <input type="number" class="qty-input" id="qty-${p.slug || pid}" value="${cartQty || 1}" min="1" max="999" onchange="validateQty(this)">
+                                    <button class="qty-btn" onclick="changeQty('${p.slug || pid}', 1)" aria-label="Increase quantity">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                                <button class="add-to-cart-btn ${inCart ? 'added' : ''}" onclick="addToCart('${p.slug || pid}')" id="addBtn-${p.slug || pid}">
+                                    <i class="fas ${inCart ? 'fa-check' : 'fa-cart-plus'}"></i>
+                                    <span>${inCart ? `In Cart (${cartQty})` : 'Add to Cart'}</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // =========================================================================
+        // SEARCH
+        // =========================================================================
+        function searchProducts(query) {
+            currentSearch = query.toLowerCase().trim();
+            const clearBtn = document.getElementById('searchClearBtn');
+            clearBtn.style.display = currentSearch ? 'flex' : 'none';
+            applyFilters();
+        }
+
+        function clearSearch() {
+            document.getElementById('productSearch').value = '';
+            document.getElementById('searchClearBtn').style.display = 'none';
+            currentSearch = '';
+            applyFilters();
+        }
+
+        // =========================================================================
+        // FILTERING
+        // =========================================================================
+        function filterProducts(category, btnElement) {
+            currentFilter = category;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            if (btnElement) btnElement.classList.add('active');
+            applyFilters();
+        }
+
+        function applyFilters() {
+            let filtered = allProducts;
+
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(p => p.category === currentFilter);
+            }
+
+            if (currentSearch) {
+                filtered = filtered.filter(p => 
+                    (p.name || '').toLowerCase().includes(currentSearch) ||
+                    (p.description || '').toLowerCase().includes(currentSearch) ||
+                    (p.sku || '').toLowerCase().includes(currentSearch)
+                );
+            }
+
+            renderProducts(filtered);
+        }
+
+        // =========================================================================
+        // QUANTITY CONTROLS
+        // =========================================================================
+        function changeQty(productId, delta) {
+            const input = document.getElementById('qty-' + productId);
+            if (!input) return;
+            let val = parseInt(input.value) || 1;
+            val = Math.max(1, Math.min(999, val + delta));
+            input.value = val;
+        }
+
+        function validateQty(input) {
+            let val = parseInt(input.value) || 1;
+            val = Math.max(1, Math.min(999, val));
+            input.value = val;
+        }
+
+        // =========================================================================
+        // CART OPERATIONS
+        // =========================================================================
+        async function addToCart(productId) {
+            const product = allProducts.find(p => p.slug === productId || p.id === productId || p._id === productId);
             if (!product) return;
+
             const qtyInput = document.getElementById('qty-' + productId);
             const qty = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
-            const existing = cart.find(item => item.id === productId);
+            const productRealId = product.id || product._id;
+
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    const result = await api.cart.addItem({
+                        productId: productRealId,
+                        quantity: qty,
+                        price: parseFloat(product.price),
+                        name: product.name,
+                        image: product.image
+                    });
+                    if (result.success) {
+                        updateCartFromServer();
+                    }
+                } catch (e) {
+                    addToCartLocal(product, qty);
+                }
+            } else {
+                addToCartLocal(product, qty);
+            }
+
+            if (qtyInput) qtyInput.value = 1;
+            
+            // Animate the button
+            const addBtn = document.getElementById('addBtn-' + productId);
+            if (addBtn) {
+                addBtn.classList.add('added');
+                addBtn.innerHTML = '<i class="fas fa-check"></i><span>Added!</span>';
+                setTimeout(() => {
+                    const inCart = cart.find(item => item.slug === productId || item.id === productId);
+                    const cartQty = inCart ? inCart.quantity : 0;
+                    addBtn.innerHTML = `<i class="fas ${cartQty > 0 ? 'fa-check' : 'fa-cart-plus'}"></i><span>${cartQty > 0 ? `In Cart (${cartQty})` : 'Add to Cart'}</span>`;
+                }, 1000);
+            }
+
+            // Show toast notification
+            showToast(`${product.name} added to cart`, `Qty: ${qty} - R${(parseFloat(product.price) * qty).toFixed(2)}`);
+
+            // Pulse the cart badge
+            const badge = document.getElementById('navCartCount');
+            if (badge) {
+                badge.classList.remove('cart-badge-pulse');
+                void badge.offsetWidth;
+                badge.classList.add('cart-badge-pulse');
+            }
+        }
+
+        function addToCartLocal(product, qty) {
+            const pid = product.id || product._id;
+            const existing = cart.find(item => item.slug === product.slug || item.id === pid || item.id === product.id || item.id === product._id);
             if (existing) {
                 existing.quantity += qty;
             } else {
-                cart.push({ ...product, quantity: qty });
+                cart.push({
+                    id: pid,
+                    slug: product.slug,
+                    name: product.name,
+                    price: parseFloat(product.price),
+                    unit: product.unit,
+                    image: product.image,
+                    quantity: qty
+                });
             }
-            if (qtyInput) qtyInput.value = 1;
             saveCart();
             updateCartUI();
-            toggleCart();
+            renderProducts(getFilteredProducts());
         }
 
-        function removeFromCart(productId) {
-            cart = cart.filter(item => item.id !== productId);
+        async function removeFromCart(productId) {
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    await api.cart.removeItem(productId);
+                    updateCartFromServer();
+                } catch (e) {}
+            }
+            cart = cart.filter(item => item.slug !== productId && item.id !== productId && String(item.id) !== String(productId));
             saveCart();
             updateCartUI();
+            renderProducts(getFilteredProducts());
         }
 
-        function updateQuantity(productId, delta) {
-            const item = cart.find(i => i.id === productId);
+        async function updateQuantity(productId, delta) {
+            const item = cart.find(i => i.slug === productId || i.id === productId || String(i.id) === String(productId));
             if (item) {
                 item.quantity += delta;
                 if (item.quantity <= 0) {
                     removeFromCart(productId);
                 } else {
+                    const token = localStorage.getItem('token');
+                    if (token) {
+                        try {
+                            await api.cart.updateItem(item.id || productId, item.quantity);
+                            updateCartFromServer();
+                        } catch (e) {}
+                    }
                     saveCart();
                     updateCartUI();
                 }
+            }
+        }
+
+        function setQuantity(productId, qty) {
+            const item = cart.find(i => i.slug === productId || i.id === productId || String(i.id) === String(productId));
+            if (item) {
+                qty = Math.max(1, Math.min(999, qty));
+                item.quantity = qty;
+                const token = localStorage.getItem('token');
+                if (token) {
+                    try {
+                        api.cart.updateItem(item.id || productId, qty);
+                    } catch (e) {}
+                }
+                saveCart();
+                updateCartUI();
             }
         }
 
@@ -1197,55 +747,147 @@
         }
 
         function clearCart() {
+            const token = localStorage.getItem('token');
+            if (token) {
+                api.cart.clear().catch(() => {});
+            }
             cart = [];
             saveCart();
             updateCartUI();
+            renderProducts(getFilteredProducts());
         }
 
+        function getFilteredProducts() {
+            let filtered = allProducts;
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(p => p.category === currentFilter);
+            }
+            if (currentSearch) {
+                filtered = filtered.filter(p => 
+                    (p.name || '').toLowerCase().includes(currentSearch) ||
+                    (p.description || '').toLowerCase().includes(currentSearch)
+                );
+            }
+            return filtered;
+        }
+
+        // =========================================================================
+        // CART UI
+        // =========================================================================
         function toggleCart() {
             const sidebar = document.getElementById('cartSidebar');
             const overlay = document.getElementById('cartOverlay');
-            const isOpen = sidebar.style.right === '0px';
-            sidebar.style.right = isOpen ? '-400px' : '0px';
-            overlay.style.display = isOpen ? 'none' : 'block';
+            const isOpen = sidebar.classList.contains('open');
+            
+            if (isOpen) {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            } else {
+                sidebar.classList.add('open');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
         }
 
         function updateCartUI() {
-            const cartCount = document.getElementById('cartCount');
-            const cartItems = document.getElementById('cartItems');
             const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-            cartCount.textContent = totalItems;
+            const subtotal = cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
+            const vat = subtotal * 0.15;
+            const total = subtotal + vat;
+
+            // Update nav badge
+            document.getElementById('navCartCount').textContent = totalItems;
+            document.getElementById('navCartCount').style.display = totalItems > 0 ? 'flex' : 'none';
+
+            // Update mobile bar
+            document.getElementById('mobileCartCount').textContent = totalItems;
+            document.getElementById('mobileCartItems').textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
+            document.getElementById('mobileCartTotal').textContent = 'R ' + total.toFixed(2);
+            document.getElementById('mobileCartBar').classList.toggle('visible', totalItems > 0);
+
+            // Update cart count in header
+            document.getElementById('cartItemCount').textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
+
+            // Update cart body
+            const cartItems = document.getElementById('cartItems');
+            const cartEmpty = document.getElementById('cartEmpty');
+            const cartFooter = document.getElementById('cartFooter');
 
             if (cart.length === 0) {
-                cartItems.innerHTML = '<p class="text-center text-muted py-4">Your cart is empty</p>';
+                cartItems.style.display = 'none';
+                cartEmpty.style.display = 'flex';
+                cartFooter.style.display = 'none';
             } else {
+                cartItems.style.display = 'block';
+                cartEmpty.style.display = 'none';
+                cartFooter.style.display = 'block';
+
                 cartItems.innerHTML = cart.map(item => `
-                    <div class="d-flex gap-3 mb-3 p-2 border-bottom">
-                        <img src="${item.image}" alt="${item.name}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;">
-                        <div class="flex-grow-1">
-                            <h6 style="margin:0;font-size:0.9rem;">${item.name}</h6>
-                            <p style="margin:0;color:var(--accent);font-weight:600;">R ${item.price} / ${item.unit}</p>
-                            <div class="d-flex align-items-center gap-2 mt-1">
-                                <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity('${item.id}', -1)">-</button>
-                                <span>${item.quantity}</span>
-                                <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity('${item.id}', 1)">+</button>
-                                <button class="btn btn-sm btn-outline-danger ms-auto" onclick="removeFromCart('${item.id}')"><i class="fas fa-trash"></i></button>
+                    <div class="cart-item">
+                        <img src="${item.image || '../../assets/images/logo.png'}" alt="${item.name}" class="cart-item-img" onerror="this.src='../../assets/images/logo.png'">
+                        <div class="cart-item-details">
+                            <h6 class="cart-item-name">${item.name}</h6>
+                            <p class="cart-item-price">R ${parseFloat(item.price).toFixed(2)} / ${item.unit || 'item'}</p>
+                            <div class="cart-item-qty-controls">
+                                <button class="cart-qty-btn" onclick="updateQuantity('${item.slug || item.id}', -1)" aria-label="Decrease">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" class="cart-qty-input" value="${item.quantity}" min="1" max="999" onchange="setQuantity('${item.slug || item.id}', parseInt(this.value) || 1)">
+                                <button class="cart-qty-btn" onclick="updateQuantity('${item.slug || item.id}', 1)" aria-label="Increase">
+                                    <i class="fas fa-plus"></i>
+                                </button>
                             </div>
+                        </div>
+                        <div class="cart-item-right">
+                            <span class="cart-item-total">R ${(parseFloat(item.price) * item.quantity).toFixed(2)}</span>
+                            <button class="cart-item-remove" onclick="removeFromCart('${item.slug || item.id}')" aria-label="Remove item">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
                         </div>
                     </div>
                 `).join('');
             }
 
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const vat = subtotal * 0.15;
-            const total = subtotal + vat;
+            // Update summary
             document.getElementById('cartSubtotal').textContent = 'R ' + subtotal.toFixed(2);
             document.getElementById('cartVat').textContent = 'R ' + vat.toFixed(2);
             document.getElementById('cartTotal').textContent = 'R ' + total.toFixed(2);
         }
 
+        // =========================================================================
+        // CART SERVER SYNC
+        // =========================================================================
+        async function updateCartFromServer() {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+            try {
+                const result = await api.cart.get();
+                if (result.success && result.data) {
+                    cart = result.data.items || [];
+                    saveCart();
+                    updateCartUI();
+                }
+            } catch (e) {}
+        }
+
+        // =========================================================================
+        // CHECKOUT
+        // =========================================================================
         function openCheckout() {
-            if (cart.length === 0) { alert('Your cart is empty'); return; }
+            if (cart.length === 0) { 
+                alert('Your cart is empty'); 
+                return; 
+            }
+            
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Please login or create an account to place an order.');
+                toggleCart();
+                window.location.href = 'login.html?redirect=shop.html';
+                return;
+            }
+            
             toggleCart();
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             if (user.firstName) document.getElementById('checkName').value = user.firstName + ' ' + (user.lastName || '');
@@ -1254,13 +896,13 @@
             
             const summary = document.getElementById('checkoutSummary');
             summary.innerHTML = cart.map(item => `
-                <div class="d-flex justify-content-between mb-1" style="font-size:0.85rem;">
+                <div class="checkout-item">
                     <span>${item.name} x${item.quantity}</span>
-                    <span>R ${(item.price * item.quantity).toFixed(2)}</span>
+                    <span>R ${(parseFloat(item.price) * item.quantity).toFixed(2)}</span>
                 </div>
             `).join('');
             
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const subtotal = cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
             const vat = subtotal * 0.15;
             document.getElementById('checkSubtotal').textContent = 'R ' + subtotal.toFixed(2);
             document.getElementById('checkVat').textContent = 'R ' + vat.toFixed(2);
@@ -1270,10 +912,15 @@
             new bootstrap.Modal(document.getElementById('checkoutModal')).show();
         }
 
+        function selectPayment(radio) {
+            document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('active'));
+            radio.closest('.payment-option').classList.add('active');
+        }
+
         document.getElementById('checkDelivery').addEventListener('change', function() {
             const showAddress = this.value === 'local_delivery';
             document.getElementById('addressFields').style.display = showAddress ? 'block' : 'none';
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const subtotal = cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
             const vat = subtotal * 0.15;
             const shipping = showAddress ? 50 : 0;
             document.getElementById('checkShipping').textContent = 'R ' + shipping.toFixed(2);
@@ -1285,7 +932,7 @@
             if (!token) {
                 alert('Please login to place an order');
                 bootstrap.Modal.getInstance(document.getElementById('checkoutModal')).hide();
-                window.location.href = 'login.html';
+                window.location.href = 'login.html?redirect=shop.html';
                 return;
             }
 
@@ -1298,7 +945,12 @@
 
             try {
                 const result = await api.orders.create({
-                    items: cart.map(item => ({ product: item.id, quantity: item.quantity })),
+                    items: cart.map(item => ({ 
+                        product: item.id || item.slug, 
+                        quantity: item.quantity,
+                        price: parseFloat(item.price),
+                        productName: item.name
+                    })),
                     deliveryOption,
                     paymentMethod,
                     deliveryAddress: deliveryOption === 'local_delivery' ? {
@@ -1310,8 +962,8 @@
 
                 if (result.success) {
                     bootstrap.Modal.getInstance(document.getElementById('checkoutModal')).hide();
-                    document.getElementById('confirmOrderNumber').textContent = 'Order #: ' + result.data.orderNumber;
-                    document.getElementById('viewInvoiceBtn').href = '../admin/invoice.html?id=' + result.data._id;
+                    document.getElementById('confirmOrderNumber').textContent = 'Order #: ' + (result.data.orderNumber || result.data.id);
+                    document.getElementById('viewInvoiceBtn').href = '../admin/invoice.html?id=' + result.data.id;
                     new bootstrap.Modal(document.getElementById('confirmationModal')).show();
                     clearCart();
                 } else {
@@ -1325,7 +977,92 @@
             }
         }
 
+        // =========================================================================
+        // QUICK VIEW
+        // =========================================================================
+        function quickView(productId) {
+            const product = allProducts.find(p => p.slug === productId || p.id === productId);
+            if (!product) return;
+            // Scroll to product card and highlight it
+            const card = document.querySelector(`[data-category="${product.category}"] .product-card`);
+            if (card) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                card.classList.add('highlight');
+                setTimeout(() => card.classList.remove('highlight'), 2000);
+            }
+        }
+
+        // =========================================================================
+        // NAV AUTH STATE
+        // =========================================================================
+        function updateNavAuth() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const authArea = document.querySelector('.nav-auth-area');
+            if (token && user.firstName) {
+                authArea.innerHTML = `
+                    <a href="../dashboard/customer.html" class="btn-primary-custom btn-sm nav-btn"><i class="fas fa-user me-1"></i> ${user.firstName}</a>
+                    <a href="#" onclick="logout()" class="btn-primary-custom btn-sm nav-btn"><i class="fas fa-sign-out-alt me-1"></i> Logout</a>
+                    <button class="cart-nav-btn" onclick="toggleCart()" aria-label="Open cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge" id="navCartCount">0</span>
+                    </button>
+                `;
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('lastActivity');
+            window.location.reload();
+        }
+
+        // =========================================================================
+        // TOAST NOTIFICATION
+        // =========================================================================
+        function showToast(title, message) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.innerHTML = `
+                <div class="toast-icon"><i class="fas fa-check"></i></div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="removeToast(this.parentElement)"><i class="fas fa-times"></i></button>
+            `;
+            container.appendChild(toast);
+
+            setTimeout(() => removeToast(toast), 3000);
+        }
+
+        function removeToast(toast) {
+            if (!toast || !toast.parentElement) return;
+            toast.classList.add('removing');
+            setTimeout(() => toast.remove(), 300);
+        }
+
+        // =========================================================================
+        // KEYBOARD SUPPORT
+        // =========================================================================
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const sidebar = document.getElementById('cartSidebar');
+                if (sidebar.classList.contains('open')) {
+                    toggleCart();
+                }
+            }
+        });
+
+        // =========================================================================
+        // INITIALIZATION
+        // =========================================================================
+        loadProducts();
         updateCartUI();
+        updateNavAuth();
+        updateCartFromServer();
     </script>
 </body>
 

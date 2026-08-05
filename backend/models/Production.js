@@ -72,7 +72,7 @@ class ProductionCycle {
    * @returns {Array} Array of production cycles
    */
   static async find(query = {}) {
-    return await db.productionCycles.find(query).sort({ createdAt: -1 }).exec();
+    return await db.productionCycles.find(query, { sort: { createdAt: -1 } });
   }
 
   /**
@@ -144,7 +144,7 @@ class DailyLog {
    * @returns {Array} Array of daily logs
    */
   static async find(query = {}) {
-    return await db.dailyLogs.find(query).sort({ date: -1 }).exec();
+    return await db.dailyLogs.find(query, { sort: { date: -1 } });
   }
 
   static async findById(id) {
@@ -201,7 +201,7 @@ class Medication {
    * @returns {Array} Array of medication records
    */
   static async find(query = {}) {
-    return await db.medications.find(query).sort({ date: -1 }).exec();
+    return await db.medications.find(query, { sort: { date: -1 } });
   }
 
   static async findById(id) {
@@ -239,7 +239,7 @@ class HealthCheck {
   }
 
   static async find(query = {}) {
-    return await db.healthChecks.find(query).sort({ date: -1 }).exec();
+    return await db.healthChecks.find(query, { sort: { date: -1 } });
   }
 
   static async findById(id) {
@@ -285,7 +285,7 @@ class Vaccination {
    * @returns {Array} Array of vaccination records
    */
   static async find(query = {}) {
-    return await db.vaccinations.find(query).sort({ scheduledDate: -1 }).exec();
+    return await db.vaccinations.find(query, { sort: { scheduledDate: -1 } });
   }
 
   static async findById(id) {
@@ -335,7 +335,7 @@ class WeightRecord {
   }
 
   static async find(query = {}) {
-    return await db.weightRecords.find(query).sort({ date: -1 }).exec();
+    return await db.weightRecords.find(query, { sort: { date: -1 } });
   }
 
   static async count(query = {}) {
@@ -369,7 +369,7 @@ class FeedRecord {
   }
 
   static async find(query = {}) {
-    return await db.feedRecords.find(query).sort({ date: -1 }).exec();
+    return await db.feedRecords.find(query, { sort: { date: -1 } });
   }
 
   static async count(query = {}) {
@@ -404,7 +404,7 @@ class EnvironmentRecord {
   }
 
   static async find(query = {}) {
-    return await db.environmentRecords.find(query).sort({ date: -1 }).exec();
+    return await db.environmentRecords.find(query, { sort: { date: -1 } });
   }
 
   static async count(query = {}) {

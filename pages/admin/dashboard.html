@@ -934,12 +934,12 @@
                     <td>R ${(o.total || 0).toFixed(2)}</td>
                     <td><span class="badge-status badge-${o.status.toLowerCase()}">${escapeHtml(o.status)}</span></td>
                     <td>
-                        <select class="form-select form-select-sm" style="width:auto" onchange="updateOrderStatus('${o._id}', this.value)">
+                        <select class="form-select form-select-sm" style="width:auto" onchange="updateOrderStatus('${o.id}', this.value)">
                             ${['Pending','Confirmed','Processing','Shipped','Delivered','Cancelled'].map(s => 
                                 `<option value="${s}" ${o.status === s ? 'selected' : ''}>${escapeHtml(s)}</option>`
                             ).join('')}
                         </select>
-                        <a href="invoice.html?id=${o._id}" target="_blank" class="btn btn-sm btn-outline-secondary mt-1"><i class="fas fa-file-invoice"></i></a>
+                        <a href="invoice.html?id=${o.id}" target="_blank" class="btn btn-sm btn-outline-secondary mt-1"><i class="fas fa-file-invoice"></i></a>
                     </td>
                 </tr>
             `).join('') || '<tr><td colspan="6" class="text-center">No orders</td></tr>';
@@ -966,7 +966,7 @@
                             <td>${i.quantity} ${escapeHtml(i.unit || 'kg')}</td>
                             <td>${new Date(i.expiryDate).toLocaleDateString()}</td>
                             <td><span class="badge-status badge-${escapeHtml(i.status)}">${escapeHtml(i.status)}</span></td>
-                            <td><button class="btn btn-sm btn-outline-primary" onclick="showAdjustModal('${i._id}', ${i.quantity})">Adjust</button></td>
+                            <td><button class="btn btn-sm btn-outline-primary" onclick="showAdjustModal('${i.id}', ${i.quantity})">Adjust</button></td>
                         </tr>
                     `).join('') || '<tr><td colspan="6" class="text-center">No inventory</td></tr>';
                 }
@@ -986,14 +986,14 @@
                             <td>${c.actualBirds || 0}</td>
                             <td><span class="badge-status badge-${c.status.toLowerCase().replace(' ', '')}">${escapeHtml(c.status)}</span></td>
                             <td>
-                                ${c.status === 'Planned' ? `<button class="btn btn-sm btn-success" onclick="approveCycle('${c._id}')">Approve</button>` : ''}
+                                ${c.status === 'Planned' ? `<button class="btn btn-sm btn-success" onclick="approveCycle('${c.id}')">Approve</button>` : ''}
                             </td>
                         </tr>
                     `).join('') || '<tr><td colspan="6" class="text-center">No cycles</td></tr>';
                 }
 
                 if (allCycles.length > 0) {
-                    const logsResult = await api.production.getDailyLogs(allCycles[0]._id);
+                    const logsResult = await api.production.getDailyLogs(allCycles[0].id);
                     if (logsResult.success) {
                         allLogs = logsResult.data;
                         document.getElementById('logsBody').innerHTML = allLogs.map(l => `
@@ -1033,7 +1033,7 @@
                 allCycles = cycles.success ? cycles.data : [];
 
                 for (const cycle of allCycles) {
-                    const healthChecks = await api.get(`/production/health-checks/${cycle._id}`);
+                    const healthChecks = await api.get(`/production/health-checks/${cycle.id}`);
                     if (healthChecks.success && healthChecks.data.length) {
                         document.getElementById('healthCheckBody').innerHTML = healthChecks.data.slice(0, 5).map(h => `
                             <tr>
@@ -1045,7 +1045,7 @@
                         `).join('');
                     }
 
-                    const meds = await api.get(`/production/medications/${cycle._id}`);
+                    const meds = await api.get(`/production/medications/${cycle.id}`);
                     if (meds.success && meds.data.length) {
                         document.getElementById('medicationBody').innerHTML = meds.data.slice(0, 5).map(m => `
                             <tr>
@@ -1057,7 +1057,7 @@
                         `).join('');
                     }
 
-                    const weights = await api.get(`/production/weight-records/${cycle._id}`);
+                    const weights = await api.get(`/production/weight-records/${cycle.id}`);
                     if (weights.success && weights.data.length) {
                         document.getElementById('weightBody').innerHTML = weights.data.slice(0, 5).map(w => `
                             <tr>
@@ -1069,7 +1069,7 @@
                         `).join('');
                     }
 
-                    const feeds = await api.get(`/production/feed-records/${cycle._id}`);
+                    const feeds = await api.get(`/production/feed-records/${cycle.id}`);
                     if (feeds.success && feeds.data.length) {
                         document.getElementById('feedBody').innerHTML = feeds.data.slice(0, 5).map(f => `
                             <tr>
@@ -1081,7 +1081,7 @@
                         `).join('');
                     }
 
-                    const env = await api.get(`/production/environment-records/${cycle._id}`);
+                    const env = await api.get(`/production/environment-records/${cycle.id}`);
                     if (env.success && env.data.length) {
                         document.getElementById('environmentBody').innerHTML = env.data.slice(0, 5).map(e => `
                             <tr>
@@ -1094,7 +1094,7 @@
                         `).join('');
                     }
 
-                    const logs = await api.production.getDailyLogs(cycle._id);
+                    const logs = await api.production.getDailyLogs(cycle.id);
                     if (logs.success && logs.data.length) {
                         document.getElementById('mortalityBody').innerHTML = logs.data.filter(l => l.mortality?.count > 0).slice(0, 5).map(l => `
                             <tr>
@@ -1113,7 +1113,7 @@
         function showHealthCheckModal() {
             document.getElementById('modalTitle').textContent = 'New Health Check';
             document.getElementById('modalBody').innerHTML = `
-                <div class="mb-2"><label class="form-label">Cycle *</label><select class="form-select" id="hcCycle">${allCycles.map(c => `<option value="${c._id}">${escapeHtml(c.cycleName)}</option>`).join('')}</select></div>
+                <div class="mb-2"><label class="form-label">Cycle *</label><select class="form-select" id="hcCycle">${allCycles.map(c => `<option value="${c.id}">${escapeHtml(c.cycleName)}</option>`).join('')}</select></div>
                 <div class="mb-2"><label class="form-label">Date *</label><input type="date" class="form-control" id="hcDate" value="${new Date().toISOString().split('T')[0]}"></div>
                 <div class="mb-2"><label class="form-label">Birds Checked *</label><input type="number" class="form-control" id="hcBirds" min="1"></div>
                 <div class="mb-2"><label class="form-label">Overall Health *</label>
@@ -1144,7 +1144,7 @@
         function showMedicationModal() {
             document.getElementById('modalTitle').textContent = 'Log Medication';
             document.getElementById('modalBody').innerHTML = `
-                <div class="mb-2"><label class="form-label">Cycle *</label><select class="form-select" id="medCycle">${allCycles.map(c => `<option value="${c._id}">${escapeHtml(c.cycleName)}</option>`).join('')}</select></div>
+                <div class="mb-2"><label class="form-label">Cycle *</label><select class="form-select" id="medCycle">${allCycles.map(c => `<option value="${c.id}">${escapeHtml(c.cycleName)}</option>`).join('')}</select></div>
                 <div class="mb-2"><label class="form-label">Date *</label><input type="date" class="form-control" id="medDate" value="${new Date().toISOString().split('T')[0]}"></div>
                 <div class="mb-2"><label class="form-label">Medication Name *</label><input type="text" class="form-control" id="medName" placeholder="e.g., Amoxicillin"></div>
                 <div class="mb-2"><label class="form-label">Dosage *</label><input type="text" class="form-control" id="medDosage" placeholder="e.g., 20mg/L"></div>
@@ -1173,7 +1173,7 @@
         function showWeightModal() {
             document.getElementById('modalTitle').textContent = 'Record Weight';
             document.getElementById('modalBody').innerHTML = `
-                <div class="mb-2"><label class="form-label">Cycle *</label><select class="form-select" id="wtCycle">${allCycles.map(c => `<option value="${c._id}">${escapeHtml(c.cycleName)}</option>`).join('')}</select></div>
+                <div class="mb-2"><label class="form-label">Cycle *</label><select class="form-select" id="wtCycle">${allCycles.map(c => `<option value="${c.id}">${escapeHtml(c.cycleName)}</option>`).join('')}</select></div>
                 <div class="mb-2"><label class="form-label">Date *</label><input type="date" class="form-control" id="wtDate" value="${new Date().toISOString().split('T')[0]}"></div>
                 <div class="mb-2"><label class="form-label">Average Weight (grams) *</label><input type="number" class="form-control" id="wtAvg" step="0.1" min="0"></div>
                 <div class="mb-2"><label class="form-label">Sample Size</label><input type="number" class="form-control" id="wtSample" placeholder="Number of birds weighed"></div>
@@ -1200,7 +1200,7 @@
         function showFeedModal() {
             document.getElementById('modalTitle').textContent = 'Log Feed';
             document.getElementById('modalBody').innerHTML = `
-                <div class="mb-2"><label class="form-label">Cycle *</label><select class="form-select" id="feedCycle">${allCycles.map(c => `<option value="${c._id}">${escapeHtml(c.cycleName)}</option>`).join('')}</select></div>
+                <div class="mb-2"><label class="form-label">Cycle *</label><select class="form-select" id="feedCycle">${allCycles.map(c => `<option value="${c.id}">${escapeHtml(c.cycleName)}</option>`).join('')}</select></div>
                 <div class="mb-2"><label class="form-label">Date *</label><input type="date" class="form-control" id="feedDate" value="${new Date().toISOString().split('T')[0]}"></div>
                 <div class="mb-2"><label class="form-label">Feed Type *</label>
                     <select class="form-select" id="feedType"><option>Starter Feed</option><option>Grower Feed</option><option>Finisher Feed</option><option>Layer Feed</option><option>Supplement</option></select>
@@ -1231,7 +1231,7 @@
         function showEnvironmentModal() {
             document.getElementById('modalTitle').textContent = 'Record Environment';
             document.getElementById('modalBody').innerHTML = `
-                <div class="mb-2"><label class="form-label">Cycle *</label><select class="form-select" id="envCycle">${allCycles.map(c => `<option value="${c._id}">${escapeHtml(c.cycleName)}</option>`).join('')}</select></div>
+                <div class="mb-2"><label class="form-label">Cycle *</label><select class="form-select" id="envCycle">${allCycles.map(c => `<option value="${c.id}">${escapeHtml(c.cycleName)}</option>`).join('')}</select></div>
                 <div class="mb-2"><label class="form-label">Date *</label><input type="date" class="form-control" id="envDate" value="${new Date().toISOString().split('T')[0]}"></div>
                 <div class="mb-2"><label class="form-label">Temperature (&deg;C) *</label><input type="number" class="form-control" id="envTemp" step="0.1"></div>
                 <div class="mb-2"><label class="form-label">Humidity (%)</label><input type="number" class="form-control" id="envHumidity" min="0" max="100"></div>
@@ -1270,7 +1270,7 @@
 
                 let allVaccs = [];
                 for (const cycle of allCycles) {
-                    const result = await api.get(`/production/vaccinations/${cycle._id}`);
+                    const result = await api.get(`/production/vaccinations/${cycle.id}`);
                     if (result.success) {
                         allVaccs = allVaccs.concat(result.data.map(v => ({ ...v, cycleName: cycle.cycleName })));
                     }
@@ -1294,7 +1294,7 @@
                     <td>${escapeHtml(v.dosage)}</td>
                     <td><span class="badge-status badge-${v.status === 'Completed' ? 'approved' : v.status === 'Overdue' ? 'cancelled' : 'pending'}">${escapeHtml(v.status)}</span></td>
                     <td>
-                        ${v.status !== 'Completed' ? `<button class="btn btn-sm btn-success" onclick="completeVaccination('${v._id}')"><i class="fas fa-check"></i></button>` : ''}
+                        ${v.status !== 'Completed' ? `<button class="btn btn-sm btn-success" onclick="completeVaccination('${v.id}')"><i class="fas fa-check"></i></button>` : ''}
                     </td>
                 </tr>
             `).join('') || '<tr><td colspan="7" class="text-center">No vaccinations</td></tr>';
@@ -1307,7 +1307,7 @@
         function showVaccinationModal() {
             document.getElementById('modalTitle').textContent = 'Schedule Vaccination';
             document.getElementById('modalBody').innerHTML = `
-                <div class="mb-2"><label class="form-label">Cycle *</label><select class="form-select" id="vaccCycle">${allCycles.map(c => `<option value="${c._id}">${escapeHtml(c.cycleName)}</option>`).join('')}</select></div>
+                <div class="mb-2"><label class="form-label">Cycle *</label><select class="form-select" id="vaccCycle">${allCycles.map(c => `<option value="${c.id}">${escapeHtml(c.cycleName)}</option>`).join('')}</select></div>
                 <div class="mb-2"><label class="form-label">Vaccine Name *</label>
                     <select class="form-select" id="vaccName">
                         <option>Newcastle Disease (NDV)</option><option>Infectious Bronchitis (IB)</option>
@@ -1372,8 +1372,8 @@
                             <td>${h.birdCount}</td>
                             <td><span class="badge-status badge-${h.status === 'Completed' ? 'approved' : h.status === 'In Progress' ? 'processing' : 'pending'}">${escapeHtml(h.status)}</span></td>
                             <td>
-                                ${h.status === 'Scheduled' ? `<button class="btn btn-sm btn-success" onclick="startHarvest('${h._id}')"><i class="fas fa-play"></i></button>` : ''}
-                                ${h.status === 'In Progress' ? `<button class="btn btn-sm btn-primary" onclick="completeHarvestModal('${h._id}')"><i class="fas fa-check"></i></button>` : ''}
+                                ${h.status === 'Scheduled' ? `<button class="btn btn-sm btn-success" onclick="startHarvest('${h.id}')"><i class="fas fa-play"></i></button>` : ''}
+                                ${h.status === 'In Progress' ? `<button class="btn btn-sm btn-primary" onclick="completeHarvestModal('${h.id}')"><i class="fas fa-check"></i></button>` : ''}
                             </td>
                         </tr>
                     `).join('') || '<tr><td colspan="6" class="text-center">No harvest batches</td></tr>';
@@ -1391,8 +1391,8 @@
                             <td>${p.outputWeight ? p.outputWeight + 'kg' : '-'}</td>
                             <td><span class="badge-status badge-${p.status === 'Completed' ? 'approved' : p.status === 'Processing' ? 'processing' : 'pending'}">${escapeHtml(p.status)}</span></td>
                             <td>
-                                ${p.status === 'Pending' ? `<button class="btn btn-sm btn-success" onclick="startProcessing('${p._id}')"><i class="fas fa-play"></i></button>` : ''}
-                                ${p.status === 'Processing' ? `<button class="btn btn-sm btn-primary" onclick="completeProcessingModal('${p._id}')"><i class="fas fa-check"></i></button>` : ''}
+                                ${p.status === 'Pending' ? `<button class="btn btn-sm btn-success" onclick="startProcessing('${p.id}')"><i class="fas fa-play"></i></button>` : ''}
+                                ${p.status === 'Processing' ? `<button class="btn btn-sm btn-primary" onclick="completeProcessingModal('${p.id}')"><i class="fas fa-check"></i></button>` : ''}
                             </td>
                         </tr>
                     `).join('') || '<tr><td colspan="8" class="text-center">No processing batches</td></tr>';
@@ -1402,7 +1402,7 @@
                 if (yieldRecs.success) {
                     document.getElementById('yieldBody').innerHTML = yieldRecs.data.slice(0, 10).map(y => `
                         <tr>
-                            <td>${new Date(y.createdAt).toLocaleDateString()}</td>
+                            <td>${new Date(y.created_at).toLocaleDateString()}</td>
                             <td>${escapeHtml(y.productType)}</td>
                             <td>${y.inputWeight}</td>
                             <td>${y.outputWeight}</td>
@@ -1418,7 +1418,7 @@
                             <td>${escapeHtml(s.staffName || '-')}</td>
                             <td>${escapeHtml(s.role)}</td>
                             <td>${escapeHtml(s.batchNumber || '-')}</td>
-                            <td>${new Date(s.createdAt).toLocaleDateString()}</td>
+                            <td>${new Date(s.created_at).toLocaleDateString()}</td>
                         </tr>
                     `).join('') || '<tr><td colspan="4" class="text-center">No assignments</td></tr>';
                 }
@@ -1430,7 +1430,7 @@
                             <td>${escapeHtml(q.checkNumber)}</td>
                             <td>${escapeHtml(q.checkType)}</td>
                             <td><span class="badge-status badge-${q.result === 'Pass' ? 'approved' : 'cancelled'}">${escapeHtml(q.result)}</span></td>
-                            <td>${new Date(q.createdAt).toLocaleDateString()}</td>
+                            <td>${new Date(q.created_at).toLocaleDateString()}</td>
                         </tr>
                     `).join('') || '<tr><td colspan="4" class="text-center">No quality checks</td></tr>';
                 }
@@ -1440,7 +1440,7 @@
         function showHarvestModal() {
             document.getElementById('modalTitle').textContent = 'Schedule Harvest';
             document.getElementById('modalBody').innerHTML = `
-                <div class="mb-2"><label class="form-label">Production Cycle *</label><select class="form-select" id="hvCycle">${allCycles.map(c => `<option value="${c._id}">${escapeHtml(c.cycleName)} (${c.expectedBirds} birds)</option>`).join('')}</select></div>
+                <div class="mb-2"><label class="form-label">Production Cycle *</label><select class="form-select" id="hvCycle">${allCycles.map(c => `<option value="${c.id}">${escapeHtml(c.cycleName)} (${c.expectedBirds} birds)</option>`).join('')}</select></div>
                 <div class="mb-2"><label class="form-label">Harvest Date *</label><input type="date" class="form-control" id="hvDate"></div>
                 <div class="mb-2"><label class="form-label">Bird Count *</label><input type="number" class="form-control" id="hvBirds" min="1"></div>
                 <div class="mb-2"><label class="form-label">Expected Weight (kg)</label><input type="number" class="form-control" id="hvWeight" step="0.1"></div>
@@ -1452,7 +1452,7 @@
 
         async function submitHarvest() {
             try {
-                const cycle = allCycles.find(c => c._id === document.getElementById('hvCycle').value);
+                const cycle = allCycles.find(c => c.id === document.getElementById('hvCycle').value);
                 await api.post('/harvest/harvest-batches', {
                     cycle: document.getElementById('hvCycle').value,
                     cycleName: cycle?.cycleName || '',
@@ -1525,7 +1525,7 @@
                 const result = await api.get('/harvest/harvest-batches?status=Completed');
                 if (result.success) {
                     document.getElementById('pbHarvest').innerHTML = '<option value="">Select harvest...</option>' + 
-                        result.data.map(h => `<option value="${h._id}" data-birds="${h.actualCount || h.birdCount}" data-weight="${h.actualWeight || 0}">${escapeHtml(h.batchNumber)} - ${escapeHtml(h.cycleName || 'Cycle')} (${h.actualCount || h.birdCount} birds)</option>`).join('');
+                        result.data.map(h => `<option value="${h.id}" data-birds="${h.actualCount || h.birdCount}" data-weight="${h.actualWeight || 0}">${escapeHtml(h.batchNumber)} - ${escapeHtml(h.cycleName || 'Cycle')} (${h.actualCount || h.birdCount} birds)</option>`).join('');
                 }
             } catch (e) { console.error(e); }
         }
@@ -1613,7 +1613,7 @@
                 const result = await api.get('/harvest/processing-batches?status=Processing');
                 if (result.success) {
                     document.getElementById(selectId).innerHTML = result.data.map(p => 
-                        `<option value="${p._id}">${escapeHtml(p.batchNumber)} - ${escapeHtml(p.productType)}</option>`
+                        `<option value="${p.id}">${escapeHtml(p.batchNumber)} - ${escapeHtml(p.productType)}</option>`
                     ).join('') || '<option>No active batches</option>';
                 }
             } catch (e) { console.error(e); }
@@ -1682,7 +1682,7 @@
                 const result = await api.users.getAll({ role: 'Processing Staff' });
                 if (result.success) {
                     document.getElementById('saStaff').innerHTML = result.data.map(u => 
-                        `<option value="${u._id}">${escapeHtml(u.firstName)} ${escapeHtml(u.lastName)}</option>`
+                        `<option value="${u.id}">${escapeHtml(u.firstName)} ${escapeHtml(u.lastName)}</option>`
                     ).join('') || '<option>No staff available</option>';
                 }
             } catch (e) { console.error(e); }
@@ -1723,7 +1723,7 @@
         function renderUsers(users) {
             document.getElementById('usersBody').innerHTML = users.map(u => `
                 <tr>
-                    <td><input type="checkbox" class="user-select" data-id="${u._id}" onchange="updateBulkActions()"></td>
+                    <td><input type="checkbox" class="user-select" data-id="${u.id}" onchange="updateBulkActions()"></td>
                     <td>
                         <div class="d-flex align-items-center">
                             <div style="width:35px;height:35px;border-radius:50%;background:${u.status==='approved'?'var(--primary)':'#ccc'};color:white;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:600;">${escapeHtml(u.firstName[0])}${escapeHtml(u.lastName[0])}</div>
@@ -1737,26 +1737,26 @@
                     <td>${escapeHtml(u.phone || '-')}</td>
                     <td><span class="badge bg-light text-dark" style="font-size:0.75rem;">${escapeHtml(u.userType)}</span></td>
                     <td>
-                        <select class="form-select form-select-sm" style="width:auto;font-size:0.8rem;" onchange="updateUserRole('${u._id}', this.value)">
+                        <select class="form-select form-select-sm" style="width:auto;font-size:0.8rem;" onchange="updateUserRole('${u.id}', this.value)">
                             ${['Farm Manager','Poultry Attendant','Processing Staff','Sales Assistant','Customer'].map(r => 
                                 `<option value="${r}" ${u.role===r?'selected':''}>${escapeHtml(r)}</option>`
                             ).join('')}
                         </select>
                     </td>
                     <td><span class="badge-status badge-${escapeHtml(u.status)}">${escapeHtml(u.status)}</span></td>
-                    <td><small>${new Date(u.createdAt).toLocaleDateString()}</small></td>
+                    <td><small>${new Date(u.created_at).toLocaleDateString()}</small></td>
                     <td>
                         <div class="d-flex gap-1">
-                            <button class="btn btn-sm btn-outline-primary" onclick="viewUser('${u._id}')" title="View"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewUser('${u.id}')" title="View"><i class="fas fa-eye"></i></button>
                             ${u.status === 'pending' ? `
-                                <button class="btn btn-sm btn-success" onclick="updateUserStatus('${u._id}', 'approved')" title="Approve"><i class="fas fa-check"></i></button>
-                                <button class="btn btn-sm btn-danger" onclick="updateUserStatus('${u._id}', 'rejected')" title="Reject"><i class="fas fa-times"></i></button>
+                                <button class="btn btn-sm btn-success" onclick="updateUserStatus('${u.id}', 'approved')" title="Approve"><i class="fas fa-check"></i></button>
+                                <button class="btn btn-sm btn-danger" onclick="updateUserStatus('${u.id}', 'rejected')" title="Reject"><i class="fas fa-times"></i></button>
                             ` : u.status === 'approved' ? `
-                                <button class="btn btn-sm btn-warning" onclick="updateUserStatus('${u._id}', 'suspended')" title="Suspend"><i class="fas fa-ban"></i></button>
+                                <button class="btn btn-sm btn-warning" onclick="updateUserStatus('${u.id}', 'suspended')" title="Suspend"><i class="fas fa-ban"></i></button>
                             ` : u.status === 'suspended' ? `
-                                <button class="btn btn-sm btn-success" onclick="updateUserStatus('${u._id}', 'approved')" title="Reactivate"><i class="fas fa-undo"></i></button>
+                                <button class="btn btn-sm btn-success" onclick="updateUserStatus('${u.id}', 'approved')" title="Reactivate"><i class="fas fa-undo"></i></button>
                             ` : ''}
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${u._id}')" title="Delete"><i class="fas fa-trash"></i></button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${u.id}')" title="Delete"><i class="fas fa-trash"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -1831,13 +1831,13 @@
                             <tr><td><strong>Business</strong></td><td>${escapeHtml(u.businessName || '-')}</td></tr>
                             <tr><td><strong>Reg Number</strong></td><td>${escapeHtml(u.businessRegNumber || '-')}</td></tr>
                             <tr><td><strong>Tax ID</strong></td><td>${escapeHtml(u.taxId || '-')}</td></tr>
-                            <tr><td><strong>Joined</strong></td><td>${new Date(u.createdAt).toLocaleDateString()}</td></tr>
+                            <tr><td><strong>Joined</strong></td><td>${new Date(u.created_at).toLocaleDateString()}</td></tr>
                             <tr><td><strong>Last Login</strong></td><td>${u.lastLogin ? new Date(u.lastLogin).toLocaleString() : 'Never'}</td></tr>
                         </table>
                         <div class="d-flex gap-2">
-                            <button class="btn btn-sm btn-outline-primary flex-grow-1" onclick="editUser('${u._id}')"><i class="fas fa-edit me-1"></i>Edit</button>
+                            <button class="btn btn-sm btn-outline-primary flex-grow-1" onclick="editUser('${u.id}')"><i class="fas fa-edit me-1"></i>Edit</button>
                             ${u.status === 'pending' ? `
-                                <button class="btn btn-sm btn-success flex-grow-1" onclick="updateUserStatus('${u._id}', 'approved');bootstrap.Modal.getInstance(document.getElementById('formModal')).hide();"><i class="fas fa-check me-1"></i>Approve</button>
+                                <button class="btn btn-sm btn-success flex-grow-1" onclick="updateUserStatus('${u.id}', 'approved');bootstrap.Modal.getInstance(document.getElementById('formModal')).hide();"><i class="fas fa-check me-1"></i>Approve</button>
                             ` : ''}
                         </div>
                     `;
@@ -1847,7 +1847,7 @@
         }
 
         function editUser(id) {
-            const u = allUsers.find(u => u._id === id);
+            const u = allUsers.find(u => u.id === id);
             if (!u) return;
             document.getElementById('modalTitle').textContent = 'Edit User';
             document.getElementById('modalBody').innerHTML = `
@@ -1865,7 +1865,7 @@
                         ${['Farm Manager','Poultry Attendant','Processing Staff','Sales Assistant','Customer'].map(r => `<option value="${r}" ${u.role===r?'selected':''}>${r}</option>`).join('')}
                     </select>
                 </div>
-                <button class="btn btn-success w-100" onclick="saveUserEdit('${u._id}')">Save Changes</button>
+                <button class="btn btn-success w-100" onclick="saveUserEdit('${u.id}')">Save Changes</button>
             `;
         }
 
@@ -2230,7 +2230,7 @@
         function showAddLogModal() {
             document.getElementById('modalTitle').textContent = 'Add Daily Log';
             document.getElementById('modalBody').innerHTML = `
-                <div class="mb-3"><label class="form-label">Cycle</label><select class="form-select" id="logCycle">${allCycles.map(c => `<option value="${c._id}">${escapeHtml(c.cycleName)}</option>`).join('')}</select></div>
+                <div class="mb-3"><label class="form-label">Cycle</label><select class="form-select" id="logCycle">${allCycles.map(c => `<option value="${c.id}">${escapeHtml(c.cycleName)}</option>`).join('')}</select></div>
                 <div class="mb-3"><label class="form-label">Date</label><input type="date" class="form-control" id="logDate"></div>
                 <div class="mb-3"><label class="form-label">Bird Count</label><input type="number" class="form-control" id="logBirds"></div>
                 <div class="mb-3"><label class="form-label">Feed Consumption (kg)</label><input type="number" class="form-control" id="logFeed"></div>
@@ -2257,7 +2257,7 @@
         function showAddInventoryModal() {
             document.getElementById('modalTitle').textContent = 'Add Inventory Batch';
             document.getElementById('modalBody').innerHTML = `
-                <div class="mb-3"><label class="form-label">Cycle</label><select class="form-select" id="invCycle">${allCycles.map(c => `<option value="${c._id}">${escapeHtml(c.cycleName)}</option>`).join('')}</select></div>
+                <div class="mb-3"><label class="form-label">Cycle</label><select class="form-select" id="invCycle">${allCycles.map(c => `<option value="${c.id}">${escapeHtml(c.cycleName)}</option>`).join('')}</select></div>
                 <div class="mb-3"><label class="form-label">Product Type</label><select class="form-select" id="invProduct"><option>Whole Chicken</option><option>Breast</option><option>Thighs</option><option>Wings</option><option>Drumsticks</option></select></div>
                 <div class="mb-3"><label class="form-label">Quantity</label><input type="number" class="form-control" id="invQty"></div>
                 <div class="mb-3"><label class="form-label">Harvest Date</label><input type="date" class="form-control" id="invHarvest"></div>

@@ -149,7 +149,7 @@
             const badgeMap = { info: 'badge-info', warn: 'badge-warning', error: 'badge-danger' };
             tbody.innerHTML = logs.map(l => `
                 <tr>
-                    <td class="log-entry">${l.createdAt ? new Date(l.createdAt).toLocaleString() : 'N/A'}</td>
+                    <td class="log-entry">${l.created_at ? new Date(l.created_at).toLocaleString() : 'N/A'}</td>
                     <td><span class="badge ${badgeMap[l.level] || 'badge-info'}">${escapeHtml(l.level)}</span></td>
                     <td>${escapeHtml(l.category || 'general')}</td>
                     <td>${escapeHtml(l.message || 'N/A')}</td>

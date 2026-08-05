@@ -1,140 +1,201 @@
 /**
- * Database Configuration — NeDB Datastores (NFR-016, NFR-018)
- *
- * Initializes all NeDB file-based database collections. Each collection
- * is stored as a separate .db file in the backend/data/ directory.
- * Auto-loads on server start (autoload: true) and ensures unique _id index.
- *
+ * Database Configuration — MySQL Database
+ * 
+ * Initializes MySQL database connection using Knex.js.
+ * Provides query builder and migration support for the Bohloko Family Farm system.
+ * 
  * NFR-016 (Integration Compatibility):
- *   - NeDB provides MongoDB-like API without requiring a running DB server
- *   - File-based storage enables single-server deployment (NFR-017.1)
- *   - Each collection is an independent .db file for easy backup/restore
- *   - 37 collections organized by domain (production, orders, CRM, etc.)
- *
+ *   - MySQL provides robust relational database with ACID compliance
+ *   - Supports concurrent connections and scalable architecture
+ *   - Full-text search and indexing for performance
+ * 
  * NFR-018 (Monitoring & Logging):
- *   - systemLogs collection stores structured audit logs
- *   - Each collection's .db file can be monitored for disk usage
- *   - Collection stats exposed via /api/data/stats endpoint (FR-023)
- *
- * Collection Inventory (37 datastores):
+ *   - system_logs table stores structured audit logs
+ *   - Query performance monitoring via Knex
+ *   - Connection pool monitoring
+ * 
+ * Database Tables (39 tables):
  *   Core Business:
  *     - users: User accounts and authentication (FR-001)
  *     - products: Product catalog (FR-010)
  *     - orders: Customer orders (FR-011)
  *     - payments: Payment transactions (FR-013)
  *     - carts: Shopping cart sessions (FR-010)
- *
+ * 
  *   Production:
- *     - productionCycles: Broiler growing cycles (FR-004)
- *     - dailyLogs: Daily production records (FR-005)
+ *     - production_cycles: Broiler growing cycles (FR-004)
+ *     - daily_logs: Daily production records (FR-005)
  *     - medications: Medication tracking (FR-006)
- *     - healthChecks: Health inspection records (FR-006)
+ *     - health_checks: Health inspection records (FR-006)
  *     - vaccinations: Vaccination records (FR-006)
- *     - weightRecords: Weight monitoring (FR-005)
- *     - feedRecords: Feed consumption tracking (FR-005)
- *     - environmentRecords: Environmental conditions (FR-005)
- *
+ *     - weight_records: Weight monitoring (FR-005)
+ *     - feed_records: Feed consumption tracking (FR-005)
+ *     - environment_records: Environmental conditions (FR-005)
+ * 
  *   Processing:
- *     - harvestBatches: Harvest records (FR-007)
- *     - processingSteps: Processing workflow steps (FR-007)
- *     - processingBatches: Processing batch records (FR-007)
- *     - yieldRecords: Yield calculations (FR-007)
- *     - processingQualityChecks: Quality during processing (FR-020)
- *     - processingStaff: Processing staff assignments (FR-007)
- *
+ *     - harvest_batches: Harvest records (FR-007)
+ *     - processing_steps: Processing workflow steps (FR-007)
+ *     - processing_batches: Processing batch records (FR-007)
+ *     - yield_records: Yield calculations (FR-007)
+ *     - processing_quality_checks: Quality during processing (FR-020)
+ *     - processing_staff: Processing staff assignments (FR-007)
+ * 
  *   Inventory:
  *     - inventory: Stock management (FR-008/009)
- *
+ * 
  *   CRM:
- *     - customerProfiles: Customer information (FR-016)
- *     - loyaltyPrograms: Loyalty program definitions (FR-016)
- *     - customerEnrollments: Loyalty enrollments (FR-016)
- *     - pointsTransactions: Loyalty points ledger (FR-016)
- *     - feedbackComplaints: Customer feedback (FR-016)
- *     - promotionalCampaigns: Marketing campaigns (FR-016)
- *
+ *     - customer_profiles: Customer information (FR-016)
+ *     - loyalty_programs: Loyalty program definitions (FR-016)
+ *     - customer_enrollments: Loyalty enrollments (FR-016)
+ *     - points_transactions: Loyalty points ledger (FR-016)
+ *     - feedback_complaints: Customer feedback (FR-016)
+ *     - promotional_campaigns: Marketing campaigns (FR-016)
+ * 
  *   Compliance:
- *     - qualityChecks: Quality inspection records (FR-020)
- *     - complianceRecords: Regulatory compliance (FR-021)
+ *     - quality_checks: Quality inspection records (FR-020)
+ *     - compliance_records: Regulatory compliance (FR-021)
  *     - audits: Audit trail records (FR-021)
- *
+ * 
  *   System:
- *     - systemConfig: Key-value system settings (FR-022)
- *     - notificationConfigs: Notification channel settings (FR-022)
- *     - systemLogs: Structured audit logs (FR-023)
- *     - apiKeys: API key management
+ *     - system_config: Key-value system settings (FR-022)
+ *     - notification_configs: Notification channel settings (FR-022)
+ *     - system_logs: Structured audit logs (FR-023)
+ *     - api_keys: API key management
  *     - employees: Employee records
  *     - notifications: Notification delivery records
- *     - passwordResets: Password reset tokens (FR-003)
- *     - contactMessages: Contact form submissions
+ *     - password_resets: Password reset tokens (FR-003)
+ *     - contact_messages: Contact form submissions
  */
 
-const Datastore = require('nedb-promises');
-const path = require('path');
+require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
+const knex = require('knex');
+const knexConfig = require('../knexfile');
 
-const db = {
-  // --- Core Business Collections ---
-  users: Datastore.create({ filename: path.join(__dirname, '../data/users.db'), autoload: true }),
-  products: Datastore.create({ filename: path.join(__dirname, '../data/products.db'), autoload: true }),
-  orders: Datastore.create({ filename: path.join(__dirname, '../data/orders.db'), autoload: true }),
-  payments: Datastore.create({ filename: path.join(__dirname, '../data/payments.db'), autoload: true }),
-  carts: Datastore.create({ filename: path.join(__dirname, '../data/carts.db'), autoload: true }),
+// Get environment from NODE_ENV or default to development
+const environment = process.env.NODE_ENV || 'development';
+const config = knexConfig[environment];
 
-  // --- Production Collections (FR-004, FR-005, FR-006) ---
-  productionCycles: Datastore.create({ filename: path.join(__dirname, '../data/productionCycles.db'), autoload: true }),
-  dailyLogs: Datastore.create({ filename: path.join(__dirname, '../data/dailyLogs.db'), autoload: true }),
-  medications: Datastore.create({ filename: path.join(__dirname, '../data/medications.db'), autoload: true }),
-  healthChecks: Datastore.create({ filename: path.join(__dirname, '../data/healthChecks.db'), autoload: true }),
-  vaccinations: Datastore.create({ filename: path.join(__dirname, '../data/vaccinations.db'), autoload: true }),
-  weightRecords: Datastore.create({ filename: path.join(__dirname, '../data/weightRecords.db'), autoload: true }),
-  feedRecords: Datastore.create({ filename: path.join(__dirname, '../data/feedRecords.db'), autoload: true }),
-  environmentRecords: Datastore.create({ filename: path.join(__dirname, '../data/environmentRecords.db'), autoload: true }),
+// Create Knex instance
+const db = knex(config);
 
-  // --- Processing Collections (FR-007) ---
-  harvestBatches: Datastore.create({ filename: path.join(__dirname, '../data/harvestBatches.db'), autoload: true }),
-  processingSteps: Datastore.create({ filename: path.join(__dirname, '../data/processingSteps.db'), autoload: true }),
-  processingBatches: Datastore.create({ filename: path.join(__dirname, '../data/processingBatches.db'), autoload: true }),
-  yieldRecords: Datastore.create({ filename: path.join(__dirname, '../data/yieldRecords.db'), autoload: true }),
-  processingQualityChecks: Datastore.create({ filename: path.join(__dirname, '../data/processingQualityChecks.db'), autoload: true }),
-  processingStaff: Datastore.create({ filename: path.join(__dirname, '../data/processingStaff.db'), autoload: true }),
+// Test connection
+db.raw('SELECT 1')
+  .then(() => {
+    console.log('✅ MySQL database connected successfully');
+  })
+  .catch((err) => {
+    console.error('❌ MySQL database connection failed:', err.message);
+    console.log('📝 Make sure MySQL is running and credentials are correct in .env');
+  });
 
-  // --- Inventory Collections (FR-008, FR-009) ---
-  inventory: Datastore.create({ filename: path.join(__dirname, '../data/inventory.db'), autoload: true }),
-
-  // --- CRM Collections (FR-016) ---
-  customerProfiles: Datastore.create({ filename: path.join(__dirname, '../data/customerProfiles.db'), autoload: true }),
-  loyaltyPrograms: Datastore.create({ filename: path.join(__dirname, '../data/loyaltyPrograms.db'), autoload: true }),
-  customerEnrollments: Datastore.create({ filename: path.join(__dirname, '../data/customerEnrollments.db'), autoload: true }),
-  pointsTransactions: Datastore.create({ filename: path.join(__dirname, '../data/pointsTransactions.db'), autoload: true }),
-  feedbackComplaints: Datastore.create({ filename: path.join(__dirname, '../data/feedbackComplaints.db'), autoload: true }),
-  promotionalCampaigns: Datastore.create({ filename: path.join(__dirname, '../data/promotionalCampaigns.db'), autoload: true }),
-
-  // --- Compliance Collections (FR-020, FR-021) ---
-  qualityChecks: Datastore.create({ filename: path.join(__dirname, '../data/qualityChecks.db'), autoload: true }),
-  complianceRecords: Datastore.create({ filename: path.join(__dirname, '../data/complianceRecords.db'), autoload: true }),
-  audits: Datastore.create({ filename: path.join(__dirname, '../data/audits.db'), autoload: true }),
-
-  // --- System Collections (FR-022, FR-023) ---
-  systemConfig: Datastore.create({ filename: path.join(__dirname, '../data/systemConfig.db'), autoload: true }),
-  notificationConfigs: Datastore.create({ filename: path.join(__dirname, '../data/notificationConfigs.db'), autoload: true }),
-  systemLogs: Datastore.create({ filename: path.join(__dirname, '../data/systemLogs.db'), autoload: true }),
-  apiKeys: Datastore.create({ filename: path.join(__dirname, '../data/apiKeys.db'), autoload: true }),
-
-  // --- Employee & Notification Collections ---
-  employees: Datastore.create({ filename: path.join(__dirname, '../data/employees.db'), autoload: true }),
-  notifications: Datastore.create({ filename: path.join(__dirname, '../data/notifications.db'), autoload: true }),
-
-  // --- Auth & Contact Collections (FR-001, FR-003) ---
-  passwordResets: Datastore.create({ filename: path.join(__dirname, '../data/passwordResets.db'), autoload: true }),
-  contactMessages: Datastore.create({ filename: path.join(__dirname, '../data/contactMessages.db'), autoload: true })
+/**
+ * Get all table names
+ * @returns {Promise<Array>} List of table names
+ */
+const getTableNames = async () => {
+  const result = await db.raw("SHOW TABLES");
+  const tableNameKey = Object.keys(result[0][0])[0];
+  return result[0].map(row => row[tableNameKey]);
 };
 
 /**
- * Ensure unique _id index on all collections.
- * Prevents duplicate records and enables fast lookups by primary key.
+ * Get table column information
+ * @param {string} tableName - Name of the table
+ * @returns {Promise<Array>} Column information
  */
-Object.values(db).forEach(collection => {
-  collection.ensureIndex({ fieldName: '_id', unique: true });
-});
+const getTableColumns = async (tableName) => {
+  const result = await db.raw(`DESCRIBE ${tableName}`);
+  return result[0];
+};
+
+/**
+ * Check if table exists
+ * @param {string} tableName - Name of the table
+ * @returns {Promise<boolean>} True if table exists
+ */
+const tableExists = async (tableName) => {
+  try {
+    await db.raw(`SELECT 1 FROM ${tableName} LIMIT 1`);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+/**
+ * Get database statistics
+ * @returns {Promise<Object>} Database statistics
+ */
+const getStats = async () => {
+  const tables = await getTableNames();
+  const stats = {};
+  
+  for (const table of tables) {
+    try {
+      const result = await db.raw(`SELECT COUNT(*) as count FROM ${table}`);
+      stats[table] = result[0][0].count;
+    } catch (error) {
+      stats[table] = 0;
+    }
+  }
+  
+  return {
+    totalTables: tables.length,
+    tables: stats
+  };
+};
 
 module.exports = db;
+module.exports.getTableNames = getTableNames;
+module.exports.getTableColumns = getTableColumns;
+module.exports.tableExists = tableExists;
+module.exports.getStats = getStats;
+
+// MySQL Collection adapters for backward compatibility with NeDB-based services
+// Maps old NeDB collection names to MySQL tables
+const MySQLCollection = require('../repositories/MySQLCollection');
+
+const tableMap = {
+  users: 'users',
+  products: 'products',
+  orders: 'orders',
+  carts: 'carts',
+  payments: 'payments',
+  inventory: 'inventory',
+  productionCycles: 'productioncycles',
+  dailyLogs: 'dailylogs',
+  medications: 'medications',
+  healthChecks: 'healthchecks',
+  vaccinations: 'vaccinations',
+  weightRecords: 'weightrecords',
+  feedRecords: 'feedrecords',
+  environmentRecords: 'environmentrecords',
+  harvestBatches: 'harvestbatches',
+  processingBatches: 'processingbatches',
+  processingSteps: 'processingsteps',
+  yieldRecords: 'yieldrecords',
+  processingQualityChecks: 'processingqualitychecks',
+  processingStaff: 'processingstaff',
+  systemConfig: 'systemconfig',
+  systemLogs: 'systemlogs',
+  notifications: 'notifications',
+  notificationConfigs: 'notificationconfigs',
+  employees: 'employees',
+  apiKeys: 'apikeys',
+  customerProfiles: 'customerprofiles',
+  loyaltyPrograms: 'loyaltyprograms',
+  customerEnrollments: 'customerenrollments',
+  pointsTransactions: 'pointstransactions',
+  feedbackComplaints: 'feedbackcomplaints',
+  promotionalCampaigns: 'promotionalcampaigns',
+  qualityChecks: 'qualitychecks',
+  complianceRecords: 'compliancerecords',
+  audits: 'audits',
+  passwordResets: 'passwordresets',
+  contactMessages: 'contactmessages'
+};
+
+// Create collection instances
+for (const [nedbName, mysqlTable] of Object.entries(tableMap)) {
+  db[nedbName] = new MySQLCollection(db, mysqlTable);
+}

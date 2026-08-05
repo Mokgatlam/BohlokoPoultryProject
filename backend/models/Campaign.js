@@ -107,7 +107,7 @@ class Campaign {
    * @returns {Array} Matching campaigns
    */
   static async find(query = {}) {
-    return await db.promotionalCampaigns.find(query).sort({ createdAt: -1 }).exec();
+    return await db.promotionalCampaigns.find(query, { sort: { createdAt: -1 } });
   }
 
   /**

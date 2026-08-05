@@ -174,10 +174,10 @@
                 <div class="backup-item">
                     <div>
                         <strong>${escapeHtml(b.filename || 'Backup')}</strong><br>
-                        <small class="text-muted">${b.createdAt ? new Date(b.createdAt).toLocaleString() : ''} - ${b.size || 'N/A'}</small>
+                        <small class="text-muted">${b.created_at ? new Date(b.created_at).toLocaleString() : ''} - ${b.size || 'N/A'}</small>
                     </div>
                     <div>
-                        <a href="/api/data/backup/${b._id}" class="btn btn-outline-success btn-sm"><i class="fas fa-download"></i></a>
+                        <a href="/api/data/backup/${b.id}" class="btn btn-outline-success btn-sm"><i class="fas fa-download"></i></a>
                     </div>
                 </div>
             `).join('');

@@ -94,7 +94,7 @@ class Order {
    * @returns {Array} Matching orders sorted by createdAt DESC
    */
   static async find(query = {}) {
-    return await db.orders.find(query).sort({ createdAt: -1 }).exec();
+    return await db.orders.find(query, { sort: { created_at: -1 } });
   }
 
   /**

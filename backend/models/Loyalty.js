@@ -116,7 +116,7 @@ class PointsTransaction {
    * @returns {Array} Points transactions
    */
   static async findByCustomer(userId) {
-    return await db.pointsTransactions.find({ userId }).sort({ createdAt: -1 }).exec();
+    return await db.pointsTransactions.find({ userId }, { sort: { createdAt: -1 } });
   }
 }
 

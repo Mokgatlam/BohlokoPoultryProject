@@ -67,7 +67,7 @@ class Inventory {
    * @returns {Array} Matching inventory records sorted by harvestDate DESC
    */
   static async find(query = {}) {
-    return await db.inventory.find(query).sort({ harvestDate: -1 }).exec();
+    return await db.inventory.find(query, { sort: { harvestDate: -1 } });
   }
 
   /**

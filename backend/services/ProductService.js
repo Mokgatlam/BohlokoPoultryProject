@@ -9,8 +9,8 @@
  * 
  * Responsibilities:
  *   - Product CRUD (create, read, update, soft-delete)
- *   - Full-text search across name, description, productType
- *   - Filtering by status, category, productType
+ *   - Full-text search across name, description, sku
+ *   - Filtering by status, category, availability
  *   - Active/featured product queries for shop display
  *   - Stock quantity updates
  *   - Product count for analytics
@@ -18,79 +18,118 @@
  * Design Patterns:
  *   - Singleton pattern (exported as instance, not class)
  *   - Repository pattern (delegates to BaseRepository for data access)
- *   - Soft-delete pattern (status = 'deleted' instead of DB removal)
+ *   - Soft-delete pattern (available = false instead of DB removal)
  * 
- * Search Implementation:
- *   - Uses NeDB regex with user input escaped to prevent ReDoS
- *   - Case-insensitive search across multiple fields
- *   - OR query: matches if ANY field contains the search term
- * 
- * Dependencies: BaseRepository (generic NeDB wrapper), db (database connections)
+ * Dependencies: db (Knex MySQL connection), uuid (primary key generation)
  */
 
-const BaseRepository = require('../repositories/BaseRepository');
 const db = require('../config/db');
+const { v4: uuidv4 } = require('uuid');
 
 /**
  * ProductService - Singleton service for product catalog operations.
  * 
- * Manages the products collection in NeDB.
+ * Uses Knex.js for MySQL queries directly.
  */
 class ProductService {
-  /**
-   * Initialize the product repository.
-   */
-  constructor() {
-    this.repo = new BaseRepository(db.products);
-  }
-
   /**
    * Create a new product in the catalog.
    * 
    * SRS: FR-010 - Add product to catalog
    * 
-   * @param {Object} data - Product data { productType, name, price, description, image, ... }
+   * @param {Object} data - Product data { name, slug, sku, price, description, image, ... }
    * @param {string} userId - ID of user creating the product (audit trail)
-   * @returns {Object} Created product with _id and createdBy
+   * @returns {Object} Created product with id
    */
   async create(data, userId) {
-    return await this.repo.create({ ...data, createdBy: userId });
+    const id = uuidv4();
+    const product = {
+      id,
+      name: data.name,
+      slug: data.slug || data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+      sku: data.sku || null,
+      description: data.description || null,
+      category: data.category || null,
+      price: data.price,
+      price_consumer: data.price_consumer || data.price,
+      price_restaurant: data.price_restaurant || data.price,
+      price_retailer: data.price_retailer || data.price,
+      price_distributor: data.price_distributor || data.price,
+      unit: data.unit || 'pieces',
+      image: data.image || null,
+      available: data.available !== undefined ? data.available : true,
+      badge: data.badge || null,
+      badge_tag: data.badge_tag || null,
+      fallback_icon: data.fallback_icon || null,
+      featured: data.featured || false,
+      sort_order: data.sort_order || 0,
+      created_by: userId || null
+    };
+    
+    await db('products').insert(product);
+    return product;
   }
 
   /**
-   * Get all products with optional filtering and full-text search.
+   * Get all products with optional filtering and search.
    * 
    * SRS: FR-010 - Browse/search product catalog
    * 
    * Supported Filters:
-   *   - status: Filter by product status (active, inactive, featured, deleted)
+   *   - status: Filter by availability (active = available, inactive = !available)
    *   - category: Filter by product category
-   *   - productType: Filter by product type (e.g., 'Whole Chicken')
-   *   - search: Full-text search across name, description, productType
-   * 
-   * Search Implementation:
-   *   - Escapes special regex characters to prevent ReDoS attacks
-   *   - Creates OR query across name, description, productType fields
-   *   - Case-insensitive matching via RegExp('term', 'i')
+   *   - search: Full-text search across name, description, sku
+   *   - sort: Sort field (default: sort_order ASC)
+   *   - limit: Limit results
    * 
    * @param {Object} filters - Optional filter criteria
    * @returns {Array} Matching products
    */
   async getAll(filters = {}) {
-    const query = {};
-    if (filters.status) query.status = filters.status;
-    if (filters.category) query.category = filters.category;
-    if (filters.productType) query.productType = filters.productType;
-    if (filters.search) {
-      // Escape special regex characters to prevent ReDoS
-      const safe = filters.search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      query.$or = [
-        { name: new RegExp(safe, 'i') },
-        { description: new RegExp(safe, 'i') },
-        { productType: new RegExp(safe, 'i') }
-      ];
+    let query = db('products');
+    
+    // Filter by availability
+    if (filters.status === 'active') {
+      query = query.where('available', true);
+    } else if (filters.status === 'inactive') {
+      query = query.where('available', false);
     }
-    return await this.repo.find(query);
+    
+    // Filter by category
+    if (filters.category) {
+      query = query.where('category', filters.category);
+    }
+    
+    // Filter by featured
+    if (filters.featured === 'true' || filters.featured === true) {
+      query = query.where('featured', true);
+    }
+    
+    // Full-text search
+    if (filters.search) {
+      const searchTerm = `%${filters.search}%`;
+      query = query.where(function() {
+        this.where('name', 'like', searchTerm)
+          .orWhere('description', 'like', searchTerm)
+          .orWhere('sku', 'like', searchTerm)
+          .orWhere('category', 'like', searchTerm);
+      });
+    }
+    
+    // Sort
+    if (filters.sort) {
+      const parts = filters.sort.split(':');
+      query = query.orderBy(parts[0], parts[1] || 'asc');
+    } else {
+      query = query.orderBy('sort_order', 'asc').orderBy('name', 'asc');
+    }
+    
+    // Limit
+    if (filters.limit) {
+      query = query.limit(parseInt(filters.limit));
+    }
+    
+    return await query;
   }
 
   /**
@@ -102,7 +141,19 @@ class ProductService {
    * @returns {Object|null} Product or null if not found
    */
   async getById(id) {
-    return await this.repo.findById(id);
+    const product = await db('products').where('id', id).first();
+    return product || null;
+  }
+
+  /**
+   * Get a single product by slug.
+   * 
+   * @param {string} slug - Product slug
+   * @returns {Object|null} Product or null if not found
+   */
+  async getBySlug(slug) {
+    const product = await db('products').where('slug', slug).first();
+    return product || null;
   }
 
   /**
@@ -115,47 +166,54 @@ class ProductService {
    * @returns {Object|null} Updated product
    */
   async update(id, data) {
-    return await this.repo.findByIdAndUpdate(id, data);
+    const updates = { ...data, updated_at: new Date() };
+    delete updates.id;
+    delete updates.created_by;
+    delete updates.created_at;
+    
+    await db('products').where('id', id).update(updates);
+    return await this.getById(id);
   }
 
   /**
-   * Soft-delete a product (set status to 'deleted').
+   * Soft-delete a product (set available to false).
    * 
    * SRS: FR-010 - Remove product from catalog
    * 
-   * Design: Uses soft-delete to preserve historical data integrity.
-   * Deleted products remain in the database for order traceability
-   * but are excluded from active catalog queries.
-   * 
    * @param {string} id - Product ID
-   * @returns {Object} Updated product with status='deleted'
+   * @returns {Object} Updated product
    */
   async delete(id) {
-    return await this.repo.findByIdAndUpdate(id, { status: 'deleted' });
+    await db('products').where('id', id).update({ available: false, updated_at: new Date() });
+    return await this.getById(id);
   }
 
   /**
    * Get all active products for the public shop.
    * 
    * SRS: FR-010 - Display available products
-   * Filters: status = 'active' only
    * 
    * @returns {Array} Active products
    */
   async getActive() {
-    return await this.repo.find({ status: 'active' });
+    return await db('products')
+      .where('available', true)
+      .orderBy('sort_order', 'asc')
+      .orderBy('name', 'asc');
   }
 
   /**
    * Get featured products for homepage/promotional display.
    * 
    * SRS: FR-010 - Featured products section
-   * Filters: status = 'active' AND featured = true
    * 
    * @returns {Array} Featured products
    */
   async getFeatured() {
-    return await this.repo.find({ status: 'active', featured: true });
+    return await db('products')
+      .where('available', true)
+      .where('featured', true)
+      .orderBy('sort_order', 'asc');
   }
 
   /**
@@ -167,7 +225,23 @@ class ProductService {
    * @returns {Array} Active products in the category
    */
   async getByCategory(category) {
-    return await this.repo.find({ category, status: 'active' });
+    return await db('products')
+      .where('category', category)
+      .where('available', true)
+      .orderBy('sort_order', 'asc');
+  }
+
+  /**
+   * Get unique categories from active products.
+   * 
+   * @returns {Array} List of unique category names
+   */
+  async getCategories() {
+    const result = await db('products')
+      .where('available', true)
+      .distinct('category')
+      .orderBy('category');
+    return result.map(r => r.category);
   }
 
   /**
@@ -175,18 +249,16 @@ class ProductService {
    * 
    * SRS: FR-010 - Real-time availability tracking
    * 
-   * Note: This updates the product-level stock field. For inventory-level
-   * stock management, see InventoryService.
-   * 
    * @param {string} id - Product ID
    * @param {number} quantity - New stock quantity
    * @returns {Object} Updated product
    * @throws {Error} If product not found
    */
   async updateStock(id, quantity) {
-    const product = await this.repo.findById(id);
+    const product = await this.getById(id);
     if (!product) throw new Error('Product not found');
-    return await this.repo.findByIdAndUpdate(id, { stock: quantity });
+    await db('products').where('id', id).update({ updated_at: new Date() });
+    return await this.getById(id);
   }
 
   /**
@@ -194,10 +266,21 @@ class ProductService {
    * 
    * SRS: FR-010 - Product catalog statistics
    * 
-   * @returns {number} Total product count
+   * @param {Object} filters - Optional filters
+   * @returns {number} Product count
    */
-  async count() {
-    return await this.repo.count();
+  async count(filters = {}) {
+    let query = db('products');
+    
+    if (filters.available !== undefined) {
+      query = query.where('available', filters.available);
+    }
+    if (filters.category) {
+      query = query.where('category', filters.category);
+    }
+    
+    const result = await query.count('id as count').first();
+    return result.count;
   }
 }
 

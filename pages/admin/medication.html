@@ -47,33 +47,104 @@
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table">
-                        <thead><tr><th>Date</th><th>Flock/Batch</th><th>Medication</th><th>Dosage</th><th>Withdrawal Period</th><th>Administered By</th><th>Status</th></tr></thead>
-                        <tbody id="medsTable"><tr><td colspan="7" class="text-center">Loading...</td></tr></tbody>
+                        <thead><tr><th>Date</th><th>Flock/Batch</th><th>Medication</th><th>Dosage</th><th>Withdrawal Period</th><th>Administered By</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="medsTable"><tr><td colspan="8" class="text-center">Loading...</td></tr></tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Record Medication Modal -->
+    <div class="modal fade" id="medModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title">Record Medication</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body"><form id="medForm">
+            <div class="mb-3"><label class="form-label">Flock / Cycle ID *</label><input type="text" class="form-control" id="medFlock" required placeholder="e.g., Cycle-001"></div>
+            <div class="mb-3"><label class="form-label">Medication Name *</label><input type="text" class="form-control" id="medName" required placeholder="e.g., Amoxicillin"></div>
+            <div class="mb-3"><label class="form-label">Type *</label><select class="form-select" id="medType"><option>Antibiotic</option><option>Vaccine</option><option>Vitamin Supplement</option><option>Antiparasitic</option><option>Disinfectant</option><option>Other</option></select></div>
+            <div class="mb-3"><label class="form-label">Dosage *</label><input type="text" class="form-control" id="medDosage" required placeholder="e.g., 500mg per bird"></div>
+            <div class="row">
+                <div class="col-md-6 mb-3"><label class="form-label">Administration Route</label><select class="form-select" id="medRoute"><option>Drinking Water</option><option>Injection</option><option>Feed Mix</option><option>Spray</option><option>Topical</option></select></div>
+                <div class="col-md-6 mb-3"><label class="form-label">Withdrawal Period (days)</label><input type="number" class="form-control" id="medWithdrawal" min="0" value="0"></div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3"><label class="form-label">Date Administered *</label><input type="date" class="form-control" id="medDate" required></div>
+                <div class="col-md-6 mb-3"><label class="form-label">Batch Quantity</label><input type="number" class="form-control" id="medBatchQty" step="0.1"></div>
+            </div>
+            <div class="mb-3"><label class="form-label">Expiry Date</label><input type="date" class="form-control" id="medExpiry"></div>
+            <div class="mb-3"><label class="form-label">Administered By</label><input type="text" class="form-control" id="medAdmin" placeholder="Staff name"></div>
+            <div class="mb-3"><label class="form-label">Notes</label><textarea class="form-control" id="medNotes" rows="2" placeholder="Additional notes..."></textarea></div>
+        </form></div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-success" onclick="saveMedication()">Save</button></div>
+    </div></div></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../assets/js/api.js"></script>
     <script src="../../assets/js/admin.js"></script>
     <script>
+        let allMeds = [];
+
         async function loadMedication() {
             const res = await api.medication.getAll();
-            if (res.success) renderMeds(res.data);
+            if (res.success) { allMeds = res.data; renderMeds(allMeds); }
         }
+
         function renderMeds(meds) {
             const tbody = document.getElementById('medsTable');
-            if (!meds.length) { tbody.innerHTML = '<tr><td colspan="7" class="text-center">No medication records</td></tr>'; return; }
+            if (!meds.length) { tbody.innerHTML = '<tr><td colspan="8" class="text-center">No medication records</td></tr>'; return; }
             tbody.innerHTML = meds.map(m => {
                 const isExpired = m.expiryDate && new Date(m.expiryDate) < new Date();
                 const status = isExpired ? 'expired' : m.status || 'active';
                 const badge = status === 'expired' ? 'expired' : status === 'active' ? 'active' : 'warning';
-                return `<tr><td>${m.date ? new Date(m.date).toLocaleDateString() : 'N/A'}</td><td>${escapeHtml(m.flockId || m.batchId || 'N/A')}</td><td>${escapeHtml(m.name || m.medicationName || 'N/A')}</td><td>${escapeHtml(m.dosage || 'N/A')}</td><td>${m.withdrawalPeriod || 'N/A'} days</td><td>${escapeHtml(m.administeredBy || m.userId || 'N/A')}</td><td><span class="badge badge-${badge}">${escapeHtml(status)}</span></td></tr>`;
+                return `
+                    <tr>
+                        <td>${m.date ? new Date(m.date).toLocaleDateString() : (m.created_at ? new Date(m.created_at).toLocaleDateString() : 'N/A')}</td>
+                        <td>${escapeHtml(m.flockId || m.batchId || 'N/A')}</td>
+                        <td>${escapeHtml(m.name || m.medicationName || 'N/A')}</td>
+                        <td>${escapeHtml(m.dosage || 'N/A')}</td>
+                        <td>${m.withdrawalPeriod || 'N/A'} days</td>
+                        <td>${escapeHtml(m.administeredBy || m.userId || 'N/A')}</td>
+                        <td><span class="badge badge-${badge}">${escapeHtml(status)}</span></td>
+                        <td><button class="btn btn-outline-danger btn-sm" onclick="deleteMed('${m.id || ''}')"><i class="fas fa-trash"></i></button></td>
+                    </tr>`;
             }).join('');
+
             document.getElementById('totalMeds').textContent = meds.filter(m => m.status === 'active' || !m.status).length;
             document.getElementById('expiredMeds').textContent = meds.filter(m => m.expiryDate && new Date(m.expiryDate) < new Date()).length;
         }
-        function showAddMedication() { alert('Record medication form coming soon!'); }
+
+        function showAddMedication() {
+            document.getElementById('medForm').reset();
+            document.getElementById('medDate').value = new Date().toISOString().split('T')[0];
+            new bootstrap.Modal(document.getElementById('medModal')).show();
+        }
+
+        async function saveMedication() {
+            try {
+                await api.medication.create({
+                    flockId: document.getElementById('medFlock').value,
+                    name: document.getElementById('medName').value,
+                    type: document.getElementById('medType').value,
+                    dosage: document.getElementById('medDosage').value,
+                    route: document.getElementById('medRoute').value,
+                    withdrawalPeriod: parseInt(document.getElementById('medWithdrawal').value) || 0,
+                    date: document.getElementById('medDate').value,
+                    batchQuantity: parseFloat(document.getElementById('medBatchQty').value) || 0,
+                    expiryDate: document.getElementById('medExpiry').value || null,
+                    administeredBy: document.getElementById('medAdmin').value,
+                    notes: document.getElementById('medNotes').value
+                });
+                bootstrap.Modal.getInstance(document.getElementById('medModal')).hide();
+                loadMedication();
+            } catch (e) { alert('Error saving medication'); }
+        }
+
+        async function deleteMed(id) {
+            if (!id) return;
+            if (!confirm('Delete this medication record?')) return;
+            try { await api.medication.delete(id); loadMedication(); } catch (e) { alert('Error deleting'); }
+        }
+
         loadMedication();
     </script>
 </body>

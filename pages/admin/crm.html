@@ -288,7 +288,7 @@
                     <td>${c.stats?.totalOrders || 0}</td>
                     <td>R ${(c.stats?.totalSpent || 0).toFixed(2)}</td>
                     <td>${escapeHtml(c.segment)}</td>
-                    <td><button class="btn btn-sm btn-outline-primary" onclick="viewCustomer('${c._id}')"><i class="fas fa-eye"></i></button></td>
+                    <td><button class="btn btn-sm btn-outline-primary" onclick="viewCustomer('${c.id}')"><i class="fas fa-eye"></i></button></td>
                 </tr>
             `).join('') || '<tr><td colspan="8" class="text-center">No customers</td></tr>';
         }
@@ -307,13 +307,13 @@
                     <td>${c.stats?.totalOrders || 0}</td>
                     <td>R ${(c.stats?.totalSpent || 0).toFixed(2)}</td>
                     <td>${escapeHtml(c.segment)}</td>
-                    <td><button class="btn btn-sm btn-outline-primary" onclick="viewCustomer('${c._id}')"><i class="fas fa-eye"></i></button></td>
+                    <td><button class="btn btn-sm btn-outline-primary" onclick="viewCustomer('${c.id}')"><i class="fas fa-eye"></i></button></td>
                 </tr>
             `).join('');
         }
 
         function viewCustomer(id) {
-            const c = allCustomers.find(cu => cu._id === id);
+            const c = allCustomers.find(cu => cu.id === id);
             if (!c) return;
             document.getElementById('modalTitle').textContent = 'Customer Profile';
             document.getElementById('modalBody').innerHTML = `
@@ -370,10 +370,10 @@
                             <td>${escapeHtml(f.subject)}</td>
                             <td>${escapeHtml(f.priority)}</td>
                             <td><span class="badge-status status-${f.status.toLowerCase()}">${escapeHtml(f.status)}</span></td>
-                            <td>${new Date(f.createdAt).toLocaleDateString()}</td>
+                            <td>${new Date(f.created_at).toLocaleDateString()}</td>
                             <td>
-                                ${f.status === 'Open' ? `<button class="btn btn-sm btn-success" onclick="respondFeedback('${f._id}')">Respond</button>` : ''}
-                                ${f.status !== 'Resolved' ? `<button class="btn btn-sm btn-outline-secondary" onclick="resolveFeedback('${f._id}')">Resolve</button>` : ''}
+                                ${f.status === 'Open' ? `<button class="btn btn-sm btn-success" onclick="respondFeedback('${f.id}')">Respond</button>` : ''}
+                                ${f.status !== 'Resolved' ? `<button class="btn btn-sm btn-outline-secondary" onclick="resolveFeedback('${f.id}')">Resolve</button>` : ''}
                             </td>
                         </tr>
                     `).join('') || '<tr><td colspan="7" class="text-center">No feedback</td></tr>';
@@ -428,8 +428,8 @@
                             <td><span class="badge-status status-${c.status.toLowerCase()}">${escapeHtml(c.status)}</span></td>
                             <td>${c.stats?.sent || 0}</td>
                             <td>
-                                ${c.status === 'Draft' ? `<button class="btn btn-sm btn-success" onclick="activateCampaign('${c._id}')">Activate</button>` : ''}
-                                ${c.status === 'Active' ? `<button class="btn btn-sm btn-warning" onclick="pauseCampaign('${c._id}')">Pause</button>` : ''}
+                                ${c.status === 'Draft' ? `<button class="btn btn-sm btn-success" onclick="activateCampaign('${c.id}')">Activate</button>` : ''}
+                                ${c.status === 'Active' ? `<button class="btn btn-sm btn-warning" onclick="pauseCampaign('${c.id}')">Pause</button>` : ''}
                             </td>
                         </tr>
                     `).join('') || '<tr><td colspan="7" class="text-center">No campaigns</td></tr>';
