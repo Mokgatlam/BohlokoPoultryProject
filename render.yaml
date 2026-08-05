@@ -22,10 +22,6 @@ services:
     autoDeploy: true
     healthCheckPath: /api/health
 
-  # Optional: PostgreSQL database for production data persistence
-  # Uncomment below to add a free PostgreSQL database
-  # - type: pgsql
-  #   name: bohloko-db
-  #   plan: free
-  #   databaseName: bohloko_farm
-  #   user: bohloko_user
+  - type: pgsql
+    name: bohloko-db
+    plan: free

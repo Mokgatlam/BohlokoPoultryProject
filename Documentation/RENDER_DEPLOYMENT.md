@@ -90,8 +90,11 @@ After deployment, go to your service dashboard and verify these environment vari
 - `JWT_SECRET` = (auto-generated secure key)
 - `JWT_EXPIRES_IN` = `1h`
 - `BASE_URL` = (your Render service URL, e.g., `https://bohloko-family-farm-backend.onrender.com`)
+- `DATABASE_URL` = (automatically set by Render PostgreSQL service)
 
-**Important**: The `BASE_URL` is automatically set by render.yaml using the `fromService` reference.
+**Important**: 
+- The `BASE_URL` is automatically set by render.yaml using the `fromService` reference
+- The `DATABASE_URL` is automatically set by Render PostgreSQL service
 
 ### 5. Run Database Seeding (Optional)
 
