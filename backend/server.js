@@ -1,8 +1,10 @@
+// Write to stderr to ensure logs appear immediately
+process.stderr.write('\n=== SERVER STARTING ===\n');
+process.stderr.write('Node version: ' + process.version + '\n');
+process.stderr.write('Working directory: ' + process.cwd() + '\n');
+
 // Wrap entire file in try-catch to catch any startup errors
 try {
-  console.log('=== SERVER STARTING ===');
-  console.log('Node version:', process.version);
-  console.log('Working directory:', process.cwd());
 
   const express = require('express');
   const cors = require('cors');
