@@ -64,7 +64,7 @@
                     <!-- Left Side - Branding -->
                     <div class="col-lg-5 auth-left">
                         <div class="auth-left-content">
-                            <img src="../../Documentation/BohlokoFamilyFarmLogo.png" alt="Bohloko Farm" class="mb-4" style="max-height:100px;filter:drop-shadow(0 5px 15px rgba(0,0,0,0.3));">
+                            <img src="../../assets/images/logo.png" alt="Bohloko Farm" class="mb-4" style="max-height:100px;filter:drop-shadow(0 5px 15px rgba(0,0,0,0.3));">
                             <h2>Welcome Back!</h2>
                             <p>Login to access your account, manage orders, and track deliveries.</p>
                             <ul class="feature-list list-unstyled">
@@ -192,6 +192,31 @@
     </div>
 
     <script>
+        /**
+         * Login Page JavaScript - FR-002
+         * =================================
+         * 
+         * Frontend implementation for user authentication (FR-002)
+         * and password reset flow (FR-002.3).
+         * 
+         * FR-002 Requirements:
+         *   - FR-002.7: Displays backend error messages to users (not generic fallback)
+         *   - FR-002.8: Frontend shows specific error messages from backend
+         *   - FR-002.9: "Forgot Password" link on login page
+         * 
+         * FR-003 Requirements:
+         *   - FR-003.1: Role-based redirection after login
+         * 
+         * Design Principles:
+         *   - User Experience: Loading states, password visibility toggle
+         *   - Security: Credentials sent via HTTPS, token stored securely
+         *   - Feedback: Clear error messages for all failure scenarios
+         */
+
+        /**
+         * Toggle password visibility between text and password input types.
+         * Improves UX by allowing users to see what they're typing.
+         */
         function togglePassword() {
             const pw = document.getElementById('password');
             const icon = document.getElementById('toggleIcon');
@@ -204,6 +229,20 @@
             }
         }
 
+        /**
+         * Handle login form submission.
+         * 
+         * FR-002.1: Sends credentials to backend for bcrypt verification
+         * FR-002.7: Displays backend error messages (e.g., "Account is pending approval")
+         * FR-003.1: Redirects user based on role after successful login
+         * 
+         * Role-based redirection (FR-003.1):
+         *   - Farm Manager -> /pages/admin/dashboard.html
+         *   - Poultry Attendant -> /pages/staff/poultry.html
+         *   - Processing Staff -> /pages/staff/processing.html
+         *   - Sales Assistant -> /pages/staff/sales.html
+         *   - Customer -> /pages/public/index.html
+         */
         async function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('email').value;
@@ -211,21 +250,28 @@
             const btn = document.querySelector('.btn-login');
             const originalText = btn.innerHTML;
 
+            // Client-side validation
             if (!email || !password) {
                 alert('Please enter email and password');
                 return;
             }
 
+            // Show loading state
             btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Logging in...';
             btn.disabled = true;
 
             try {
+                // Call backend API for authentication
                 const result = await api.auth.login({ email, password });
                 
                 if (result.success) {
+                    // Store JWT token for subsequent API calls
                     api.setToken(result.data.token);
+                    // Store user data for role-based UI rendering
                     localStorage.setItem('user', JSON.stringify(result.data.user));
+                    
                     const user = result.data.user;
+                    // FR-003.1: Redirect based on user role
                     if (user.role === 'Farm Manager') {
                         window.location.href = '../admin/dashboard.html';
                     } else if (user.role === 'Poultry Attendant') {
@@ -235,19 +281,32 @@
                     } else if (user.role === 'Sales Assistant') {
                         window.location.href = '../staff/sales.html';
                     } else {
+                        // Default: Customer role goes to public index
                         window.location.href = 'index.html';
                     }
                 } else {
+                    // FR-002.7: Display backend error message to user
                     alert(result.message || 'Login failed. Please try again.');
                 }
             } catch (error) {
+                // Network or server error
                 alert('Network error. Please check if the server is running.');
             } finally {
+                // Reset button state
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }
         }
 
+        /**
+         * Show the forgot password modal (FR-002.9).
+         * 
+         * FR-002.9: "Forgot Password" link is provided on the login page.
+         * Opens a Bootstrap modal with a 3-step reset flow:
+         *   Step 1: Enter email address
+         *   Step 2: Enter reset token and new password
+         *   Step 3: Success confirmation
+         */
         function showForgotPassword() {
             document.getElementById('forgotStep1').style.display = 'block';
             document.getElementById('forgotStep2').style.display = 'none';
@@ -255,15 +314,24 @@
             new bootstrap.Modal(document.getElementById('forgotPasswordModal')).show();
         }
 
+        /**
+         * Request a password reset token (FR-002.3, Step 1).
+         * 
+         * FR-002.3: Sends email to backend which generates a reset token.
+         * Security: Always shows success message regardless of email existence
+         *           to prevent user enumeration attacks.
+         */
         async function requestReset() {
             const email = document.getElementById('resetEmail').value;
             if (!email) { alert('Please enter your email'); return; }
             try {
                 const res = await api.post('/auth/forgot-password', { email });
                 if (res.success) {
+                    // Development only: auto-fill token if returned (production would use email)
                     if (res.resetToken) {
                         document.getElementById('resetToken').value = res.resetToken;
                     }
+                    // Move to step 2: enter token and new password
                     document.getElementById('forgotStep1').style.display = 'none';
                     document.getElementById('forgotStep2').style.display = 'block';
                 } else {
@@ -274,15 +342,25 @@
             }
         }
 
+        /**
+         * Complete password reset with token (FR-002.3, Step 2).
+         * 
+         * FR-002.3: Validates token and sets new password.
+         * Client-side validation ensures passwords match before API call.
+         */
         async function resetPassword() {
             const token = document.getElementById('resetToken').value;
             const password = document.getElementById('newPassword').value;
             const confirm = document.getElementById('confirmPassword').value;
+            
+            // Client-side validation
             if (!token || !password) { alert('Please fill all fields'); return; }
             if (password !== confirm) { alert('Passwords do not match'); return; }
+            
             try {
                 const res = await api.post('/auth/reset-password', { token, password });
                 if (res.success) {
+                    // Move to step 3: success confirmation
                     document.getElementById('forgotStep2').style.display = 'none';
                     document.getElementById('forgotStep3').style.display = 'block';
                 } else {

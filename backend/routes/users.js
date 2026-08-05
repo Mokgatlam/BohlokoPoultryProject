@@ -1,3 +1,28 @@
+/**
+ * User Management Routes - FR-001 & FR-003
+ * ==========================================
+ * 
+ * Admin-only routes for managing user accounts and roles.
+ * All routes require Farm Manager authentication and authorization.
+ * 
+ * Architecture: Express Router with protect + authorize middleware chain
+ * Pattern: Request -> Auth Check -> Role Check -> Validation -> Service -> Response
+ * 
+ * FR-001 Requirements Covered (Admin-side):
+ *   - FR-001.5: Approve/reject pending user registrations
+ *   - FR-001.9: Staff Members created internally (not via public registration)
+ * 
+ * FR-003 Requirements Covered:
+ *   - FR-003.1: Role definitions enforced - Farm Manager, Poultry Attendant, Processing Staff, Sales Assistant, Customer
+ *   - FR-003.3: All routes restricted to Farm Manager role via authorize middleware
+ *   - FR-003.4: Farm Manager can modify user roles via PUT /:id/role
+ * 
+ * Security Principles:
+ *   - Principle of Least Privilege: Only Farm Manager can access these routes
+ *   - Defense in Depth: Both protect (JWT) and authorize (role) middleware applied
+ *   - Input Validation: express-validator on all write operations
+ */
+
 const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
@@ -5,6 +30,16 @@ const validate = require('../middleware/validate');
 const userService = require('../services/UserService');
 const { protect, authorize } = require('../middleware/auth');
 
+/**
+ * GET /api/users
+ * ---------------
+ * Retrieve all users with optional filtering.
+ * 
+ * FR-003.3: Restricted to Farm Manager role only.
+ * Supports query params: status, userType, role, search
+ * 
+ * Response: 200 { success, data: [users] }
+ */
 router.get('/', protect, authorize('Farm Manager'), async (req, res) => {
   try {
     const users = await userService.getAll(req.query);
@@ -14,6 +49,16 @@ router.get('/', protect, authorize('Farm Manager'), async (req, res) => {
   }
 });
 
+/**
+ * GET /api/users/pending
+ * -----------------------
+ * Retrieve all users with "pending" status awaiting approval.
+ * 
+ * FR-001.5: New accounts start with status "pending"
+ * FR-003.3: Restricted to Farm Manager role only.
+ * 
+ * Response: 200 { success, data: [pendingUsers] }
+ */
 router.get('/pending', protect, authorize('Farm Manager'), async (req, res) => {
   try {
     const users = await userService.getPending();
@@ -23,6 +68,16 @@ router.get('/pending', protect, authorize('Farm Manager'), async (req, res) => {
   }
 });
 
+/**
+ * GET /api/users/stats
+ * ---------------------
+ * Get user statistics for dashboard display.
+ * 
+ * Returns counts by status (total, pending, approved, suspended, rejected)
+ * and breakdowns by userType and role.
+ * 
+ * Response: 200 { success, data: { total, pending, approved, suspended, rejected, byType, byRole } }
+ */
 router.get('/stats', protect, authorize('Farm Manager'), async (req, res) => {
   try {
     const stats = await userService.getStats();
@@ -32,6 +87,19 @@ router.get('/stats', protect, authorize('Farm Manager'), async (req, res) => {
   }
 });
 
+/**
+ * PUT /api/users/bulk/status
+ * ---------------------------
+ * Bulk update user statuses (approve, suspend, or reject multiple users).
+ * 
+ * FR-001.5: Enables batch approval of pending registrations
+ * FR-003.3: Restricted to Farm Manager role only.
+ * 
+ * Request Body:
+ *   { ids: [userId, ...], status: 'approved'|'suspended'|'rejected' }
+ * 
+ * Response: 200 { success, message: "X users updated to Y" }
+ */
 router.put('/bulk/status', protect, authorize('Farm Manager'), [
   body('ids').isArray().withMessage('IDs must be an array'),
   body('status').isIn(['approved', 'suspended', 'rejected'])
@@ -46,6 +114,16 @@ router.put('/bulk/status', protect, authorize('Farm Manager'), [
   }
 });
 
+/**
+ * GET /api/users/:id
+ * -------------------
+ * Retrieve a single user by ID.
+ * 
+ * FR-003.3: Restricted to Farm Manager role only.
+ * 
+ * Response: 200 { success, data: user }
+ * Error: 404 { success, message: "User not found" }
+ */
 router.get('/:id', protect, authorize('Farm Manager'), async (req, res) => {
   try {
     const user = await userService.getById(req.params.id);
@@ -56,6 +134,25 @@ router.get('/:id', protect, authorize('Farm Manager'), async (req, res) => {
   }
 });
 
+/**
+ * POST /api/users
+ * ----------------
+ * Create a new user account (admin-only, for Staff Members).
+ * 
+ * FR-001.9: Staff Members are created internally by Farm Manager,
+ *           not through public registration.
+ * FR-001.7: Password complexity enforced (same as registration)
+ * FR-003.1: Role must be one of: Farm Manager, Poultry Attendant, Processing Staff, Sales Assistant, Customer
+ * FR-003.3: Restricted to Farm Manager role only.
+ * 
+ * Note: Created accounts are automatically approved (status: 'approved')
+ *       since they are created by an authorized administrator.
+ * 
+ * Request Body:
+ *   { firstName, lastName, email, password, userType, role }
+ * 
+ * Response: 201 { success, data: user }
+ */
 router.post('/', protect, authorize('Farm Manager'), [
   body('firstName').notEmpty().withMessage('First name is required'),
   body('lastName').notEmpty().withMessage('Last name is required'),
@@ -79,6 +176,19 @@ router.post('/', protect, authorize('Farm Manager'), [
   }
 });
 
+/**
+ * PUT /api/users/:id/status
+ * --------------------------
+ * Update a single user's account status.
+ * 
+ * FR-001.5: Enables approval/rejection of pending registrations
+ * FR-003.3: Restricted to Farm Manager role only.
+ * 
+ * Request Body:
+ *   { status: 'approved'|'suspended'|'rejected' }
+ * 
+ * Response: 200 { success, data: user }
+ */
 router.put('/:id/status', protect, authorize('Farm Manager'), [
   body('status').isIn(['approved', 'suspended', 'rejected'])
 ], async (req, res) => {
@@ -93,6 +203,21 @@ router.put('/:id/status', protect, authorize('Farm Manager'), [
   }
 });
 
+/**
+ * PUT /api/users/:id/role
+ * ------------------------
+ * Update a user's role within the system.
+ * 
+ * FR-003.1: Role must be one of the defined system roles
+ * FR-003.4: Farm Manager can modify user roles and permissions
+ * FR-003.5: Role changes should be logged (TODO: audit logging)
+ * FR-003.3: Restricted to Farm Manager role only.
+ * 
+ * Request Body:
+ *   { role: 'Farm Manager'|'Poultry Attendant'|'Processing Staff'|'Sales Assistant'|'Customer' }
+ * 
+ * Response: 200 { success, data: user }
+ */
 router.put('/:id/role', protect, authorize('Farm Manager'), [
   body('role').isIn(['Farm Manager', 'Poultry Attendant', 'Processing Staff', 'Sales Assistant', 'Customer'])
 ], async (req, res) => {
@@ -107,6 +232,19 @@ router.put('/:id/role', protect, authorize('Farm Manager'), [
   }
 });
 
+/**
+ * PUT /api/users/:id/profile
+ * ---------------------------
+ * Update user profile information.
+ * 
+ * Authorization: Users can update their own profile.
+ *                Farm Manager can update any user's profile.
+ * 
+ * Allowed fields: firstName, lastName, phone, address, businessName
+ * 
+ * Response: 200 { success, data: user }
+ * Error: 403 { success, message: "Not authorized" }
+ */
 router.put('/:id/profile', protect, [
   body('firstName').optional().trim().isLength({ min: 1, max: 50 }).withMessage('First name must be 1-50 characters'),
   body('lastName').optional().trim().isLength({ min: 1, max: 50 }).withMessage('Last name must be 1-50 characters'),
@@ -122,6 +260,19 @@ router.put('/:id/profile', protect, [
   }
 });
 
+/**
+ * DELETE /api/users/:id
+ * ----------------------
+ * Soft-delete a user account (set status to 'deleted').
+ * 
+ * Cannot delete Farm Manager accounts (safety constraint).
+ * Uses soft-delete to preserve data integrity and audit trail.
+ * 
+ * FR-003.3: Restricted to Farm Manager role only.
+ * 
+ * Response: 200 { success, message: "User deleted" }
+ * Error: 500 { success, message: "Cannot delete Farm Manager" }
+ */
 router.delete('/:id', protect, authorize('Farm Manager'), async (req, res) => {
   try {
     const result = await userService.softDelete(req.params.id);
