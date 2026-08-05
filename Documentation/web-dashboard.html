@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chicken Processing System - Web Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        h1 .emoji {
+            font-size: 1.2em;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .status-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-left: 5px solid #3498db;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .status-card.frontend {
+            border-left-color: #2ecc71;
+        }
+        
+        .status-card.backend {
+            border-left-color: #e74c3c;
+        }
+        
+        .status-card.database {
+            border-left-color: #f39c12;
+        }
+        
+        .status-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-icon {
+            font-size: 1.5em;
+        }
+        
+        .status-details {
+            margin-top: 15px;
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        
+        .status-label {
+            color: #7f8c8d;
+        }
+        
+        .status-value {
+            font-weight: 600;
+        }
+        
+        .status-value.running {
+            color: #27ae60;
+        }
+        
+        .status-value.stopped {
+            color: #e74c3c;
+        }
+        
+        .status-value.unknown {
+            color: #f39c12;
+        }
+        
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 15px;
+            text-decoration: none;
+            color: #2c3e50;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            background: #f8f9fa;
+        }
+        
+        .action-btn .emoji {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        
+        .action-btn h4 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+        
+        .action-btn p {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .action-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .action-btn.primary:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        }
+        
+        .action-btn.primary p {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .instructions {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+        }
+        
+        .instructions h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        
+        .code-block code {
+            display: block;
+            line-height: 1.6;
+        }
+        
+        .step {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .step:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .step-number {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .status-grid, .actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <span class="emoji">🐔</span>
+                Chicken Processing Management System
+                <span class="emoji">📊</span>
+            </h1>
+            <p class="subtitle">Complete web application for poultry processing operations</p>
+        </header>
+        
+        <div class="status-grid">
+            <div class="status-card frontend">
+                <h3><span class="status-icon">🌐</span> Frontend Application</h3>
+                <div class="status-details">
+                    <div class="status-item">
+                        <span class="status-label">Status:</span>
+                        <span class="status-value running" id="frontend-status">Checking...</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Port:</span>
+                        <span class="status-value">3000</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Technology:</span>
+                        <span class="status-value">React + TypeScript + Vite</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="status-card backend">
+                <h3><span class="status-icon">🔧</span> Backend API</h3>
+                <div class="status-details">
+                    <div class="status-item">
+                        <span class="status-label">Status:</span>
+                        <span class="status-value stopped" id="backend-status">Checking...</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Port:</span>
+                        <span class="status-value">3001</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Technology:</span>
+                        <span class="status-value">Node.js + Express + Firebase</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="status-card database">
+                <h3><span class="status-icon">🗄️</span> Database</h3>
+                <div class="status-details">
+                    <div class="status-item">
+                        <span class="status-label">Status:</span>
+                        <span class="status-value running" id="database-status">Cloud Service</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Type:</span>
+                        <span class="status-value">Firebase Firestore</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Mode:</span>
+                        <span class="status-value">Production (Real Firebase)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <a href="http://localhost:3000" class="action-btn primary" target="_blank" id="frontend-link">
+                <span class="emoji">🚀</span>
+                <h4>Launch Frontend</h4>
+                <p>Open the React application in your browser</p>
+            </a>
+            
+            <a href="http://localhost:3001/api/products/public" class="action-btn" target="_blank" id="backend-link">
+                <span class="emoji">🔧</span>
+                <h4>Test Backend API</h4>
+                <p>Check if the backend server is responding</p>
+            </a>
+            
+            <a href="run-web.bat" class="action-btn" id="start-script-link">
+                <span class="emoji">⚡</span>
+                <h4>Run Start Script</h4>
+                <p>Execute the batch file to start all services</p>
+            </a>
+            
+            <a href="chicken-processing-frontend/test-api.html" class="action-btn" target="_blank">
+                <span class="emoji">🧪</span>
+                <h4>Integration Test</h4>
+                <p>Run comprehensive frontend-backend tests</p>
+            </a>
+        </div>
+        
+        <div class="instructions">
+            <h3><span class="emoji">📋</span> Quick Start Instructions</h3>
+            
+            <div class="step">
+                <div><span class="step-number">1</span> <strong>Start Backend Server</strong></div>
+                <p>Open a terminal and run:</p>
+                <div class="code-block">
+                    <code>cd chicken-processing-backend<br>node run-server.js</code>
+                </div>
+                <p><strong>Note:</strong> Backend is configured to use REAL Firebase service (not emulator)</p>
+            </div>
+            
+            <div class="step">
+                <div><span class="step-number">2</span> <strong>Start Frontend Server</strong></div>
+                <p>Open another terminal and run:</p>
+                <div class="code-block">
+                    <code>cd chicken-processing-frontend<br>npm run dev</code>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div><span class="step-number">3</span> <strong>Or Use the Batch File</strong></div>
+                <p>Simply double-click <code>run-web.bat</code> to start everything automatically.</p>
+            </div>
+            
+            <div class="step">
+                <div><span class="step-number">4</span> <strong>Access the Application</strong></div>
+                <p>Once both servers are running, access the system at:</p>
+                <div class="code-block">
+                    <code>Frontend: http://localhost:3000<br>Backend API: http://localhost:3001</code>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Chicken Processing Management System &copy; 2026 | Built with React, Node.js, and Firebase</p>
+            <p>System Status: <span id="overall-status">Initializing...</span></p>
+        </footer>
+    </div>
+    
+    <script>
+        // Check service status
+        async function checkService(url, elementId, linkId) {
+            try {
+                const response = await fetch(url, { method: 'HEAD', mode: 'no-cors' });
+                document.getElementById(elementId).textContent = 'Running';
+                document.getElementById(elementId).className = 'status-value running';
+                if (linkId) {
+                    document.getElementById(linkId).style.opacity = '1';
+                }
+                return true;
+            } catch (error) {
+                document.getElementById(elementId).textContent = 'Stopped';
+                document.getElementById(elementId).className = 'status-value stopped';
+                if (linkId) {
+                    document.getElementById(linkId).style.opacity = '0.6';
+                    document.getElementById(linkId).onclick = function(e) {
+                        e.preventDefault();
+                        alert('Service is not running. Please start it first.');
+                    };
+                }
+                return false;
+            }
+        }
+        
+        async function checkAllServices() {
+            const frontendRunning = await checkService('http://localhost:3000', 'frontend-status', 'frontend-link');
+            const backendRunning = await checkService('http://localhost:3001', 'backend-status', 'backend-link');
+            
+            // Database is always running when using real Firebase (cloud service)
+            const databaseRunning = true;
+            document.getElementById('database-status').textContent = 'Cloud Service';
+            document.getElementById('database-status').className = 'status-value running';
+            
+            // Update overall status
+            const overallStatus = document.getElementById('overall-status');
+            if (frontendRunning && backendRunning) {
+                overallStatus.textContent = 'All Systems Operational 🟢';
+                overallStatus.style.color = '#27ae60';
+            } else if (!frontendRunning && !backendRunning) {
+                overallStatus.textContent = 'All Systems Stopped 🔴';
+                overallStatus.style.color = '#e74c3c';
+            } else {
+                overallStatus.textContent = 'Partial Operation 🟡';
+                overallStatus.style.color = '#f39c12';
+            }
+            
+            // Check if batch file exists
+            const startScriptLink = document.getElementById('start-script-link');
+            fetch('run-web.bat')
+                .then(response => {
+                    if (!response.ok) {
+                        startScriptLink.style.opacity = '0.6';
+                        startScriptLink.onclick = function(e) {
+                            e.preventDefault();
+                            alert('Batch file not found.');
+                        };
+                    }
+                })
+                .catch(() => {
+                    startScriptLink.style.opacity = '0.6';
+                    startScriptLink.onclick = function(e) {
+                        e.preventDefault();
+                        alert('Batch file not found.');
+                    };
+                });
+        }
+        
+        // Check status on load and every 10 seconds
+        window.addEventListener('load', checkAllServices);
+        setInterval(checkAllServices, 10000);
+        
+        // Add click handler for batch file
+        document.getElementById('start-script-link').addEventListener('click', function(e) {
+            if (this.style.opacity === '0.6') {
+                e.preventDefault();
+                alert('Batch file not found or cannot be executed.');
+            }
+        });
+    </script>
+</body>
+</html>

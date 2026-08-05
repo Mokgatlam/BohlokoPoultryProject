@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Bohloko Family Farm</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../../assets/images/icons/favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body>
+    <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <img src="../../assets/images/logo.png" alt="Logo">
+            <h5>Bohloko Family Farm</h5>
+            <small>Product Management</small>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-header">Main</div>
+            <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Admin Panel</a>
+            <div class="menu-header">Management</div>
+            <a href="products.html" class="active"><i class="fas fa-box"></i> Products</a>
+            <a href="inventory.html"><i class="fas fa-warehouse"></i> Inventory</a>
+            <a href="production.html"><i class="fas fa-egg"></i> Production</a>
+            <a href="payments.html"><i class="fas fa-credit-card"></i> Payments</a>
+            <div class="menu-header">People</div>
+            <a href="employees.html"><i class="fas fa-users"></i> Employees</a>
+            <a href="crm.html"><i class="fas fa-heart"></i> CRM</a>
+            <div class="menu-header">System</div>
+            <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+            <a href="system-logs.html"><i class="fas fa-file-alt"></i> System Logs</a>
+            <a href="api-keys.html"><i class="fas fa-key"></i> API Keys</a>
+        </div>
+        <div style="padding:20px;position:absolute;bottom:0;width:100%;"><button class="logout-btn w-100" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</button></div>
+    </div>
+    <div class="main-content">
+        <div class="top-bar">
+            <h4><i class="fas fa-box me-2"></i>Products</h4>
+            <button class="btn btn-success btn-sm" onclick="showAddModal()"><i class="fas fa-plus me-1"></i>Add Product</button>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <span>Product Catalog</span>
+                <input type="text" class="form-control form-control-sm" style="width:250px;" placeholder="Search products..." oninput="searchProducts(this.value)">
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead><tr><th>Name</th><th>Type</th><th>Category</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="productsTable"><tr><td colspan="6" class="text-center">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="productModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="modalTitle">Add Product</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="productForm"><div class="mb-3"><label class="form-label">Name</label><input type="text" class="form-control" id="productName" required></div><div class="mb-3"><label class="form-label">Product Type</label><select class="form-select" id="productType"><option>Whole Chicken</option><option>Breast</option><option>Thighs</option><option>Wings</option><option>Drumsticks</option><option>Eggs</option><option>Sausages</option><option>Marinated</option><option>Offal Pack</option><option>Soup Pack</option></select></div><div class="mb-3"><label class="form-label">Category</label><select class="form-select" id="productCategory"><option>Poultry</option><option>Value-Added</option><option>Traditional</option><option>Eggs</option></select></div><div class="mb-3"><label class="form-label">Price (ZAR)</label><input type="number" class="form-control" id="productPrice" step="0.01" required></div><div class="mb-3"><label class="form-label">Description</label><textarea class="form-control" id="productDesc" rows="3"></textarea></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-success" onclick="saveProduct()">Save</button></div></div></div></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/js/api.js"></script>
+    <script src="../../assets/js/admin.js"></script>
+    <script>
+        let allProducts = [];
+        async function loadProducts() {
+            const res = await api.products.getAll();
+            if (res.success) { allProducts = res.data; renderProducts(allProducts); }
+        }
+        function renderProducts(products) {
+            const tbody = document.getElementById('productsTable');
+            if (!products.length) { tbody.innerHTML = '<tr><td colspan="6" class="text-center">No products found</td></tr>'; return; }
+            tbody.innerHTML = products.map(p => `<tr><td><strong>${escapeHtml(p.name || p.productType)}</strong></td><td>${escapeHtml(p.productType)}</td><td>${escapeHtml(p.category)}</td><td>R${(p.price || 0).toFixed(2)}</td><td><span class="badge badge-${p.status === 'active' ? 'active' : 'inactive'}">${escapeHtml(p.status || 'active')}</span></td><td><button class="btn btn-outline-primary btn-action me-1" onclick="editProduct('${p._id}')"><i class="fas fa-edit"></i></button><button class="btn btn-outline-danger btn-action" onclick="deleteProduct('${p._id}')"><i class="fas fa-trash"></i></button></td></tr>`).join('');
+        }
+        function searchProducts(q) { const filtered = allProducts.filter(p => (p.name || p.productType).toLowerCase().includes(q.toLowerCase())); renderProducts(filtered); }
+        function showAddModal() { document.getElementById('modalTitle').textContent = 'Add Product'; document.getElementById('productForm').reset(); new bootstrap.Modal(document.getElementById('productModal')).show(); }
+        function editProduct(id) { const p = allProducts.find(x => x._id === id); if (!p) return; document.getElementById('modalTitle').textContent = 'Edit Product'; document.getElementById('productName').value = p.name || ''; document.getElementById('productType').value = p.productType; document.getElementById('productCategory').value = p.category; document.getElementById('productPrice').value = p.price; document.getElementById('productDesc').value = p.description || ''; new bootstrap.Modal(document.getElementById('productModal')).show(); }
+        async function saveProduct() {
+            const data = { name: document.getElementById('productName').value, productType: document.getElementById('productType').value, category: document.getElementById('productCategory').value, price: parseFloat(document.getElementById('productPrice').value), description: document.getElementById('productDesc').value };
+            const res = await api.products.create(data);
+            if (res.success) { bootstrap.Modal.getInstance(document.getElementById('productModal')).hide(); loadProducts(); }
+        }
+        async function deleteProduct(id) { if (confirm('Delete this product?')) { await api.products.delete(id); loadProducts(); } }
+        loadProducts();
+    </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employees - Bohloko Family Farm</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../../assets/images/icons/favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body>
+    <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-brand"><img src="../../assets/images/logo.png" alt="Logo"><h5>Bohloko Family Farm</h5><small>Employee Management</small></div>
+        <div class="sidebar-menu">
+            <div class="menu-header">Main</div>
+            <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Admin Panel</a>
+            <div class="menu-header">Management</div>
+            <a href="products.html"><i class="fas fa-box"></i> Products</a>
+            <a href="inventory.html"><i class="fas fa-warehouse"></i> Inventory</a>
+            <a href="production.html"><i class="fas fa-egg"></i> Production</a>
+            <a href="payments.html"><i class="fas fa-credit-card"></i> Payments</a>
+            <div class="menu-header">People</div>
+            <a href="employees.html" class="active"><i class="fas fa-users"></i> Employees</a>
+            <a href="crm.html"><i class="fas fa-heart"></i> CRM</a>
+            <div class="menu-header">System</div>
+            <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+            <a href="system-logs.html"><i class="fas fa-file-alt"></i> System Logs</a>
+            <a href="api-keys.html"><i class="fas fa-key"></i> API Keys</a>
+        </div>
+        <div style="padding:20px;position:absolute;bottom:0;width:100%;"><button class="logout-btn w-100" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</button></div>
+    </div>
+    <div class="main-content">
+        <div class="top-bar"><h4><i class="fas fa-users me-2"></i>Employees</h4><button class="btn btn-success btn-sm" onclick="showAddModal()"><i class="fas fa-plus me-1"></i>Add Employee</button></div>
+        <div class="row g-4 mb-4">
+            <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon green"><i class="fas fa-users"></i></div><h3 id="totalEmployees">0</h3><p>Total Staff</p></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon gold"><i class="fas fa-user-check"></i></div><h3 id="activeEmployees">0</h3><p>Active</p></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon blue"><i class="fas fa-building"></i></div><h3 id="departments">0</h3><p>Departments</p></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon green"><i class="fas fa-user-clock"></i></div><h3 id="newHires">0</h3><p>New This Month</p></div></div>
+        </div>
+        <div class="card">
+            <div class="card-header"><span>Employee Directory</span></div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead><tr><th>ID</th><th>Name</th><th>Department</th><th>Position</th><th>Hire Date</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="employeesTable"><tr><td colspan="7" class="text-center">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="employeeModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Add Employee</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="employeeForm"><div class="row"><div class="col-md-6 mb-3"><label class="form-label">First Name</label><input type="text" class="form-control" id="empFirstName" required></div><div class="col-md-6 mb-3"><label class="form-label">Last Name</label><input type="text" class="form-control" id="empLastName" required></div></div><div class="mb-3"><label class="form-label">Email</label><input type="email" class="form-control" id="empEmail" required></div><div class="row"><div class="col-md-6 mb-3"><label class="form-label">Department</label><select class="form-select" id="empDept"><option>Farm Operations</option><option>Processing</option><option>Sales</option><option>Administration</option><option>Logistics</option></select></div><div class="col-md-6 mb-3"><label class="form-label">Position</label><input type="text" class="form-control" id="empPosition" required></div></div><div class="mb-3"><label class="form-label">Phone</label><input type="tel" class="form-control" id="empPhone"></div></form></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-success" onclick="saveEmployee()">Save</button></div></div></div></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/js/api.js"></script>
+    <script src="../../assets/js/admin.js"></script>
+    <script>
+        let allEmployees = [];
+        async function loadEmployees() {
+            const [empRes, statsRes] = await Promise.all([api.employees.getAll(), api.employees.getStats()]);
+            if (empRes.success) { allEmployees = empRes.data; renderEmployees(allEmployees); }
+            if (statsRes.success) {
+                document.getElementById('totalEmployees').textContent = statsRes.data.total || 0;
+                document.getElementById('activeEmployees').textContent = statsRes.data.active || 0;
+                document.getElementById('departments').textContent = Object.keys(statsRes.data.byDepartment || {}).length;
+            }
+        }
+        function renderEmployees(employees) {
+            const tbody = document.getElementById('employeesTable');
+            if (!employees.length) { tbody.innerHTML = '<tr><td colspan="7" class="text-center">No employees found</td></tr>'; return; }
+            tbody.innerHTML = employees.map(e => `<tr><td><strong>${escapeHtml(e.employeeId || 'N/A')}</strong></td><td>${escapeHtml(e.firstName)} ${escapeHtml(e.lastName)}</td><td>${escapeHtml(e.department)}</td><td>${escapeHtml(e.position)}</td><td>${e.hireDate ? new Date(e.hireDate).toLocaleDateString() : 'N/A'}</td><td><span class="badge badge-${e.status === 'active' ? 'active' : 'inactive'}">${escapeHtml(e.status || 'active')}</span></td><td><button class="btn btn-outline-primary btn-sm" onclick="editEmployee('${e._id}')"><i class="fas fa-edit"></i></button></td></tr>`).join('');
+        }
+        function showAddModal() { document.getElementById('employeeForm').reset(); new bootstrap.Modal(document.getElementById('employeeModal')).show(); }
+        async function saveEmployee() {
+            const data = { firstName: document.getElementById('empFirstName').value, lastName: document.getElementById('empLastName').value, email: document.getElementById('empEmail').value, department: document.getElementById('empDept').value, position: document.getElementById('empPosition').value, phone: document.getElementById('empPhone').value };
+            const res = await api.employees.create(data);
+            if (res.success) { bootstrap.Modal.getInstance(document.getElementById('employeeModal')).hide(); loadEmployees(); }
+        }
+        function editEmployee(id) { alert('Edit functionality - ID: ' + id); }
+        loadEmployees();
+    </script>
+</body>
+</html>

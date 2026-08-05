@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Bohloko Family Farm</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../../assets/images/icons/favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="../../assets/css/admin.css">
+    <style>.chart-placeholder { height: 250px; background: linear-gradient(135deg, #f0f0f0, #e8e8e8); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #999; }</style>
+</head>
+<body>
+    <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-brand"><img src="../../assets/images/logo.png" alt="Logo"><h5>Bohloko Family Farm</h5><small>Analytics</small></div>
+        <div class="sidebar-menu">
+            <div class="menu-header">Main</div>
+            <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="analytics.html" class="active"><i class="fas fa-chart-bar"></i> Analytics</a>
+            <div class="menu-header">Management</div>
+            <a href="products.html"><i class="fas fa-box"></i> Products</a>
+            <a href="inventory.html"><i class="fas fa-warehouse"></i> Inventory</a>
+            <a href="production.html"><i class="fas fa-egg"></i> Production</a>
+            <a href="payments.html"><i class="fas fa-credit-card"></i> Payments</a>
+            <div class="menu-header">People</div>
+            <a href="employees.html"><i class="fas fa-users"></i> Employees</a>
+            <a href="crm.html"><i class="fas fa-heart"></i> CRM</a>
+            <div class="menu-header">System</div>
+            <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+            <a href="system-logs.html"><i class="fas fa-file-alt"></i> System Logs</a>
+        </div>
+        <div style="padding:20px;position:absolute;bottom:0;width:100%;"><button class="logout-btn w-100" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</button></div>
+    </div>
+    <div class="main-content">
+        <div class="top-bar"><h4><i class="fas fa-chart-bar me-2"></i>Analytics</h4>
+            <select class="form-select form-select-sm w-auto" id="periodSelect" onchange="loadAnalytics()">
+                <option value="7">Last 7 Days</option>
+                <option value="30" selected>Last 30 Days</option>
+                <option value="90">Last 90 Days</option>
+                <option value="365">Last Year</option>
+            </select>
+        </div>
+        <div class="row g-4 mb-4">
+            <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon green"><i class="fas fa-dollar-sign"></i></div><h3 id="totalRevenue">R0</h3><p>Total Revenue</p></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon gold"><i class="fas fa-shopping-cart"></i></div><h3 id="totalOrders">0</h3><p>Total Orders</p></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon blue"><i class="fas fa-users"></i></div><h3 id="totalCustomers">0</h3><p>Customers</p></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon red"><i class="fas fa-chart-line"></i></div><h3 id="avgOrderValue">R0</h3><p>Avg Order</p></div></div>
+        </div>
+        <div class="row g-4 mb-4">
+            <div class="col-lg-8"><div class="card"><div class="card-header">Revenue Trend</div><div class="card-body"><div class="chart-placeholder"><i class="fas fa-chart-line me-2"></i>Revenue Chart (Chart.js integration)</div></div></div></div>
+            <div class="col-lg-4"><div class="card"><div class="card-header">Top Products</div><div class="card-body"><div id="topProducts"><p class="text-muted">Loading...</p></div></div></div></div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-6"><div class="card"><div class="card-header">Orders by Status</div><div class="card-body"><div id="ordersByStatus"><p class="text-muted">Loading...</p></div></div></div></div>
+            <div class="col-lg-6"><div class="card"><div class="card-header">Inventory Health</div><div class="card-body"><div id="inventoryHealth"><p class="text-muted">Loading...</p></div></div></div></div>
+        </div>
+    </div>
+    <script src="../../assets/js/api.js"></script>
+    <script src="../../assets/js/admin.js"></script>
+    <script>
+        async function loadAnalytics() {
+            const days = parseInt(document.getElementById('periodSelect').value);
+            const [ordersRes, dashboardRes, invRes] = await Promise.all([
+                api.orders.getAll(),
+                api.analytics.getDashboard(),
+                api.analytics.getInventory()
+            ]);
+            if (ordersRes.success) {
+                const orders = ordersRes.data || [];
+                const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+                const totalOrders = orders.length;
+                const avgOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+                document.getElementById('totalOrders').textContent = totalOrders;
+                document.getElementById('totalRevenue').textContent = 'R' + totalRevenue.toLocaleString();
+                document.getElementById('avgOrderValue').textContent = 'R' + avgOrderValue.toFixed(2);
+            }
+            if (dashboardRes.success) {
+                const d = dashboardRes.data || {};
+                document.getElementById('totalCustomers').textContent = d.totalCustomers || 0;
+                renderTopProducts(d.topProducts || []);
+                renderOrdersByStatus(d.ordersByStatus || {});
+            }
+            if (invRes.success) renderInventoryHealth(invRes.data);
+        }
+        function renderTopProducts(products) {
+            const el = document.getElementById('topProducts');
+            if (!products.length) { el.innerHTML = '<p class="text-muted">No data</p>'; return; }
+            el.innerHTML = products.slice(0, 5).map(p => `<div class="d-flex justify-content-between mb-2"><span>${escapeHtml(p.name || p.productType)}</span><span class="text-muted">${p.count || p.totalSold} sold</span></div>`).join('');
+        }
+        function renderOrdersByStatus(statuses) {
+            const el = document.getElementById('ordersByStatus');
+            const colors = { confirmed: '#10b981', pending: '#f59e0b', delivered: '#3b82f6', cancelled: '#ef4444' };
+            const entries = Object.entries(statuses);
+            if (!entries.length) { el.innerHTML = '<p class="text-muted">No data</p>'; return; }
+            const max = Math.max(...entries.map(([, v]) => v));
+            el.innerHTML = entries.map(([k, v]) => `<div class="mb-3"><div class="d-flex justify-content-between"><span class="text-capitalize">${escapeHtml(k)}</span><span>${v}</span></div><div class="metric-bar"><div class="metric-fill" style="width:${(v / max) * 100}%;background:${colors[k] || '#999'}"></div></div></div>`).join('');
+        }
+        function renderInventoryHealth(data) {
+            const el = document.getElementById('inventoryHealth');
+            if (!data) { el.innerHTML = '<p class="text-muted">No data</p>'; return; }
+            el.innerHTML = `<div class="d-flex justify-content-between mb-2"><span>Total Products</span><strong>${data.totalProducts || 0}</strong></div><div class="d-flex justify-content-between mb-2"><span>Low Stock Items</span><strong class="text-danger">${data.lowStockItems || 0}</strong></div><div class="d-flex justify-content-between mb-2"><span>Out of Stock</span><strong class="text-warning">${data.outOfStock || 0}</strong></div><div class="d-flex justify-content-between mb-2"><span>Total Value</span><strong>R${(data.totalValue || 0).toLocaleString()}</strong></div>`;
+        }
+        loadAnalytics();
+    </script>
+</body>
+</html>

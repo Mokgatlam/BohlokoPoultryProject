@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ADMIN_PAGES_ANALYSIS.md</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+html,footer,header{
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Custom MD PDF CSS
+ */
+html,footer,header{
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+
+ }
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+<link rel="stylesheet" href="file:///r%3A/2.Travail/1.Enseignement/Cours/_1.Outils/2.Developpement/1.SCSS/main.css" type="text/css"><link rel="stylesheet" href="file:///d%3A/rdaros/Cours/_1.Outils/2.Developpement/1.SCSS/main.css" type="text/css">
+</head>
+
+<body>
+    <h1 id="admin-pages-analysis-and-enhancement-plan">Admin Pages Analysis and Enhancement Plan</h1>
+<h2 id="current-admin-pages-analysis">Current Admin Pages Analysis</h2>
+<h3 id="existing-admin-pages">Existing Admin Pages:</h3>
+<ol>
+<li><strong>Users</strong> (<code>/app/users</code>) - User account management (approve/reject, suspend/activate)</li>
+<li><strong>Orders</strong> (<code>/app/orders</code>) - Order management and status updates</li>
+<li><strong>CustomerCRM</strong> (<code>/app/crm</code>) - Customer relationship management with loyalty programs, feedback, campaigns</li>
+<li><strong>Settings</strong> (<code>/app/settings</code>) - Basic system settings and company info</li>
+<li><strong>Products</strong> (<code>/app/products</code>) - Product management</li>
+<li><strong>Inventory</strong> (<code>/app/inventory</code>) - Inventory management</li>
+<li><strong>Production</strong> (<code>/app/production</code>) - Production tracking</li>
+<li><strong>Analytics</strong> (<code>/app/analytics</code>) - Analytics dashboard</li>
+<li><strong>ProductionAnalytics</strong> (<code>/app/production-analytics</code>) - Production-specific analytics</li>
+</ol>
+<h3 id="existing-backend-routes">Existing Backend Routes:</h3>
+<ul>
+<li><code>/api/users</code> - User management with approval/rejection, suspension, export</li>
+<li><code>/api/orders</code> - Order management</li>
+<li><code>/api/products</code> - Product management</li>
+<li><code>/api/inventory</code> - Inventory management</li>
+<li><code>/api/production</code> - Production tracking</li>
+<li><code>/api/medication</code> - Medication tracking</li>
+<li><code>/api/harvest</code> - Harvest processing</li>
+<li><code>/api/quality</code> - Quality control</li>
+<li><code>/api/configuration</code> - System configuration</li>
+<li><code>/api/crm</code> - Customer relationship management</li>
+<li><code>/api/payments</code> - Payment processing</li>
+</ul>
+<h2 id="missing-admin-functionality">Missing Admin Functionality</h2>
+<h3 id="1-system-logs--audit-trail">1. System Logs &amp; Audit Trail</h3>
+<p><strong>Purpose</strong>: Track all system activities, user actions, and changes for security and compliance.<br>
+<strong>Features</strong>:</p>
+<ul>
+<li>View login/logout history</li>
+<li>Track data modifications (CRUD operations)</li>
+<li>Filter by user, date, action type</li>
+<li>Export audit logs</li>
+<li>Real-time monitoring</li>
+</ul>
+<h3 id="2-role--permission-management">2. Role &amp; Permission Management</h3>
+<p><strong>Purpose</strong>: Granular control over user permissions and roles.<br>
+<strong>Features</strong>:</p>
+<ul>
+<li>Create/edit/delete roles</li>
+<li>Assign permissions to roles</li>
+<li>Assign roles to users</li>
+<li>Permission inheritance</li>
+<li>Role-based access control (RBAC)</li>
+</ul>
+<h3 id="3-notification-management">3. Notification Management</h3>
+<p><strong>Purpose</strong>: Configure and manage system notifications.<br>
+<strong>Features</strong>:</p>
+<ul>
+<li>Configure notification templates</li>
+<li>Manage notification channels (email, SMS, push)</li>
+<li>Set notification triggers</li>
+<li>View notification history</li>
+<li>Test notification delivery</li>
+</ul>
+<h3 id="4-backup--restore-management">4. Backup &amp; Restore Management</h3>
+<p><strong>Purpose</strong>: System backup configuration and restoration.<br>
+<strong>Features</strong>:</p>
+<ul>
+<li>Schedule automatic backups</li>
+<li>Manual backup triggers</li>
+<li>Restore from backup</li>
+<li>Backup history and status</li>
+<li>Storage configuration</li>
+</ul>
+<h3 id="5-data-management">5. Data Management</h3>
+<p><strong>Purpose</strong>: Data export, import, and cleanup tools.<br>
+<strong>Features</strong>:</p>
+<ul>
+<li>Bulk data export (CSV, JSON, Excel)</li>
+<li>Data import tools</li>
+<li>Data cleanup and deduplication</li>
+<li>Data validation tools</li>
+<li>Archive management</li>
+</ul>
+<h3 id="6-api-key-management">6. API Key Management</h3>
+<p><strong>Purpose</strong>: Manage API keys for integrations.<br>
+<strong>Features</strong>:</p>
+<ul>
+<li>Generate/revoke API keys</li>
+<li>Set permissions for API keys</li>
+<li>View API usage statistics</li>
+<li>Rate limiting configuration</li>
+<li>API documentation</li>
+</ul>
+<h3 id="7-system-health-monitoring">7. System Health Monitoring</h3>
+<p><strong>Purpose</strong>: Monitor system performance and health.<br>
+<strong>Features</strong>:</p>
+<ul>
+<li>Real-time system metrics</li>
+<li>Database health checks</li>
+<li>API endpoint monitoring</li>
+<li>Error rate tracking</li>
+<li>Performance alerts</li>
+</ul>
+<h3 id="8-report-generation">8. Report Generation</h3>
+<p><strong>Purpose</strong>: Advanced reporting tools.<br>
+<strong>Features</strong>:</p>
+<ul>
+<li>Custom report builder</li>
+<li>Scheduled report generation</li>
+<li>Report templates</li>
+<li>Export reports (PDF, Excel, CSV)</li>
+<li>Dashboard widgets</li>
+</ul>
+<h3 id="9-bulk-operations">9. Bulk Operations</h3>
+<p><strong>Purpose</strong>: Bulk user/order/product management.<br>
+<strong>Features</strong>:</p>
+<ul>
+<li>Bulk user updates</li>
+<li>Bulk order processing</li>
+<li>Bulk product updates</li>
+<li>Import/export tools</li>
+<li>Batch job management</li>
+</ul>
+<h3 id="10-integration-management">10. Integration Management</h3>
+<p><strong>Purpose</strong>: Manage third-party integrations.<br>
+<strong>Features</strong>:</p>
+<ul>
+<li>Integration status monitoring</li>
+<li>Configuration management</li>
+<li>Webhook management</li>
+<li>API connection testing</li>
+<li>Integration logs</li>
+</ul>
+<h2 id="implementation-plan">Implementation Plan</h2>
+<h3 id="phase-1-core-admin-pages-high-priority">Phase 1: Core Admin Pages (High Priority)</h3>
+<ol>
+<li><strong>System Logs</strong> - Audit trail and activity monitoring</li>
+<li><strong>Role Management</strong> - RBAC implementation</li>
+<li><strong>Notification Management</strong> - Centralized notification system</li>
+</ol>
+<h3 id="phase-2-data-management-medium-priority">Phase 2: Data Management (Medium Priority)</h3>
+<ol start="4">
+<li><strong>Backup &amp; Restore</strong> - Data protection</li>
+<li><strong>Data Management</strong> - Import/export tools</li>
+<li><strong>API Key Management</strong> - Integration security</li>
+</ol>
+<h3 id="phase-3-advanced-features-low-priority">Phase 3: Advanced Features (Low Priority)</h3>
+<ol start="7">
+<li><strong>System Health</strong> - Monitoring dashboard</li>
+<li><strong>Report Generation</strong> - Advanced reporting</li>
+<li><strong>Bulk Operations</strong> - Mass management tools</li>
+<li><strong>Integration Management</strong> - Third-party integrations</li>
+</ol>
+<h2 id="technical-implementation">Technical Implementation</h2>
+<h3 id="backend-requirements">Backend Requirements:</h3>
+<ol>
+<li>New routes for each admin feature</li>
+<li>Enhanced middleware for audit logging</li>
+<li>Permission validation middleware</li>
+<li>New service classes for each feature</li>
+<li>Database models for logs, roles, notifications, etc.</li>
+</ol>
+<h3 id="frontend-requirements">Frontend Requirements:</h3>
+<ol>
+<li>New React components for each admin page</li>
+<li>Updated App.tsx routing</li>
+<li>Enhanced API service methods</li>
+<li>New UI components for admin features</li>
+<li>Updated navigation menu</li>
+</ol>
+<h3 id="security-considerations">Security Considerations:</h3>
+<ol>
+<li>All admin routes require admin role</li>
+<li>Audit logging for all admin actions</li>
+<li>Input validation and sanitization</li>
+<li>Rate limiting for admin endpoints</li>
+<li>Secure backup storage</li>
+</ol>
+<h2 id="next-steps">Next Steps</h2>
+<ol>
+<li>Design database schemas for new features</li>
+<li>Implement backend routes and services</li>
+<li>Create frontend pages and components</li>
+<li>Update navigation and routing</li>
+<li>Test all admin functionality</li>
+<li>Document admin features</li>
+</ol>
+
+</body>
+
+</html>

@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bohloko Family Farm - Business Pitch Deck</title>
+<style>
+  @page { size: A4 landscape; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #fff; }
+
+  .slide {
+    width: 297mm; height: 210mm;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .slide:last-child { page-break-after: avoid; }
+
+  /* ===== COLOR PALETTE ===== */
+  :root {
+    --primary: #1B5E20;
+    --primary-light: #2E7D32;
+    --accent: #FF8F00;
+    --accent-light: #FFB300;
+    --dark: #1a1a2e;
+    --light: #f5f5f5;
+    --white: #ffffff;
+    --text: #333333;
+    --text-light: #666666;
+    --red: #C62828;
+    --blue: #1565C0;
+    --green: #2E7D32;
+    --orange: #E65100;
+  }
+
+  /* ===== SLIDE 1: TITLE ===== */
+  .slide-title {
+    background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 50%, #43A047 100%);
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .slide-title .logo-area { margin-bottom: 30px; }
+  .slide-title .chicken-icon { font-size: 72px; margin-bottom: 10px; }
+  .slide-title h1 { font-size: 52px; font-weight: 800; letter-spacing: 2px; margin-bottom: 8px; }
+  .slide-title h2 { font-size: 26px; font-weight: 300; letter-spacing: 4px; text-transform: uppercase; opacity: 0.9; }
+  .slide-title .tagline {
+    margin-top: 40px;
+    font-size: 18px;
+    font-weight: 400;
+    background: rgba(255,255,255,0.15);
+    padding: 12px 40px;
+    border-radius: 30px;
+    letter-spacing: 1px;
+  }
+  .slide-title .date {
+    position: absolute;
+    bottom: 30px;
+    right: 40px;
+    font-size: 14px;
+    opacity: 0.7;
+  }
+
+  /* ===== COMMON SLIDE HEADER ===== */
+  .slide-header {
+    background: var(--primary);
+    color: white;
+    padding: 18px 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 60px;
+  }
+  .slide-header h2 { font-size: 26px; font-weight: 700; letter-spacing: 1px; }
+  .slide-header .slide-num {
+    font-size: 14px;
+    background: rgba(255,255,255,0.2);
+    padding: 4px 14px;
+    border-radius: 12px;
+  }
+  .slide-body { flex: 1; padding: 30px 50px; display: flex; flex-direction: column; }
+
+  /* ===== CARDS ===== */
+  .card-grid {
+    display: grid;
+    gap: 16px;
+    flex: 1;
+  }
+  .card-grid-2 { grid-template-columns: 1fr 1fr; }
+  .card-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card-grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .card-grid-2-1 { grid-template-columns: 2fr 1fr; }
+  .card-grid-1-2 { grid-template-columns: 1fr 2fr; }
+
+  .card {
+    background: var(--light);
+    border-radius: 12px;
+    padding: 22px;
+    border-left: 5px solid var(--primary);
+  }
+  .card.accent { border-left-color: var(--accent); }
+  .card.red { border-left-color: var(--red); }
+  .card.blue { border-left-color: var(--blue); }
+  .card h3 {
+    font-size: 16px;
+    color: var(--primary);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .card p, .card li {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .card ul { padding-left: 18px; }
+  .card ul li { margin-bottom: 4px; }
+
+  .stat-card {
+    background: var(--primary);
+    color: white;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    border-left: none;
+  }
+  .stat-card .number { font-size: 36px; font-weight: 800; }
+  .stat-card .label { font-size: 13px; opacity: 0.9; margin-top: 4px; }
+
+  .highlight-box {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border-radius: 12px;
+    padding: 20px 28px;
+  }
+  .highlight-box h3 { color: var(--accent-light); font-size: 16px; margin-bottom: 8px; }
+  .highlight-box p, .highlight-box li { color: rgba(255,255,255,0.95); font-size: 13px; line-height: 1.55; }
+  .highlight-box ul { padding-left: 18px; }
+
+  /* ===== SLIDE 2: PROBLEM ===== */
+  .problem-card {
+    background: #FFF3E0;
+    border-left: 5px solid var(--orange);
+    border-radius: 12px;
+    padding: 18px 22px;
+  }
+  .problem-card h3 { color: var(--orange); font-size: 15px; margin-bottom: 6px; }
+  .problem-card p { font-size: 12.5px; color: var(--text); line-height: 1.5; }
+
+  /* ===== BMC TABLE ===== */
+  .bmc-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    flex: 1;
+  }
+  .bmc-table td, .bmc-table th {
+    border: 2px solid var(--primary);
+    padding: 10px 12px;
+    vertical-align: top;
+    line-height: 1.45;
+  }
+  .bmc-table th {
+    background: var(--primary);
+    color: white;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .bmc-table .bmc-title { font-weight: 700; color: var(--primary); font-size: 12px; margin-bottom: 4px; }
+  .bmc-table ul { padding-left: 14px; margin: 0; }
+  .bmc-table ul li { margin-bottom: 2px; }
+
+  /* ===== TIMELINE ===== */
+  .timeline { display: flex; gap: 0; flex: 1; align-items: stretch; }
+  .timeline-item {
+    flex: 1;
+    padding: 16px;
+    position: relative;
+    background: var(--light);
+    border-radius: 10px;
+    margin: 0 6px;
+  }
+  .timeline-item.active { background: var(--primary); color: white; }
+  .timeline-item h4 { font-size: 14px; margin-bottom: 6px; }
+  .timeline-item p { font-size: 12px; line-height: 1.45; }
+  .timeline-item .phase-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+  }
+  .timeline-item .phase-tag.green { background: #C8E6C9; color: var(--primary); }
+  .timeline-item.active .phase-tag.green { background: rgba(255,255,255,0.2); color: white; }
+
+  /* ===== FOOTER ===== */
+  .slide-footer {
+    padding: 8px 50px;
+    font-size: 11px;
+    color: var(--text-light);
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  /* ===== LIST STYLES ===== */
+  .feature-list { list-style: none; padding: 0; }
+  .feature-list li {
+    padding: 6px 0;
+    font-size: 13px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .feature-list li::before { content: "✓"; color: var(--primary); font-weight: 700; font-size: 14px; flex-shrink: 0; }
+
+  .metric-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .metric-item {
+    flex: 1;
+    background: var(--light);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+  }
+  .metric-item .val { font-size: 24px; font-weight: 800; color: var(--primary); }
+  .metric-item .lbl { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+
+  .tag {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    margin: 2px;
+  }
+  .tag.orange { background: var(--accent); }
+  .tag.blue { background: var(--blue); }
+
+  .icon-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .icon-item {
+    background: var(--light);
+    border-radius: 10px;
+    padding: 14px 18px;
+    text-align: center;
+    flex: 1;
+    min-width: 100px;
+  }
+  .icon-item .emoji { font-size: 28px; }
+  .icon-item .text { font-size: 12px; color: var(--text); margin-top: 4px; font-weight: 600; }
+
+  .two-col { display: flex; gap: 24px; flex: 1; }
+  .two-col > div { flex: 1; }
+</style>
+</head>
+<body>
+
+<!-- ==================== SLIDE 1: TITLE ==================== -->
+<div class="slide slide-title">
+  <div class="logo-area">
+    <div class="chicken-icon">🐔</div>
+    <h1>BOHLOKO FAMILY FARM</h1>
+    <h2>Poultry Processing &amp; Sales Platform</h2>
+  </div>
+  <div class="tagline">From Farm to Fork — A Complete Digital poultry Management Ecosystem</div>
+  <div class="date">Business Pitch Deck | June 2026</div>
+</div>
+
+<!-- ==================== SLIDE 2: THE PROBLEM ==================== -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>The Problem</h2>
+    <span class="slide-num">02</span>
+  </div>
+  <div class="slide-body">
+    <div style="margin-bottom: 18px;">
+      <h3 style="font-size: 18px; color: var(--dark);">South Africa's poultry industry faces critical operational challenges</h3>
+      <p style="font-size: 13px; color: var(--text-light); margin-top: 4px;">Small-to-medium poultry farms lose revenue through inefficiency, waste, and lack of visibility.</p>
+    </div>
+    <div class="card-grid card-grid-3" style="flex: 1;">
+      <div class="problem-card">
+        <h3>📊 No Real-Time Visibility</h3>
+        <p>Farmers lack real-time data on inventory levels, production cycles, and sales — leading to stockouts, overstocking, and spoiled perishable goods.</p>
+      </div>
+      <div class="problem-card">
+        <h3>📋 Manual &amp; Paper-Based</h3>
+        <p>Critical operations — feed tracking, medication logs, quality checks — are still done on paper, causing errors, lost data, and compliance risks.</p>
+      </div>
+      <div class="problem-card">
+        <h3>💸 Revenue Leakage</h3>
+        <p>Inefficient order processing, no customer loyalty programs, and poor sales channel management result in lost repeat business and revenue.</p>
+      </div>
+      <div class="problem-card">
+        <h3>⚠️ Compliance Burden</h3>
+        <p>Food safety regulations (DAFF, POPIA) require documented audit trails — manual systems can't keep up, risking fines and shutdowns.</p>
+      </div>
+      <div class="problem-card">
+        <h3>📉 Growth Barriers</h3>
+        <p>Scaling from 500 to 5,000+ birds per cycle requires systems that manual processes simply cannot support.</p>
+      </div>
+      <div class="problem-card">
+        <h3>🔗 Disconnected Systems</h3>
+        <p>No integration between production, inventory, sales, and finance — creating data silos and decision-making delays.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Bohloko Family Farm</span>
+    <span>Confidential</span>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 3: THE SOLUTION ==================== -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Our Solution</h2>
+    <span class="slide-num">03</span>
+  </div>
+  <div class="slide-body">
+    <div style="margin-bottom: 14px;">
+      <h3 style="font-size: 18px; color: var(--dark);">An end-to-end digital platform for poultry production, processing, and sales</h3>
+    </div>
+    <div class="card-grid card-grid-3" style="flex: 1;">
+      <div class="highlight-box">
+        <h3>🏭 Production Management</h3>
+        <ul>
+          <li>Plan &amp; track broiler production cycles</li>
+          <li>Daily logging: feed, water, mortality</li>
+          <li>Medication &amp; vaccination tracking</li>
+          <li>Automated mortality alerts (&gt;5%)</li>
+          <li>Feed conversion ratio analytics</li>
+        </ul>
+      </div>
+      <div class="highlight-box">
+        <h3>📦 Inventory &amp; Processing</h3>
+        <ul>
+          <li>Harvest into 10 cut types (whole, breast, wings, etc.)</li>
+          <li>Real-time stock level monitoring</li>
+          <li>Expiry tracking with automated alerts</li>
+          <li>Batch traceability: farm to sale</li>
+          <li>Multi-location storage management</li>
+        </ul>
+      </div>
+      <div class="highlight-box">
+        <h3>🛒 Sales &amp; Orders</h3>
+        <ul>
+          <li>Multi-channel ordering (farm gate, online, wholesale)</li>
+          <li>6 payment methods including mobile money</li>
+          <li>Automated receipts &amp; invoicing</li>
+          <li>Order status tracking &amp; notifications</li>
+          <li>Cash-on-delivery verification</li>
+        </ul>
+      </div>
+      <div class="highlight-box">
+        <h3>👥 Customer Relationship</h3>
+        <ul>
+          <li>5-tier loyalty program (Bronze → Diamond)</li>
+          <li>Customer segmentation &amp; targeting</li>
+          <li>Promotional campaigns (email, SMS, push)</li>
+          <li>Feedback &amp; complaint management</li>
+          <li>Customer lifetime value analytics</li>
+        </ul>
+      </div>
+      <div class="highlight-box">
+        <h3>✅ Quality &amp; Compliance</h3>
+        <ul>
+          <li>9 quality check types (microbiological, chemical, etc.)</li>
+          <li>Corrective action tracking</li>
+          <li>Quality certificate generation</li>
+          <li>Full audit trail for regulatory inspections</li>
+          <li>POPIA &amp; food safety compliance</li>
+        </ul>
+      </div>
+      <div class="highlight-box">
+        <h3>📈 Analytics &amp; Reporting</h3>
+        <ul>
+          <li>Production performance dashboards</li>
+          <li>Sales &amp; financial analytics</li>
+          <li>Inventory turnover &amp; aging reports</li>
+          <li>Export to PDF, Excel, CSV</li>
+          <li>Forecasting &amp; trend analysis</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Bohloko Family Farm</span>
+    <span>Confidential</span>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 4: MARKET OPPORTUNITY ==================== -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Market Opportunity</h2>
+    <span class="slide-num">04</span>
+  </div>
+  <div class="slide-body">
+    <div class="metric-row">
+      <div class="metric-item">
+        <div class="val">R 25B+</div>
+        <div class="lbl">SA Poultry Market Value</div>
+      </div>
+      <div class="metric-item">
+        <div class="val">~60%</div>
+        <div class="lbl">of SA Chicken Consumption</div>
+      </div>
+      <div class="metric-item">
+        <div class="val">2,500+</div>
+        <div class="lbl">Small Poultry Farms in SA</div>
+      </div>
+      <div class="metric-item">
+        <div class="val">&lt;15%</div>
+        <div class="lbl">Farms Using Digital Systems</div>
+      </div>
+    </div>
+    <div class="two-col" style="flex: 1;">
+      <div>
+        <div class="card" style="height: 100%;">
+          <h3>Target Customer Segments</h3>
+          <ul class="feature-list">
+            <li><strong>Consumers</strong> — Direct farm-to-table chicken buyers</li>
+            <li><strong>Restaurants</strong> — Bulk fresh chicken orders with traceability</li>
+            <li><strong>Retailers</strong> — Supermarkets and butcheries needing reliable supply</li>
+            <li><strong>Distributors</strong> — Wholesale buyers requiring volume and logistics</li>
+            <li><strong>Farm Gate Buyers</strong> — Walk-in customers at the farm</li>
+            <li><strong>Institutions</strong> — Schools, hospitals, and caterers</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card accent" style="height: 100%;">
+          <h3>Market Drivers</h3>
+          <ul class="feature-list">
+            <li>Growing demand for traceable, locally-sourced poultry</li>
+            <li>Increasing regulatory requirements for food safety</li>
+            <li>Mobile money adoption accelerating in rural SA</li>
+            <li>Rising consumer preference for farm-fresh products</li>
+            <li>Government support for agricultural digitisation</li>
+            <li>Need to reduce R3.5B annual poultry import bill</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Bohloko Family Farm</span>
+    <span>Confidential</span>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 5: BUSINESS MODEL CANVAS ==================== -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Business Model Canvas</h2>
+    <span class="slide-num">05</span>
+  </div>
+  <div class="slide-body" style="padding: 20px 30px;">
+    <table class="bmc-table">
+      <tr>
+        <th style="width:15%">Key Partners</th>
+        <th style="width:15%">Key Activities</th>
+        <th style="width:20%">Value Propositions</th>
+        <th style="width:15%">Customer Relationships</th>
+        <th style="width:20%">Customer Segments</th>
+      </tr>
+      <tr>
+        <td>
+          <ul>
+            <li>Firebase / Google Cloud</li>
+            <li>Stripe, PayFast, Yoco</li>
+            <li>DAFF (Dept. of Agriculture)</li>
+            <li>Feed suppliers</li>
+            <li>Cold chain logistics partners</li>
+            <li>Local municipalities</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>Poultry production management</li>
+            <li>Processing &amp; packaging</li>
+            <li>Quality control &amp; compliance</li>
+            <li>Order fulfilment &amp; delivery</li>
+            <li>Customer relationship management</li>
+            <li>Data analytics &amp; reporting</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>Complete farm-to-fork traceability</li>
+            <li>Real-time inventory visibility</li>
+            <li>Automated compliance documentation</li>
+            <li>Multi-channel sales platform</li>
+            <li>Food safety &amp; quality assurance</li>
+            <li>Data-driven decision making</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>Self-service online ordering</li>
+            <li>5-tier loyalty program</li>
+            <li>Promotional campaigns</li>
+            <li>Feedback &amp; complaint tracking</li>
+            <li>Personalised recommendations</li>
+            <li>Dedicated account management (B2B)</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>Consumers (direct buyers)</li>
+            <li>Restaurants &amp; caterers</li>
+            <li>Retailers &amp; butcheries</li>
+            <li>Wholesale distributors</li>
+            <li>Farm gate customers</li>
+            <li>Institutions (schools, hospitals)</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <th>Key Resources</th>
+        <th colspan="2">Channels</th>
+        <th colspan="2">Revenue Streams</th>
+      </tr>
+      <tr>
+        <td>
+          <ul>
+            <li>Poultry farm infrastructure</li>
+            <li>Processing facility</li>
+            <li>Digital platform (web app)</li>
+            <li>Skilled workforce</li>
+            <li>Customer data &amp; analytics</li>
+          </ul>
+        </td>
+        <td colspan="2">
+          <ul>
+            <li>Farm gate (walk-in sales)</li>
+            <li>Online ordering platform</li>
+            <li>Wholesale distribution network</li>
+            <li>Mobile app (planned)</li>
+            <li>Social media &amp; digital marketing</li>
+            <li>SMS &amp; email promotions</li>
+          </ul>
+        </td>
+        <td colspan="2">
+          <ul>
+            <li><strong>Product sales:</strong> Whole chicken, portions, value-added cuts</li>
+            <li><strong>B2B contracts:</strong> Restaurant &amp; retailer supply agreements</li>
+            <li><strong>Wholesale volume:</strong> Bulk orders with tiered pricing</li>
+            <li><strong>Value-added products:</strong> Pre-packed, marinated, seasoned cuts</li>
+            <li><strong>Future:</strong> Subscription boxes, export sales</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <th colspan="3">Cost Structure</th>
+        <th colspan="2">Cost Highlights</th>
+      </tr>
+      <tr>
+        <td colspan="3">
+          <ul>
+            <li>Feed &amp; medication (largest variable cost ~60%)</li>
+            <li>Labor (processing, sales, farm staff)</li>
+            <li>Platform hosting &amp; maintenance (R5,000/month)</li>
+            <li>Cold storage &amp; logistics</li>
+            <li>Marketing &amp; customer acquisition</li>
+            <li>Regulatory compliance &amp; certification</li>
+          </ul>
+        </td>
+        <td colspan="2">
+          <ul>
+            <li><strong>Initial Investment:</strong> R150,000</li>
+            <li><strong>Monthly Operating:</strong> R5,000</li>
+            <li><strong>Payback Period:</strong> 18 months</li>
+            <li><strong>Feed costs dominate:</strong> ~60% of production cost</li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="slide-footer">
+    <span>Bohloko Family Farm</span>
+    <span>Confidential</span>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 6: PRODUCT FEATURES ==================== -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Platform Features</h2>
+    <span class="slide-num">06</span>
+  </div>
+  <div class="slide-body">
+    <div class="card-grid card-grid-4" style="margin-bottom: 16px;">
+      <div class="stat-card">
+        <div class="number">37</div>
+        <div class="label">Frontend Pages</div>
+      </div>
+      <div class="stat-card" style="background: var(--accent);">
+        <div class="number">19</div>
+        <div class="label">API Routes</div>
+      </div>
+      <div class="stat-card" style="background: var(--blue);">
+        <div class="number">15</div>
+        <div class="label">Data Models</div>
+      </div>
+      <div class="stat-card" style="background: var(--red);">
+        <div class="number">9</div>
+        <div class="label">Modules Fully Implemented</div>
+      </div>
+    </div>
+    <div class="card-grid card-grid-3" style="flex: 1;">
+      <div class="card">
+        <h3>🐔 Production Module</h3>
+        <ul class="feature-list">
+          <li>Cycle planning &amp; approval workflow</li>
+          <li>Daily production logs</li>
+          <li>Medication &amp; vaccination tracking</li>
+          <li>Mortality rate monitoring</li>
+          <li>Harvest processing (10 cut types)</li>
+        </ul>
+      </div>
+      <div class="card accent">
+        <h3>📦 Inventory Module</h3>
+        <ul class="feature-list">
+          <li>Real-time stock monitoring</li>
+          <li>Multi-location management</li>
+          <li>Expiry date tracking &amp; alerts</li>
+          <li>Batch traceability</li>
+          <li>Transfer workflow management</li>
+        </ul>
+      </div>
+      <div class="card blue">
+        <h3>🛒 Orders &amp; Payments</h3>
+        <ul class="feature-list">
+          <li>Product catalogue with real-time stock</li>
+          <li>6 payment methods</li>
+          <li>3 payment gateway integrations</li>
+          <li>Partial payments &amp; payment plans</li>
+          <li>Automated receipts &amp; invoices</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>👥 CRM Module</h3>
+        <ul class="feature-list">
+          <li>Customer profiles &amp; order history</li>
+          <li>5-tier loyalty program</li>
+          <li>Promotional campaign management</li>
+          <li>Customer segmentation</li>
+          <li>Customer lifetime value analytics</li>
+        </ul>
+      </div>
+      <div class="card accent">
+        <h3>✅ Quality Control</h3>
+        <ul class="feature-list">
+          <li>9 quality check types</li>
+          <li>Corrective action tracking</li>
+          <li>Certificate generation</li>
+          <li>Full audit trails</li>
+          <li>Scheduled quality checks</li>
+        </ul>
+      </div>
+      <div class="card blue">
+        <h3>📊 Analytics &amp; Admin</h3>
+        <ul class="feature-list">
+          <li>Production &amp; sales dashboards</li>
+          <li>Inventory turnover reports</li>
+          <li>System configuration panel</li>
+          <li>User role management (RBAC)</li>
+          <li>Data backup &amp; export tools</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Bohloko Family Farm</span>
+    <span>Confidential</span>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 7: TECHNOLOGY ==================== -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Technology Stack</h2>
+    <span class="slide-num">07</span>
+  </div>
+  <div class="slide-body">
+    <div class="two-col" style="flex: 1;">
+      <div>
+        <div class="card" style="margin-bottom: 16px;">
+          <h3>Backend Architecture</h3>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;">
+            <span class="tag">Node.js</span>
+            <span class="tag">TypeScript</span>
+            <span class="tag">Express.js</span>
+            <span class="tag">Firebase Auth</span>
+            <span class="tag">Firestore</span>
+            <span class="tag">JWT</span>
+            <span class="tag">bcrypt</span>
+          </div>
+          <p style="margin-top: 10px;">Microservices-ready architecture with clean separation of concerns. Service layer pattern with repository abstraction and dependency injection.</p>
+        </div>
+        <div class="card" style="margin-bottom: 16px;">
+          <h3>Frontend</h3>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;">
+            <span class="tag">React</span>
+            <span class="tag">TypeScript</span>
+            <span class="tag">Material-UI</span>
+            <span class="tag">Axios</span>
+            <span class="tag">Responsive</span>
+          </div>
+          <p style="margin-top: 10px;">37-page responsive dashboard with role-based views. Farm-themed UI with offline capability for field staff.</p>
+        </div>
+        <div class="card">
+          <h3>Infrastructure</h3>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;">
+            <span class="tag blue">Google Cloud</span>
+            <span class="tag blue">Firebase</span>
+            <span class="tag blue">Docker</span>
+            <span class="tag blue">CI/CD</span>
+          </div>
+          <p style="margin-top: 10px;">Cloud-native deployment with auto-scaling, daily backups, and disaster recovery (4-hour RTO).</p>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="height: 100%;">
+          <h3>Design Principles</h3>
+          <ul class="feature-list">
+            <li><strong>SOLID Principles</strong> — SRP, OCP, LSP, ISP, DIP enforced across all modules</li>
+            <li><strong>Service Layer Pattern</strong> — Business logic separated from data access</li>
+            <li><strong>Repository Pattern</strong> — Data access abstracted for testability</li>
+            <li><strong>DTO Pattern</strong> — Clean API contracts between frontend and backend</li>
+            <li><strong>Dependency Injection</strong> — Loose coupling for maintainability</li>
+            <li><strong>Strategy Pattern</strong> — Pluggable payment gateways</li>
+            <li><strong>Observer Pattern</strong> — Event-driven notifications</li>
+          </ul>
+          <div style="margin-top: 16px; padding: 12px; background: #E8F5E9; border-radius: 8px;">
+            <strong style="color: var(--primary);">Performance Targets</strong>
+            <ul style="font-size: 12px; margin-top: 6px; padding-left: 16px;">
+              <li>Page load: ≤ 3 seconds</li>
+              <li>API response: ≤ 1 second (95th percentile)</li>
+              <li>Uptime: 99.5% during business hours</li>
+              <li>50→200 concurrent users (scalable)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Bohloko Family Farm</span>
+    <span>Confidential</span>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 8: COMPETITIVE ADVANTAGE ==================== -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Competitive Advantage</h2>
+    <span class="slide-num">08</span>
+  </div>
+  <div class="slide-body">
+    <div class="card-grid card-grid-2" style="flex: 1;">
+      <div>
+        <div class="card" style="margin-bottom: 14px;">
+          <h3>🏆 What Sets Us Apart</h3>
+          <ul class="feature-list">
+            <li><strong>End-to-end integration</strong> — Only platform covering production → processing → sales in one system</li>
+            <li><strong>South African first</strong> — Built for SA regulations, payment methods (PayFast, Yoco, mobile money), and currency (ZAR)</li>
+            <li><strong>Offline-capable</strong> — Works in rural areas with limited connectivity</li>
+            <li><strong>Bilingual</strong> — English &amp; Sesotho language support</li>
+            <li><strong>Mobile-first</strong> — Designed for field staff with smartphones</li>
+          </ul>
+        </div>
+        <div class="card accent">
+          <h3>🔒 Compliance Built-In</h3>
+          <ul class="feature-list">
+            <li>POPIA-compliant data handling</li>
+            <li>Food safety audit trails (DAFF)</li>
+            <li>Automated quality certificates</li>
+            <li>7-year financial record retention</li>
+            <li>VAT calculation &amp; reporting</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom: 14px;">
+          <h3>💰 Cost Efficiency</h3>
+          <div class="metric-row">
+            <div class="metric-item">
+              <div class="val">R150K</div>
+              <div class="lbl">Initial Investment</div>
+            </div>
+            <div class="metric-item">
+              <div class="val">R5K</div>
+              <div class="lbl">Monthly Operating</div>
+            </div>
+            <div class="metric-item">
+              <div class="val">18 mo</div>
+              <div class="lbl">Payback Period</div>
+            </div>
+          </div>
+          <p style="font-size: 13px; margin-top: 8px;">Reduces manual data entry by <strong>60%</strong> and improves inventory accuracy to <strong>99%</strong>. ROI driven by efficiency gains, waste reduction, and increased sales.</p>
+        </div>
+        <div class="highlight-box">
+          <h3>📈 Measurable Impact</h3>
+          <ul>
+            <li>60% reduction in manual data entry</li>
+            <li>99% inventory accuracy (up from ~80%)</li>
+            <li>Real-time visibility across all operations</li>
+            <li>Faster order processing (&lt;30 seconds)</li>
+            <li>Automated compliance reporting</li>
+            <li>Scalable from 500 to 5,000+ birds/cycle</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Bohloko Family Farm</span>
+    <span>Confidential</span>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 9: FINANCIAL PROJECTIONS ==================== -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Financial Overview</h2>
+    <span class="slide-num">09</span>
+  </div>
+  <div class="slide-body">
+    <div class="metric-row">
+      <div class="metric-item">
+        <div class="val">R150,000</div>
+        <div class="lbl">Total Development Cost</div>
+      </div>
+      <div class="metric-item">
+        <div class="val">R5,000</div>
+        <div class="lbl">Monthly Operating Cost</div>
+      </div>
+      <div class="metric-item">
+        <div class="val">R240,000+</div>
+        <div class="lbl">Year 1 Revenue Target</div>
+      </div>
+      <div class="metric-item">
+        <div class="val">18 Months</div>
+        <div class="lbl">Investment Payback</div>
+      </div>
+    </div>
+    <div class="two-col" style="flex: 1;">
+      <div>
+        <div class="card" style="height: 100%;">
+          <h3>Revenue Model</h3>
+          <ul class="feature-list">
+            <li><strong>Direct Sales</strong> — Farm gate, online orders for whole &amp; portioned chicken</li>
+            <li><strong>B2B Contracts</strong> — Recurring supply agreements with restaurants &amp; retailers</li>
+            <li><strong>Wholesale Volume</strong> — Tiered pricing for bulk buyers (distributors, institutions)</li>
+            <li><strong>Value-Added Products</strong> — Pre-packed, marinated, and seasoned cuts at premium pricing</li>
+            <li><strong>Future: Subscriptions</strong> — Weekly/monthly chicken box subscriptions for consumers</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card accent" style="height: 100%;">
+          <h3>Cost Breakdown</h3>
+          <ul class="feature-list">
+            <li><strong>Feed &amp; Medication:</strong> ~60% of production costs (largest variable cost)</li>
+            <li><strong>Labor:</strong> Processing staff, farm attendants, sales team</li>
+            <li><strong>Platform Hosting:</strong> R5,000/month (Firebase/Google Cloud)</li>
+            <li><strong>Cold Storage:</strong> Refrigeration and freezer operations</li>
+            <li><strong>Marketing:</strong> Digital marketing and promotional campaigns</li>
+            <li><strong>Compliance:</strong> Certifications, inspections, regulatory fees</li>
+          </ul>
+          <div style="margin-top: 12px; padding: 10px; background: #FFF3E0; border-radius: 8px; font-size: 12px;">
+            <strong>Key Metric:</strong> System must pay for itself within 18 months through efficiency gains, reduced waste, and increased sales volume.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Bohloko Family Farm</span>
+    <span>Confidential</span>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 10: ROADMAP ==================== -->
+<div class="slide">
+  <div class="slide-header">
+    <h2>Implementation Roadmap</h2>
+    <span class="slide-num">10</span>
+  </div>
+  <div class="slide-body">
+    <div class="timeline">
+      <div class="timeline-item active">
+        <span class="phase-tag green">Phase 1 — Months 1-3</span>
+        <h4>Core Production &amp; Inventory</h4>
+        <ul style="font-size: 12px; padding-left: 14px; margin-top: 6px;">
+          <li>Production cycle management</li>
+          <li>Daily logging &amp; medication tracking</li>
+          <li>Harvest processing (10 cut types)</li>
+          <li>Real-time inventory tracking</li>
+          <li>Storage location management</li>
+        </ul>
+      </div>
+      <div class="timeline-item">
+        <span class="phase-tag green">Phase 2 — Months 4-5</span>
+        <h4>Orders &amp; Sales</h4>
+        <ul style="font-size: 12px; padding-left: 14px; margin-top: 6px;">
+          <li>Product catalogue</li>
+          <li>Multi-channel ordering</li>
+          <li>Payment processing (6 methods)</li>
+          <li>Receipt &amp; invoice generation</li>
+          <li>Order tracking &amp; notifications</li>
+        </ul>
+      </div>
+      <div class="timeline-item">
+        <span class="phase-tag green">Phase 3 — Months 6-7</span>
+        <h4>Analytics &amp; CRM</h4>
+        <ul style="font-size: 12px; padding-left: 14px; margin-top: 6px;">
+          <li>Production analytics dashboards</li>
+          <li>Sales &amp; financial reports</li>
+          <li>CRM system (loyalty, campaigns)</li>
+          <li>Customer segmentation</li>
+          <li>Inventory analytics</li>
+        </ul>
+      </div>
+      <div class="timeline-item">
+        <span class="phase-tag green">Phase 4 — Months 8-9</span>
+        <h4>Compliance &amp; Mobile</h4>
+        <ul style="font-size: 12px; padding-left: 14px; margin-top: 6px;">
+          <li>Quality control system</li>
+          <li>Compliance reporting</li>
+          <li>Certificate generation</li>
+          <li>Mobile app for field staff</li>
+          <li>Offline capability</li>
+        </ul>
+      </div>
+    </div>
+    <div style="margin-top: 16px; display: flex; gap: 16px;">
+      <div class="card" style="flex: 1;">
+        <h3>9-Month Total Timeline</h3>
+        <p>Phased delivery ensures core operations are live within 3 months, with full platform completion by month 9. Agile methodology with regular stakeholder demos.</p>
+      </div>
+      <div class="card accent" style="flex: 1;">
+        <h3>Future Enhancements</h3>
+        <p>AI-powered recommendations, predictive analytics, supplier management, barcode/QR scanning, accounting system integration, and mobile money expansion.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Bohloko Family Farm</span>
+    <span>Confidential</span>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 11: CTA ==================== -->
+<div class="slide slide-title" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);">
+  <div class="logo-area">
+    <div class="chicken-icon">🐔</div>
+    <h1 style="font-size: 44px;">Thank You</h1>
+    <h2 style="font-size: 20px; margin-top: 10px;">Let's Build the Future of Poultry Farming Together</h2>
+  </div>
+  <div style="margin-top: 30px; display: flex; gap: 30px; justify-content: center;">
+    <div style="text-align: center;">
+      <div style="font-size: 14px; opacity: 0.7;">Investment Required</div>
+      <div style="font-size: 36px; font-weight: 800; color: var(--accent-light);">R 150,000</div>
+    </div>
+    <div style="text-align: center;">
+      <div style="font-size: 14px; opacity: 0.7;">Payback Period</div>
+      <div style="font-size: 36px; font-weight: 800; color: var(--accent-light);">18 Months</div>
+    </div>
+    <div style="text-align: center;">
+      <div style="font-size: 14px; opacity: 0.7;">Market Readiness</div>
+      <div style="font-size: 36px; font-weight: 800; color: var(--accent-light);">90% Complete</div>
+    </div>
+  </div>
+  <div class="tagline" style="margin-top: 40px;">
+    Bohloko Family Farm — Digitising South African Poultry, One Farm at a Time
+  </div>
+  <div class="date">Contact: Bohloko Family Farm | June 2026</div>
+</div>
+
+</body>
+</html>

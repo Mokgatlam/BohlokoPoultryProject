@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Login - Bohloko Family Farm</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Login to your Bohloko Family Farm account to manage orders and track deliveries.">
+    <link rel="shortcut icon" type="image/x-icon" href="../../assets/images/icons/favicon.png">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="../../assets/css/login.css">
+</head>
+
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar d-none d-lg-block">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="mailto:orders@bohlokofamilyfarm.co.za" class="me-3"><i class="fas fa-envelope me-1"></i> orders@bohlokofamilyfarm.co.za</a>
+                    <a href="tel:+27511234567"><i class="fas fa-phone me-1"></i> +27 51 123 4567</a>
+                </div>
+                <div>
+                    <a href="#" class="me-2"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="me-2"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="me-2"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg main-nav sticky-top">
+        <div class="container">
+            <a class="navbar-brand logo" href="index.html">
+                <img src="../../assets/images/logo.png" alt="Bohloko Family Farm Logo" style="height:120px;width:auto;">
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="shop.html">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="login.html" class="btn btn-outline-success btn-sm" style="padding:8px 20px;font-size:0.9rem;border-radius:50px;">Login</a>
+                    <a href="signup.html" class="btn btn-success btn-sm" style="padding:8px 20px;font-size:0.9rem;border-radius:50px;background:var(--primary);border-color:var(--primary);">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Auth Section -->
+    <section class="auth-section">
+        <div class="container">
+            <div class="auth-card">
+                <div class="row g-0">
+                    <!-- Left Side - Branding -->
+                    <div class="col-lg-5 auth-left">
+                        <div class="auth-left-content">
+                            <img src="Documentation/BohlokoFamilyFarmLogo.png" alt="Bohloko Farm" class="mb-4" style="max-height:100px;filter:drop-shadow(0 5px 15px rgba(0,0,0,0.3));">
+                            <h2>Welcome Back!</h2>
+                            <p>Login to access your account, manage orders, and track deliveries.</p>
+                            <ul class="feature-list list-unstyled">
+                                <li><i class="fas fa-check-circle"></i> Track your orders in real-time</li>
+                                <li><i class="fas fa-check-circle"></i> View order history and invoices</li>
+                                <li><i class="fas fa-check-circle"></i> Manage delivery addresses</li>
+                                <li><i class="fas fa-check-circle"></i> Get exclusive member pricing</li>
+                                <li><i class="fas fa-check-circle"></i> Receive special offers and promotions</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Right Side - Login Form -->
+                    <div class="col-lg-7 auth-right">
+                        <h3>Login to Your Account</h3>
+                        <p class="subtitle">Enter your credentials to access your account.</p>
+
+                        <form id="loginForm" onsubmit="handleLogin(event)">
+                            <div class="form-floating position-relative">
+                                <input type="email" class="form-control" id="email" placeholder="Email address" required>
+                                <label for="email"><i class="fas fa-envelope me-2" style="color:var(--text-muted)"></i>Email Address</label>
+                            </div>
+
+                            <div class="form-floating position-relative">
+                                <input type="password" class="form-control" id="password" placeholder="Password" required style="padding-right:50px;">
+                                <label for="password"><i class="fas fa-lock me-2" style="color:var(--text-muted)"></i>Password</label>
+                                <button type="button" class="password-toggle" onclick="togglePassword()">
+                                    <i class="fas fa-eye" id="toggleIcon"></i>
+                                </button>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="rememberMe">
+                                    <label class="form-check-label" for="rememberMe">Remember me</label>
+                                </div>
+                                <a href="#" class="forgot-link" style="margin:0;" onclick="showForgotPassword()">Forgot Password?</a>
+                            </div>
+
+                            <button type="submit" class="btn btn-login mb-3">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login
+                            </button>
+
+                            <div class="divider"><span>or continue with</span></div>
+
+                            <button type="button" class="btn btn-google mb-3">
+                                <i class="fab fa-google me-2"></i>Continue with Google
+                            </button>
+
+                            <div class="auth-links">
+                                Don't have an account? <a href="signup.html">Sign up here</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container py-5">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5><i class="fas fa-feather-alt me-2"></i>Bohloko Family Farm</h5>
+                    <p style="color:rgba(253,248,240,0.7);font-size:0.9rem;line-height:1.7;">Community-based poultry production, processing, and distribution in the Free State, South Africa.</p>
+                    <ul class="list-unstyled mt-3">
+                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2" style="color:var(--accent)"></i> Bloemfontein, Free State</li>
+                        <li class="mb-2"><i class="fas fa-phone me-2" style="color:var(--accent)"></i> <a href="tel:+27511234567">+27 51 123 4567</a></li>
+                        <li><i class="fas fa-envelope me-2" style="color:var(--accent)"></i> <a href="mailto:orders@bohlokofamilyfarm.co.za">orders@bohlokofamilyfarm.co.za</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4"><h5>Products</h5><ul class="list-unstyled"><li class="mb-2"><a href="shop.html">Whole Chickens</a></li><li class="mb-2"><a href="shop.html">Chicken Portions</a></li><li class="mb-2"><a href="shop.html">Marinated Chicken</a></li><li class="mb-2"><a href="shop.html">Sausages</a></li><li><a href="shop.html">Giblets & Feet</a></li></ul></div>
+                <div class="col-lg-2 col-md-4"><h5>Quick Links</h5><ul class="list-unstyled"><li class="mb-2"><a href="index.html">Home</a></li><li class="mb-2"><a href="about.html">About Us</a></li><li class="mb-2"><a href="shop.html">Products & Pricing</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+                <div class="col-lg-4 col-md-4">
+                    <h5>Stay Connected</h5>
+                    <p style="color:rgba(253,248,240,0.7);font-size:0.9rem;">Subscribe for updates on new products and special offers.</p>
+                    <div class="input-group mb-3"><input type="email" class="form-control" placeholder="Your email" style="border:none;padding:12px 16px;"><button class="btn" style="background:var(--accent);color:var(--primary-dark);font-weight:600;">Subscribe</button></div>
+                    <div class="d-flex gap-3 mt-3">
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom"><div class="container text-center"><p>&copy; 2026 Bohloko Family Farm. All rights reserved. | Poultry Department. Developed by Mokgatla Musapelo</p></div></div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/js/api.js"></script>
+
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background:#1B4332;color:#FDF8F0;">
+                <div class="modal-header" style="border-bottom:1px solid rgba(212,168,67,0.3);">
+                    <h5 class="modal-title"><i class="fas fa-key me-2" style="color:#D4A843;"></i>Reset Password</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="forgotStep1">
+                        <p>Enter your email address and we'll send you a reset token.</p>
+                        <input type="email" class="form-control mb-3" id="resetEmail" placeholder="Email address" style="background:rgba(255,255,255,0.1);border:1px solid rgba(212,168,67,0.3);color:#FDF8F0;">
+                        <button class="btn w-100" style="background:#D4A843;color:#1B4332;font-weight:600;" onclick="requestReset()">Send Reset Token</button>
+                    </div>
+                    <div id="forgotStep2" style="display:none;">
+                        <p>Enter the reset token and your new password.</p>
+                        <input type="text" class="form-control mb-2" id="resetToken" placeholder="Reset token" style="background:rgba(255,255,255,0.1);border:1px solid rgba(212,168,67,0.3);color:#FDF8F0;">
+                        <input type="password" class="form-control mb-2" id="newPassword" placeholder="New password" style="background:rgba(255,255,255,0.1);border:1px solid rgba(212,168,67,0.3);color:#FDF8F0;">
+                        <input type="password" class="form-control mb-3" id="confirmPassword" placeholder="Confirm password" style="background:rgba(255,255,255,0.1);border:1px solid rgba(212,168,67,0.3);color:#FDF8F0;">
+                        <button class="btn w-100" style="background:#D4A843;color:#1B4332;font-weight:600;" onclick="resetPassword()">Reset Password</button>
+                    </div>
+                    <div id="forgotStep3" style="display:none;">
+                        <div class="text-center py-3">
+                            <i class="fas fa-check-circle fa-3x mb-3" style="color:#28a745;"></i>
+                            <h5>Password Reset Successful!</h5>
+                            <p>You can now login with your new password.</p>
+                            <button class="btn" style="background:#D4A843;color:#1B4332;font-weight:600;" data-bs-dismiss="modal">Back to Login</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const pw = document.getElementById('password');
+            const icon = document.getElementById('toggleIcon');
+            if (pw.type === 'password') {
+                pw.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                pw.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const btn = document.querySelector('.btn-login');
+            const originalText = btn.innerHTML;
+
+            if (!email || !password) {
+                alert('Please enter email and password');
+                return;
+            }
+
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Logging in...';
+            btn.disabled = true;
+
+            try {
+                const result = await api.auth.login({ email, password });
+                
+                if (result.success) {
+                    api.setToken(result.data.token);
+                    localStorage.setItem('user', JSON.stringify(result.data.user));
+                    const user = result.data.user;
+                    if (user.role === 'Farm Manager') {
+                        window.location.href = '../admin/dashboard.html';
+                    } else if (user.role === 'Poultry Attendant') {
+                        window.location.href = '../staff/poultry.html';
+                    } else if (user.role === 'Processing Staff') {
+                        window.location.href = '../staff/processing.html';
+                    } else if (user.role === 'Sales Assistant') {
+                        window.location.href = '../staff/sales.html';
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                } else {
+                    alert(result.message || 'Login failed. Please try again.');
+                }
+            } catch (error) {
+                alert('Network error. Please check if the server is running.');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function showForgotPassword() {
+            document.getElementById('forgotStep1').style.display = 'block';
+            document.getElementById('forgotStep2').style.display = 'none';
+            document.getElementById('forgotStep3').style.display = 'none';
+            new bootstrap.Modal(document.getElementById('forgotPasswordModal')).show();
+        }
+
+        async function requestReset() {
+            const email = document.getElementById('resetEmail').value;
+            if (!email) { alert('Please enter your email'); return; }
+            try {
+                const res = await api.post('/auth/forgot-password', { email });
+                if (res.success) {
+                    if (res.resetToken) {
+                        document.getElementById('resetToken').value = res.resetToken;
+                    }
+                    document.getElementById('forgotStep1').style.display = 'none';
+                    document.getElementById('forgotStep2').style.display = 'block';
+                } else {
+                    alert(res.message || 'Error sending reset link');
+                }
+            } catch (e) {
+                alert('Network error');
+            }
+        }
+
+        async function resetPassword() {
+            const token = document.getElementById('resetToken').value;
+            const password = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            if (!token || !password) { alert('Please fill all fields'); return; }
+            if (password !== confirm) { alert('Passwords do not match'); return; }
+            try {
+                const res = await api.post('/auth/reset-password', { token, password });
+                if (res.success) {
+                    document.getElementById('forgotStep2').style.display = 'none';
+                    document.getElementById('forgotStep3').style.display = 'block';
+                } else {
+                    alert(res.message || 'Error resetting password');
+                }
+            } catch (e) {
+                alert('Network error');
+            }
+        }
+    </script>
+</body>
+
+</html>

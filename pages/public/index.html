@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Bohloko Family Farm - Fresh Poultry Products</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Bohloko Family Farm - Premium poultry products from the Free State, South Africa. Fresh chicken, portions, and value-added products.">
+    <link rel="shortcut icon" type="image/x-icon" href="../../assets/images/icons/favicon.png">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../assets/css/public.css">
+</head>
+
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar d-none d-lg-block">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="mailto:orders@bohlokofamilyfarm.co.za" class="me-3"><i class="fas fa-envelope me-1"></i> orders@bohlokofamilyfarm.co.za</a>
+                    <a href="tel:+27511234567"><i class="fas fa-phone me-1"></i> +27 51 123 4567</a>
+                </div>
+                <div>
+                    <a href="#" class="me-2"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="me-2"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="me-2"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg main-nav sticky-top">
+        <div class="container">
+            <a class="navbar-brand logo" href="index.html">
+                <img src="../../assets/images/logo.png" alt="Bohloko Family Farm Logo" class="logo-img">
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="shop.html">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-2">
+                    <button id="langToggle" onclick="toggleLanguage()" class="btn btn-outline-light btn-sm lang-toggle" title="Switch to Sesotho">St</button>
+                    <a href="login.html" class="btn-primary-custom btn-sm nav-btn">
+                        <i class="fas fa-sign-in-alt me-1"></i> Login
+                    </a>
+                    <a href="signup.html" class="btn-primary-custom btn-sm nav-btn">
+                        <i class="fas fa-user-plus me-1"></i> Sign Up
+                    </a>
+                    <a href="shop.html" class="btn-primary-custom btn-sm nav-btn">
+                        <i class="fas fa-shopping-cart me-1"></i> Order
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 hero-content mb-5 mb-lg-0">
+                    <span data-i18n="hero.badge" class="hero-badge">
+                        <i class="fas fa-egg me-1"></i> 100% Free State Farm Fresh
+                    </span>
+                    <h1 class="mb-3"><span data-i18n="hero.title1">Raised with Care,</span><br><span data-i18n="hero.title2">Served with Pride</span></h1>
+                    <p data-i18n="hero.subtitle" class="mb-4">From our family farm in Bloemfontein to your table - premium chickens raised naturally on open land, fed quality grain, and processed fresh daily. Taste the difference of real farm poultry.</p>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a href="shop.html" class="btn-primary-custom">
+                            <i class="fas fa-shopping-basket me-2"></i><span data-i18n="hero.shop_now">Shop Fresh Chicken</span>
+                        </a>
+                        <a href="about.html" class="btn-outline-light-custom">
+                            <i class="fas fa-leaf me-2"></i><span data-i18n="hero.learn_more">Our Farm Story</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6 hero-image text-center">
+                    <img src="https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=600&h=500&fit=crop&q=80" 
+                         alt="Chickens at Bohloko Family Farm" 
+                         class="img-fluid rounded-4 shadow-lg hero-img"
+                         onerror="this.src='../../assets/images/products/whole-chicken.png';this.style.maxHeight='450px';this.style.objectFit='contain';">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <section class="container">
+        <div class="stats-bar">
+            <div class="row">
+                <div class="col-6 col-lg-3">
+                    <div class="stat-item">
+                        <div class="stat-number">1000+</div>
+                        <div class="stat-label">Chickens Raised Per Cycle</div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="stat-item">
+                        <div class="stat-number">6-8</div>
+                        <div class="stat-label">Growing Cycles Per Year</div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="stat-item">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Antibiotic Free</div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="stat-item">
+                        <div class="stat-number">Free State</div>
+                        <div class="stat-label">Farm Gate & Delivery</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Categories -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">What's in the Coop</h2>
+                <div class="section-accent"></div>
+                <p class="section-subtitle">Fresh from the farm every morning. Whole chickens, cut portions, and traditional favourites.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-12 col-md-4">
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-drumstick-bite"></i>
+                        </div>
+                        <h5>Whole Chickens</h5>
+                        <p>Big, beautiful whole broilers perfect for Sunday lunch, braais, and family gatherings. Fresh from the coop to your pot.</p>
+                        <a href="shop.html" class="category-link">Shop Now <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-cut"></i>
+                        </div>
+                        <h5>Fresh Portions</h5>
+                        <p>Breast, thighs, wings, and drumsticks cut fresh to your order. No pre-packed nonsense - just clean, fresh cuts.</p>
+                        <a href="shop.html" class="category-link">Shop Now <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <h5>Traditional Favourites</h5>
+                        <p>Chicken feet, livers, gizzards, hearts, and necks. The real deal for soups, stews, and pap by the fire.</p>
+                        <a href="shop.html" class="category-link">Shop Now <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="section-padding bg-white">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Farm Favourites</h2>
+                <div class="section-accent"></div>
+                <p class="section-subtitle">Our most popular birds and cuts - the ones our customers come back for every week.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-12 col-md-4">
+                    <div class="product-card">
+                        <div class="product-card-img">
+                            <img src="../../assets/images/products/whole-chicken.png" 
+                                 alt="Whole Fresh Chicken"
+                                 class="product-img-placeholder"
+                                 loading="lazy"
+                                 onerror="this.parentElement.style.background='linear-gradient(135deg,var(--primary),var(--primary-light))';this.style.display='none';this.parentElement.innerHTML+='<i class=\'fas fa-drumstick-bite\' style=\'font-size:4rem;color:white;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)\'></i>';">
+                            <span class="product-badge">Best Seller</span>
+                        </div>
+                        <div class="product-card-body">
+                            <h5>Whole Fresh Chicken</h5>
+                            <p>Plump, juicy whole broiler. The centrepiece of every proper family meal.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="product-price">R89.99 <small>/kg</small></span>
+                                <a href="shop.html" class="btn-primary-custom btn-sm product-order-btn">Order</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="product-card">
+                        <div class="product-card-img">
+                            <img src="../../assets/images/products/chicken-breast.png" 
+                                 alt="Chicken Breast Fillets"
+                                 class="product-img-placeholder"
+                                 loading="lazy"
+                                 onerror="this.parentElement.style.background='linear-gradient(135deg,var(--primary),var(--primary-light))';this.style.display='none';this.parentElement.innerHTML+='<i class=\'fas fa-cut\' style=\'font-size:4rem;color:white;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)\'></i>';">
+                            <span class="product-badge">Popular</span>
+                        </div>
+                        <div class="product-card-body">
+                            <h5>Chicken Breast Fillets</h5>
+                            <p>Lean, tender breast fillets. Perfect for grilling, braaing, or a quick weeknight stir-fry.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="product-price">R129.99 <small>/kg</small></span>
+                                <a href="shop.html" class="btn-primary-custom btn-sm product-order-btn">Order</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="product-card">
+                        <div class="product-card-img">
+                            <img src="../../assets/images/products/marinated-chicken.png" 
+                                 alt="Marinated Chicken"
+                                 class="product-img-placeholder"
+                                 loading="lazy"
+                                 onerror="this.parentElement.style.background='linear-gradient(135deg,var(--primary),var(--primary-light))';this.style.display='none';this.parentElement.innerHTML+='<i class=\'fas fa-pepper-hot\' style=\'font-size:4rem;color:white;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)\'></i>';">
+                            <span class="product-badge">New</span>
+                        </div>
+                        <div class="product-card-body">
+                            <h5>Marinated Chicken</h5>
+                            <p>Ready to hit the fire. Traditional African marinade, packed with flavour and spice.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="product-price">R139.99 <small>/kg</small></span>
+                                <a href="shop.html" class="btn-primary-custom btn-sm product-order-btn">Order</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-5">
+                <a href="shop.html" class="btn-primary-custom">
+                    <i class="fas fa-shopping-basket me-2"></i>View All Products
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Why Choose Bohloko Farm?</h2>
+                <div class="section-accent"></div>
+                <p class="section-subtitle">From the coop to your kitchen - we do things the right way, the old-fashioned way.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <h5>Raised Naturally</h5>
+                        <p>Our chickens roam freely on open Free State land, fed quality grain with no antibiotics or hormones.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <h5>100% Natural</h5>
+                        <p>Our chickens are raised naturally with no antibiotics, no hormones, and no shortcuts. Just honest farming.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-snowflake"></i>
+                        </div>
+                        <h5>Fresh Daily</h5>
+                        <p>Processed fresh every morning. No frozen stock sitting around - you get farm-fresh chicken, every time.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-tractor"></i>
+                        </div>
+                        <h5>Local is Lekker</h5>
+                        <p>Supporting Free State farmers, creating local jobs, and strengthening food security in our community.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Farm Story Teaser -->
+    <section class="section-padding bg-white">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <img src="https://images.unsplash.com/photo-1580748141549-73282e82b837?w=400&h=300&fit=crop&q=80" 
+                                 alt="Chickens in Coop" 
+                                 class="img-fluid rounded-4 shadow-sm gallery-img"
+                                 loading="lazy"
+                                 onerror="this.src='../../assets/images/products/whole-chicken.png';this.style.objectFit='contain';">
+                        </div>
+                        <div class="col-6">
+                            <img src="https://images.unsplash.com/photo-1589922583749-6b8473a85048?w=400&h=300&fit=crop&q=80" 
+                                 alt="Broiler Chicken" 
+                                 class="img-fluid rounded-4 shadow-sm gallery-img"
+                                 loading="lazy"
+                                 onerror="this.src='../../assets/images/products/chicken-breast.png';this.style.objectFit='contain';">
+                        </div>
+                        <div class="col-12">
+                            <img src="https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=800&h=300&fit=crop&q=80" 
+                                 alt="Bohloko Farm Workers" 
+                                 class="img-fluid rounded-4 shadow-sm gallery-img"
+                                 loading="lazy"
+                                 onerror="this.src='../../assets/images/products/chicken-sausages.png';this.style.objectFit='contain';">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <span class="story-label"><i class="fas fa-feather-alt me-1"></i> Our Story</span>
+                    <h2 class="section-title story-title">Where Every Chicken<br>Tells a Story</h2>
+                    <div class="story-accent"></div>
+                    <p class="story-text-mb-sm">
+                        Bohloko Family Farm started with a simple dream - to bring real, honest chicken back to the table. No shortcuts, just good old-fashioned farming in the heart of the Free State.
+                    </p>
+                    <p class="story-text-mb-lg">
+                        From our coops to the Bloemfontein taxi ranks, from township spaza shops to city restaurants - our chickens are raised with pride, processed with care, and delivered fresh to your door.
+                    </p>
+                    <a href="about.html" class="btn-primary-custom">
+                        <i class="fas fa-leaf me-2"></i>Visit Our Farm
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Farm Life Gallery -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Life on Our Farm</h2>
+                <div class="section-accent"></div>
+                <p class="section-subtitle">Take a peek behind the scenes at Bohloko Family Farm.</p>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4 col-lg-2">
+                    <div class="position-relative overflow-hidden rounded-4 gallery-item">
+                        <img src="https://images.unsplash.com/photo-1580748141549-73282e82b837?w=400&h=400&fit=crop&q=80" 
+                             alt="Chickens in Chicken Coop" 
+                             class="gallery-img"
+                             loading="lazy"
+                             onmouseover="this.style.transform='scale(1.1)'"
+                             onmouseout="this.style.transform='scale(1)'"
+                             onerror="this.src='../../assets/images/products/whole-chicken.png';this.style.objectFit='contain';">
+                        <div class="gallery-overlay">
+                            <span class="gallery-label"><i class="fas fa-home me-1"></i> Coops</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-2">
+                    <div class="position-relative overflow-hidden rounded-4 gallery-item">
+                        <img src="https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=400&h=400&fit=crop&q=80" 
+                             alt="Free Range Chickens" 
+                             class="gallery-img"
+                             loading="lazy"
+                             onmouseover="this.style.transform='scale(1.1)'"
+                             onmouseout="this.style.transform='scale(1)'"
+                             onerror="this.src='../../assets/images/products/chicken-breast.png';this.style.objectFit='contain';">
+                        <div class="gallery-overlay">
+                            <span class="gallery-label"><i class="fas fa-feather-alt me-1"></i> Free Range</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-2">
+                    <div class="position-relative overflow-hidden rounded-4 gallery-item">
+                        <img src="https://images.unsplash.com/photo-1589922583749-6b8473a85048?w=400&h=400&fit=crop&q=80" 
+                             alt="Broiler Chickens" 
+                             class="gallery-img"
+                             loading="lazy"
+                             onmouseover="this.style.transform='scale(1.1)'"
+                             onmouseout="this.style.transform='scale(1)'"
+                             onerror="this.src='../../assets/images/products/chicken-thighs.png';this.style.objectFit='contain';">
+                        <div class="gallery-overlay">
+                            <span class="gallery-label"><i class="fas fa-drumstick-bite me-1"></i> Broilers</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-2">
+                    <div class="position-relative overflow-hidden rounded-4 gallery-item">
+                        <img src="https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=400&h=400&fit=crop&q=80" 
+                             alt="Farm Workers" 
+                             class="gallery-img"
+                             loading="lazy"
+                             onmouseover="this.style.transform='scale(1.1)'"
+                             onmouseout="this.style.transform='scale(1)'"
+                             onerror="this.src='../../assets/images/products/chicken-wings.png';this.style.objectFit='contain';">
+                        <div class="gallery-overlay">
+                            <span class="gallery-label"><i class="fas fa-users me-1"></i> Our Team</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-2">
+                    <div class="position-relative overflow-hidden rounded-4 gallery-item">
+                        <img src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=400&h=400&fit=crop&q=80" 
+                             alt="Free State Farm Land" 
+                             class="gallery-img"
+                             loading="lazy"
+                             onmouseover="this.style.transform='scale(1.1)'"
+                             onmouseout="this.style.transform='scale(1)'"
+                             onerror="this.src='../../assets/images/products/chicken-sausages.png';this.style.objectFit='contain';">
+                        <div class="gallery-overlay">
+                            <span class="gallery-label"><i class="fas fa-leaf me-1"></i> Farm Land</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-2">
+                    <div class="position-relative overflow-hidden rounded-4 gallery-item">
+                        <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&h=400&fit=crop&q=80" 
+                             alt="Farm Fresh Feed" 
+                             class="gallery-img"
+                             loading="lazy"
+                             onmouseover="this.style.transform='scale(1.1)'"
+                             onmouseout="this.style.transform='scale(1)'"
+                             onerror="this.src='../../assets/images/products/chicken-livers.png';this.style.objectFit='contain';">
+                        <div class="gallery-overlay">
+                            <span class="gallery-label"><i class="fas fa-seedling me-1"></i> Quality Feed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section-padding bg-white">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">From Coop to Kitchen</h2>
+                <div class="section-accent"></div>
+                <p class="section-subtitle">Four simple steps from our farm to your family's plate. Freshness guaranteed.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="text-center position-relative">
+                        <div class="step-icon">
+                            <i class="fas fa-egg"></i>
+                        </div>
+                        <h5 class="step-title">We Hatch & Raise</h5>
+                        <p class="step-text">Chicks hatched and raised on our Bloemfontein farm for 5-6 weeks with quality feed, clean water, and open space to roam.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="text-center position-relative">
+                        <div class="step-icon">
+                            <i class="fas fa-hand-holding-water"></i>
+                        </div>
+                        <h5 class="step-title">We Process with Care</h5>
+                        <p class="step-text">Processed with care in our certified facility. Every bird handled with respect and dignity.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="text-center position-relative">
+                        <div class="step-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <h5 class="step-title">We Pack Fresh</h5>
+                        <p class="step-text">Vacuum-sealed freshness with proper labelling, temperature control, and full traceability from farm to pack.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="text-center position-relative">
+                        <div class="step-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <h5 class="step-title">We Deliver to You</h5>
+                        <p class="step-text">Same-day delivery across Bloemfontein or free farm gate collection. Fresh to your door while it's still warm.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Who We Serve -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Who We Feed</h2>
+                <div class="section-accent"></div>
+                <p class="section-subtitle">From Sunday family dinners to busy restaurant kitchens - we've got the whole Free State covered.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="feature-card serve-card">
+                        <div class="feature-icon serve-icon"><i class="fas fa-home"></i></div>
+                        <h5 class="serve-title">Families</h5>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="feature-card serve-card">
+                        <div class="feature-icon serve-icon"><i class="fas fa-utensils"></i></div>
+                        <h5 class="serve-title">Restaurants</h5>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="feature-card serve-card">
+                        <div class="feature-icon serve-icon"><i class="fas fa-store"></i></div>
+                        <h5 class="serve-title">Butcheries</h5>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="feature-card serve-card">
+                        <div class="feature-icon serve-icon"><i class="fas fa-shopping-basket"></i></div>
+                        <h5 class="serve-title">Spaza Shops</h5>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="feature-card serve-card">
+                        <div class="feature-icon serve-icon"><i class="fas fa-school"></i></div>
+                        <h5 class="serve-title">Schools</h5>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="feature-card serve-card">
+                        <div class="feature-icon serve-icon"><i class="fas fa-hospital"></i></div>
+                        <h5 class="serve-title">Hospitals</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seasonal Offer -->
+    <section class="section-padding bg-white">
+        <div class="container">
+            <div class="row align-items-center g-4 promo-banner">
+                <div class="promo-decor-1"></div>
+                <div class="promo-decor-2"></div>
+                <div class="col-lg-8 position-relative" style="z-index:2;">
+                    <span class="promo-tag">
+                        <i class="fas fa-fire me-1"></i> Hot Deal
+                    </span>
+                    <h2 class="promo-title">Bulk Order Special: 10% Off on 500kg+</h2>
+                    <p class="promo-text">Running a restaurant, spaza, or butchery? Order 500kg or more this month and save big on top of our already fair prices.</p>
+                    <a href="shop.html" class="promo-btn">
+                        <i class="fas fa-tag me-2"></i>View Price List
+                    </a>
+                </div>
+                <div class="col-lg-4 text-center position-relative" style="z-index:2;">
+                    <div class="promo-big">10%</div>
+                    <div class="promo-save">SAVE</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">What the Community Says</h2>
+                <div class="section-accent"></div>
+                <p class="section-subtitle">Real customers, real stories. The proof is in the pot.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card testimonial-card">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="testimonial-avatar green">NM</div>
+                            <div class="ms-3">
+                                <h6 class="testimonial-name">Nomsa Mokoena</h6>
+                                <small class="testimonial-role">Restaurant Owner, Bloemfontein</small>
+                            </div>
+                        </div>
+                        <div class="mb-2 testimonial-stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"The chicken is always fresh and the portion sizes are honest. My customers keep coming back for more. Bohloko is the real deal - no funny business."</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card testimonial-card">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="testimonial-avatar green-light">TJ</div>
+                            <div class="ms-3">
+                                <h6 class="testimonial-name">Thabo Johannes</h6>
+                                <small class="testimonial-role">Spaza Shop Owner, Mangaung</small>
+                            </div>
+                        </div>
+                        <div class="mb-2 testimonial-stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"My customers love the chicken feet and gizzards. They fly off the shelf every weekend. Delivery is always on time and the prices make sense for my business."</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card testimonial-card">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="testimonial-avatar gold">MP</div>
+                            <div class="ms-3">
+                                <h6 class="testimonial-name">Mpho Petlele</h6>
+                                <small class="testimonial-role">Home Cook, Bloemfontein</small>
+                            </div>
+                        </div>
+                        <div class="mb-2 testimonial-stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <p class="testimonial-text">"My kids go crazy for the marinated chicken! It's so easy - just throw it on the fire and we're eating. Knowing it's fresh and local makes it even better."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section-padding bg-white">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Got Questions? We've Got Answers</h2>
+                <div class="section-accent"></div>
+                <p class="section-subtitle">Everything you need to know about ordering from the farm.</p>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item border-0 mb-3 faq-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button faq-btn" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    Are your products fresh?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body faq-body">
+                                    Yes, all our poultry products are fresh and processed daily. Our slaughtering and processing facility follows strict quality controls, giving you complete peace of mind.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item border-0 mb-3 faq-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed faq-btn" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    What areas do you deliver to?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body faq-body">
+                                    We deliver across Bloemfontein and the broader Free State. Farm gate pickup is free at our Bloemfontein location. Local delivery is R50, and regional delivery is quoted based on distance and quantity.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item border-0 mb-3 faq-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed faq-btn" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    What is the minimum order quantity?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body faq-body">
+                                    Minimum orders vary by customer type: Consumers can order from 1kg per product. Restaurants need 5kg minimum, retailers 10kg, and distributors 50kg per product.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item border-0 mb-3 faq-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed faq-btn" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                    Do you offer bulk discounts?
+                                </button>
+                            </h2>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body faq-body">
+                                    Absolutely! Orders over 100kg get 5% off, 500kg+ gets 10% off, and 1000kg+ gets 15% off. These discounts apply on top of our already competitive wholesale pricing.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item border-0 mb-3 faq-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed faq-btn" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                                    How fresh are the products?
+                                </button>
+                            </h2>
+                            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body faq-body">
+                                    Our products are processed fresh daily. Whole chickens have a shelf life of 3-7 days, and value-added products last 4-7 days when stored at 0-4&deg;C. We recommend consuming within 3 days for optimal freshness.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item border-0 faq-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed faq-btn" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+                                    What payment methods do you accept?
+                                </button>
+                            </h2>
+                            <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body faq-body">
+                                    We accept cash on delivery (local orders), bank transfer/EFT with 50% deposit, and credit terms for established customers (30 days). Contact us to set up a payment arrangement.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section section-padding">
+        <div class="container text-center cta-content">
+            <h2 class="cta-title">Ready for Real Farm Chicken?</h2>
+            <p class="cta-text">
+                No shortcuts, no funny business - just honest, fresh poultry from our family to yours. Order today and taste the Free State difference.
+            </p>
+            <a href="contact.html" class="btn-primary-custom me-3">
+                <i class="fas fa-phone me-2"></i>Call Us Now
+            </a>
+            <a href="shop.html" class="btn-outline-light-custom">
+                <i class="fas fa-shopping-basket me-2"></i>View Price List
+            </a>
+        </div>
+    </section>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/27511234567?text=Hello%20Bohloko%20Farm%2C%20I%27d%20like%20to%20order%20some%20fresh%20chicken." 
+       target="_blank" 
+       class="whatsapp-btn">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container py-5">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5><i class="fas fa-feather-alt me-2"></i>Bohloko Family Farm</h5>
+                    <p class="footer-desc">
+                        Family-owned poultry farm in the Free State. Raising chickens the old-fashioned way - with care, pride, and good Free State soil under our boots.
+                    </p>
+                    <ul class="list-unstyled mt-3">
+                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2 footer-icon"></i> Bloemfontein, Free State</li>
+                        <li class="mb-2"><i class="fas fa-phone me-2 footer-icon"></i> <a href="tel:+27511234567">+27 51 123 4567</a></li>
+                        <li><i class="fas fa-envelope me-2 footer-icon"></i> <a href="mailto:orders@bohlokofamilyfarm.co.za">orders@bohlokofamilyfarm.co.za</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h5>From the Coop</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="shop.html">Whole Chickens</a></li>
+                        <li class="mb-2"><a href="shop.html">Fresh Portions</a></li>
+                        <li class="mb-2"><a href="shop.html">Marinated Chicken</a></li>
+                        <li class="mb-2"><a href="shop.html">Sausages</a></li>
+                        <li><a href="shop.html">Feet, Livers & More</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="index.html">Home</a></li>
+                        <li class="mb-2"><a href="about.html">Our Farm</a></li>
+                        <li class="mb-2"><a href="shop.html">Shop & Pricing</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                    <h5>Stay in the Loop</h5>
+                    <p class="footer-subtitle">Get notified when fresh chickens are ready and when specials drop. No spam - just good food news.</p>
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control footer-email-input" placeholder="Your email">
+                        <button class="btn footer-subscribe-btn">Subscribe</button>
+                    </div>
+                    <div class="d-flex gap-3 mt-3">
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container text-center">
+                <p>&copy; 2026 Bohloko Family Farm. All rights reserved. | Poultry Department. Developed by Mokgatla Musapelo</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/js/lang.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').then(reg => {
+                console.log('Service Worker registered:', reg.scope);
+            }).catch(err => {
+                console.log('Service Worker registration failed:', err);
+            });
+        }
+    </script>
+</body>
+
+</html>

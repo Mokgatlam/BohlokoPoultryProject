@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard - Bohloko Family Farm</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../../assets/images/icons/favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../assets/css/index.css">
+    <style>
+        .dashboard-header { background: linear-gradient(135deg, var(--primary) 0%, #0d2818 100%); color: white; padding: 40px 0; }
+        .stat-card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 15px rgba(0,0,0,0.05); transition: transform 0.3s; }
+        .stat-card:hover { transform: translateY(-2px); }
+        .stat-card .icon { width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 15px; }
+        .stat-card h3 { font-size: 2rem; font-weight: 700; }
+        .stat-card p { color: #666; margin: 0; }
+        .order-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        .order-card .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .badge { padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; }
+        .badge-pending { background: #fef3c7; color: #92400e; }
+        .badge-confirmed { background: #dbeafe; color: #1e40af; }
+        .badge-delivered { background: #d1fae5; color: #065f46; }
+        .loyalty-progress { height: 10px; background: #e5e7eb; border-radius: 5px; overflow: hidden; }
+        .loyalty-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 5px; }
+        @media (max-width: 768px) { .dashboard-header { padding: 20px 0; } }
+    </style>
+</head>
+<body>
+    <div class="dashboard-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="mb-1">Welcome, <span id="customerName">Customer</span></h4>
+                    <p class="mb-0 opacity-75">Track your orders and manage your account</p>
+                </div>
+                <div>
+                    <a href="../public/shop.html" class="btn btn-outline-light btn-sm"><i class="fas fa-shopping-cart me-1"></i>Shop</a>
+                    <a href="#" class="btn btn-light btn-sm ms-2" onclick="logout()"><i class="fas fa-sign-out-alt"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container py-4">
+        <div class="row g-4 mb-4">
+            <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon" style="background:rgba(27,67,50,0.1);color:var(--primary)"><i class="fas fa-shopping-bag"></i></div><h3 id="totalOrders">0</h3><p>Total Orders</p></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon" style="background:rgba(212,168,67,0.1);color:#D4A843"><i class="fas fa-truck"></i></div><h3 id="activeOrders">0</h3><p>In Progress</p></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon" style="background:rgba(16,185,129,0.1);color:#10b981"><i class="fas fa-dollar-sign"></i></div><h3 id="totalSpent">R0</h3><p>Total Spent</p></div></div>
+            <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon" style="background:rgba(239,68,68,0.1);color:#ef4444"><i class="fas fa-star"></i></div><h3 id="loyaltyPoints">0</h3><p>Loyalty Points</p></div></div>
+        </div>
+        <div class="row g-4 mb-4">
+            <div class="col-lg-8">
+                <h5 class="mb-3">Recent Orders</h5>
+                <div id="recentOrders"><p class="text-muted">Loading...</p></div>
+            </div>
+            <div class="col-lg-4">
+                <h5 class="mb-3">Loyalty Status</h5>
+                <div class="card p-3 mb-4">
+                    <div class="d-flex justify-content-between mb-2"><strong id="loyaltyTier">Bronze</strong><span id="loyaltyPointsDisplay">0 pts</span></div>
+                    <div class="loyalty-progress"><div class="loyalty-fill" id="loyaltyBar" style="width:0%"></div></div>
+                    <small class="text-muted mt-2 d-block" id="loyaltyNext">0 points to Silver</small>
+                </div>
+                <h5 class="mb-3">Quick Links</h5>
+                <div class="list-group">
+                    <a href="../public/shop.html" class="list-group-item list-group-item-action"><i class="fas fa-store me-2"></i>Browse Shop</a>
+                    <a href="#" class="list-group-item list-group-item-action" onclick="showOrderHistory()"><i class="fas fa-history me-2"></i>Order History</a>
+                    <a href="#" class="list-group-item list-group-item-action" onclick="showAccountSettings()"><i class="fas fa-cog me-2"></i>Account Settings</a>
+                    <a href="#" class="list-group-item list-group-item-action" onclick="showHelp()"><i class="fas fa-question-circle me-2"></i>Help & Support</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../../assets/js/api.js"></script>
+    <script src="../../assets/js/admin.js"></script>
+    <script>
+        async function loadDashboard() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            document.getElementById('customerName').textContent = user.firstName || user.name || 'Customer';
+            const [ordersRes, loyaltyRes] = await Promise.all([api.orders.getAll(), api.orders.getLoyalty()]);
+            if (ordersRes.success) {
+                const orders = ordersRes.data;
+                document.getElementById('totalOrders').textContent = orders.length;
+                document.getElementById('activeOrders').textContent = orders.filter(o => o.status !== 'delivered' && o.status !== 'cancelled').length;
+                document.getElementById('totalSpent').textContent = 'R' + orders.reduce((s, o) => s + (o.totalAmount || o.total || 0), 0).toLocaleString();
+                renderRecentOrders(orders.slice(0, 5));
+            }
+            if (loyaltyRes.success) {
+                const l = loyaltyRes.data;
+                document.getElementById('loyaltyPoints').textContent = l.points || 0;
+                document.getElementById('loyaltyPointsDisplay').textContent = (l.points || 0) + ' pts';
+                document.getElementById('loyaltyTier').textContent = l.tier || 'Bronze';
+                document.getElementById('loyaltyBar').style.width = Math.min((l.points || 0) / 1000 * 100, 100) + '%';
+                document.getElementById('loyaltyNext').textContent = Math.max(1000 - (l.points || 0), 0) + ' points to next tier';
+            }
+        }
+        function renderRecentOrders(orders) {
+            const el = document.getElementById('recentOrders');
+            if (!orders.length) { el.innerHTML = '<p class="text-muted">No orders yet. <a href="../public/shop.html">Start shopping!</a></p>'; return; }
+            el.innerHTML = orders.map(o => `<div class="order-card"><div class="order-header"><div><strong>#${o.orderNumber || o._id?.substring(0, 8)}</strong><br><small class="text-muted">${o.createdAt ? new Date(o.createdAt).toLocaleDateString() : ''}</small></div><span class="badge badge-${o.status || 'pending'}">${o.status || 'pending'}</span></div><div class="d-flex justify-content-between"><span>${(o.items || []).length} item(s)</span><strong>R${(o.totalAmount || o.total || 0).toFixed(2)}</strong></div></div>`).join('');
+        }
+        function showOrderHistory() { alert('Order history page coming soon!'); }
+        function showAccountSettings() { alert('Account settings coming soon!'); }
+        function showHelp() { alert('Help & support coming soon!'); }
+        loadDashboard();
+    </script>
+</body>
+</html>

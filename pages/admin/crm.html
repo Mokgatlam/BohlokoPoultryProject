@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM - Bohloko Family Farm</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../../assets/images/icons/favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="../../assets/css/admin.css">
+    <style>
+        .badge-tier { padding: 4px 10px; border-radius: 15px; font-size: 0.75rem; font-weight: 600; }
+        .tier-bronze { background: #fed7aa; color: #9a3412; }
+        .tier-silver { background: #e5e7eb; color: #374151; }
+        .tier-gold { background: #fef08a; color: #854d0e; }
+        .tier-platinum { background: #dbeafe; color: #1e40af; }
+        .tier-diamond { background: #ede9fe; color: #6d28d9; }
+        .badge-status { padding: 4px 10px; border-radius: 15px; font-size: 0.75rem; }
+        .status-open { background: #fef3c7; color: #92400e; }
+        .status-responded { background: #dbeafe; color: #1e40af; }
+        .status-resolved { background: #d1fae5; color: #065f46; }
+        .page { display: none; }
+        .page.active { display: block; }
+    </style>
+</head>
+<body>
+    <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-brand">
+            <img src="../../assets/images/logo.png" alt="Logo">
+            <h5>CRM System</h5>
+            <small>Bohloko Family Farm</small>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-header">CRM</div>
+            <a href="#" class="active" onclick="showPage('dashboard')"><i class="fas fa-chart-pie"></i> Dashboard</a>
+            <a href="#" onclick="showPage('customers')"><i class="fas fa-users"></i> Customers</a>
+            <a href="#" onclick="showPage('loyalty')"><i class="fas fa-star"></i> Loyalty Program</a>
+            <a href="#" onclick="showPage('feedback')"><i class="fas fa-comments"></i> Feedback</a>
+            <a href="#" onclick="showPage('campaigns')"><i class="fas fa-bullhorn"></i> Campaigns</a>
+            <div class="menu-header">Navigation</div>
+            <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Back to Admin</a>
+            <a href="../public/index.html"><i class="fas fa-store"></i> View Website</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-bar">
+            <h4 id="pageTitle">CRM Dashboard</h4>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="page active">
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="icon" style="background:rgba(27,67,50,0.1);color:var(--primary);"><i class="fas fa-users"></i></div>
+                        <h3 id="statTotal">0</h3>
+                        <p>Total Customers</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="icon" style="background:rgba(212,168,67,0.1);color:var(--accent);"><i class="fas fa-crown"></i></div>
+                        <h3 id="statVIP">0</h3>
+                        <p>VIP Customers</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="icon" style="background:rgba(59,130,246,0.1);color:#3b82f6;"><i class="fas fa-comments"></i></div>
+                        <h3 id="statFeedback">0</h3>
+                        <p>Open Feedback</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="icon" style="background:rgba(16,185,129,0.1);color:#10b981;"><i class="fas fa-bullhorn"></i></div>
+                        <h3 id="statCampaigns">0</h3>
+                        <p>Active Campaigns</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">Loyalty Tier Distribution</div>
+                        <div class="card-body" id="loyaltyDist"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">Revenue by Customers</div>
+                        <div class="card-body" id="revenueStats"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customers -->
+        <div id="customers" class="page">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    <span>Customer Management</span>
+                    <div>
+                        <input type="text" class="form-control form-control-sm" id="searchInput" placeholder="Search customers..." style="width:200px;display:inline-block;" onkeyup="searchCustomers()">
+                        <button class="btn btn-sm btn-outline-success" onclick="exportCustomers()"><i class="fas fa-download me-1"></i>Export CSV</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead><tr><th>Customer</th><th>Email</th><th>Type</th><th>Tier</th><th>Orders</th><th>Spent</th><th>Segment</th><th>Actions</th></tr></thead>
+                            <tbody id="customersBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loyalty -->
+        <div id="loyalty" class="page">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">Tier Distribution</div>
+                        <div class="card-body" id="loyaltyTiers"></div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">Loyalty Program Members</div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead><tr><th>Customer</th><th>Tier</th><th>Points</th><th>Total Spent</th><th>Enrolled</th></tr></thead>
+                                    <tbody id="loyaltyBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback -->
+        <div id="feedback" class="page">
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="stat-card"><h3 id="fbOpen">0</h3><p>Open</p></div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card"><h3 id="fbResponded">0</h3><p>Responded</p></div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card"><h3 id="fbResolved">0</h3><p>Resolved</p></div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card"><h3 id="fbAvgRating">0</h3><p>Avg Rating</p></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    <span>Feedback & Complaints</span>
+                    <select class="form-select form-select-sm" style="width:auto" onchange="filterFeedback(this.value)">
+                        <option value="">All</option>
+                        <option value="Open">Open</option>
+                        <option value="Responded">Responded</option>
+                        <option value="Resolved">Resolved</option>
+                    </select>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead><tr><th>Customer</th><th>Type</th><th>Subject</th><th>Priority</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+                            <tbody id="feedbackBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Campaigns -->
+        <div id="campaigns" class="page">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between">
+                    <span>Promotional Campaigns</span>
+                    <button class="btn btn-sm btn-success" onclick="showCreateCampaign()"><i class="fas fa-plus me-1"></i>New Campaign</button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead><tr><th>Campaign</th><th>Type</th><th>Channel</th><th>Discount</th><th>Status</th><th>Sent</th><th>Actions</th></tr></thead>
+                            <tbody id="campaignsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="formModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Form</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/js/api.js"></script>
+    <script src="../../assets/js/admin.js"></script>
+    <script>
+        let allCustomers = [], allFeedback = [], allCampaigns = [];
+
+        function checkAuth() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            if (!localStorage.getItem('token') || user.role !== 'Farm Manager') {
+                alert('Please login as Farm Manager');
+                window.location.href = '../public/login.html';
+                return false;
+            }
+            return true;
+        }
+
+        function showPage(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(page).classList.add('active');
+            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+            event.target.closest('a').classList.add('active');
+            document.getElementById('pageTitle').textContent = page.charAt(0).toUpperCase() + page.slice(1);
+            loadPageData(page);
+            if (window.innerWidth <= 992) { toggleSidebar(); }
+        }
+
+        async function loadDashboard() {
+            try {
+                const result = await api.get('/crm/dashboard/stats');
+                if (result.success) {
+                    const s = result.data;
+                    document.getElementById('statTotal').textContent = s.totalCustomers;
+                    document.getElementById('statVIP').textContent = s.vipCustomers;
+                    document.getElementById('statFeedback').textContent = s.feedback?.open || 0;
+                    document.getElementById('statCampaigns').textContent = s.campaigns?.active || 0;
+
+                    const ld = s.loyaltyDistribution || {};
+                    document.getElementById('loyaltyDist').innerHTML = `
+                        <div class="d-flex justify-content-between mb-2"><span><span class="badge-tier tier-bronze">Bronze</span></span><span>${ld.Bronze || 0}</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span><span class="badge-tier tier-silver">Silver</span></span><span>${ld.Silver || 0}</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span><span class="badge-tier tier-gold">Gold</span></span><span>${ld.Gold || 0}</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span><span class="badge-tier tier-platinum">Platinum</span></span><span>${ld.Platinum || 0}</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span><span class="badge-tier tier-diamond">Diamond</span></span><span>${ld.Diamond || 0}</span></div>
+                    `;
+
+                    document.getElementById('revenueStats').innerHTML = `
+                        <div class="text-center mb-3"><h3>R ${(s.totalRevenue || 0).toFixed(2)}</h3><small>Total Customer Revenue</small></div>
+                        <div class="text-center"><h4>R ${(s.averageLifetimeValue || 0).toFixed(2)}</h4><small>Avg Lifetime Value</small></div>
+                    `;
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadCustomers() {
+            try {
+                const result = await api.get('/crm/customers');
+                if (result.success) {
+                    allCustomers = result.data;
+                    renderCustomers();
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function renderCustomers(filter) {
+            const list = filter ? allCustomers.filter(c => c.segment === filter) : allCustomers;
+            document.getElementById('customersBody').innerHTML = list.map(c => `
+                <tr>
+                    <td>${escapeHtml(c.firstName)} ${escapeHtml(c.lastName)}</td>
+                    <td>${escapeHtml(c.email)}</td>
+                    <td>${escapeHtml(c.userType)}</td>
+                    <td><span class="badge-tier tier-${(c.loyalty?.tier || 'bronze').toLowerCase()}">${escapeHtml(c.loyalty?.tier || 'Bronze')}</span></td>
+                    <td>${c.stats?.totalOrders || 0}</td>
+                    <td>R ${(c.stats?.totalSpent || 0).toFixed(2)}</td>
+                    <td>${escapeHtml(c.segment)}</td>
+                    <td><button class="btn btn-sm btn-outline-primary" onclick="viewCustomer('${c._id}')"><i class="fas fa-eye"></i></button></td>
+                </tr>
+            `).join('') || '<tr><td colspan="8" class="text-center">No customers</td></tr>';
+        }
+
+        function searchCustomers() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allCustomers.filter(c => 
+                c.firstName?.toLowerCase().includes(q) || c.lastName?.toLowerCase().includes(q) || c.email?.toLowerCase().includes(q)
+            );
+            document.getElementById('customersBody').innerHTML = filtered.map(c => `
+                <tr>
+                    <td>${escapeHtml(c.firstName)} ${escapeHtml(c.lastName)}</td>
+                    <td>${escapeHtml(c.email)}</td>
+                    <td>${escapeHtml(c.userType)}</td>
+                    <td><span class="badge-tier tier-${(c.loyalty?.tier || 'bronze').toLowerCase()}">${escapeHtml(c.loyalty?.tier || 'Bronze')}</span></td>
+                    <td>${c.stats?.totalOrders || 0}</td>
+                    <td>R ${(c.stats?.totalSpent || 0).toFixed(2)}</td>
+                    <td>${escapeHtml(c.segment)}</td>
+                    <td><button class="btn btn-sm btn-outline-primary" onclick="viewCustomer('${c._id}')"><i class="fas fa-eye"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        function viewCustomer(id) {
+            const c = allCustomers.find(cu => cu._id === id);
+            if (!c) return;
+            document.getElementById('modalTitle').textContent = 'Customer Profile';
+            document.getElementById('modalBody').innerHTML = `
+                <h5>${escapeHtml(c.firstName)} ${escapeHtml(c.lastName)}</h5>
+                <p><strong>Email:</strong> ${escapeHtml(c.email)}</p>
+                <p><strong>Phone:</strong> ${escapeHtml(c.phone || 'N/A')}</p>
+                <p><strong>Type:</strong> ${escapeHtml(c.userType)}</p>
+                <p><strong>Tier:</strong> <span class="badge-tier tier-${(c.loyalty?.tier || 'bronze').toLowerCase()}">${escapeHtml(c.loyalty?.tier || 'Bronze')}</span></p>
+                <p><strong>Points:</strong> ${c.loyalty?.points || 0}</p>
+                <hr>
+                <p><strong>Total Orders:</strong> ${c.stats?.totalOrders || 0}</p>
+                <p><strong>Total Spent:</strong> R ${(c.stats?.totalSpent || 0).toFixed(2)}</p>
+                <p><strong>Avg Order:</strong> R ${(c.stats?.averageOrderValue || 0).toFixed(2)}</p>
+                <p><strong>Segment:</strong> ${escapeHtml(c.segment)}</p>
+                <p><strong>Lifetime Value:</strong> R ${(c.lifetimeValue?.predicted || 0).toFixed(2)}</p>
+                <p><strong>Retention Probability:</strong> ${((c.lifetimeValue?.retentionProbability || 0) * 100).toFixed(0)}%</p>
+            `;
+            new bootstrap.Modal(document.getElementById('formModal')).show();
+        }
+
+        async function loadLoyalty() {
+            try {
+                const result = await api.get('/crm/customers');
+                if (result.success) {
+                    allCustomers = result.data;
+                    const tiers = { Bronze: 0, Silver: 0, Gold: 0, Platinum: 0, Diamond: 0 };
+                    allCustomers.forEach(c => { tiers[c.loyalty?.tier || 'Bronze']++; });
+                    document.getElementById('loyaltyTiers').innerHTML = Object.entries(tiers).map(([t, n]) => `
+                        <div class="d-flex justify-content-between mb-2"><span><span class="badge-tier tier-${t.toLowerCase()}">${t}</span></span><span>${n}</span></div>
+                    `).join('');
+                    document.getElementById('loyaltyBody').innerHTML = allCustomers.filter(c => c.loyalty?.points > 0).map(c => `
+                        <tr>
+                            <td>${escapeHtml(c.firstName)} ${escapeHtml(c.lastName)}</td>
+                            <td><span class="badge-tier tier-${(c.loyalty?.tier || 'bronze').toLowerCase()}">${escapeHtml(c.loyalty?.tier)}</span></td>
+                            <td>${c.loyalty?.points || 0}</td>
+                            <td>R ${(c.stats?.totalSpent || 0).toFixed(2)}</td>
+                            <td>${c.loyalty?.enrolledAt ? new Date(c.loyalty.enrolledAt).toLocaleDateString() : 'N/A'}</td>
+                        </tr>
+                    `).join('') || '<tr><td colspan="5" class="text-center">No members</td></tr>';
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadFeedback(filter) {
+            try {
+                const url = filter ? `/crm/feedback?status=${filter}` : '/crm/feedback';
+                const result = await api.get(url);
+                if (result.success) {
+                    allFeedback = result.data;
+                    document.getElementById('feedbackBody').innerHTML = allFeedback.map(f => `
+                        <tr>
+                            <td>${escapeHtml(f.customerName)}</td>
+                            <td>${escapeHtml(f.type)}</td>
+                            <td>${escapeHtml(f.subject)}</td>
+                            <td>${escapeHtml(f.priority)}</td>
+                            <td><span class="badge-status status-${f.status.toLowerCase()}">${escapeHtml(f.status)}</span></td>
+                            <td>${new Date(f.createdAt).toLocaleDateString()}</td>
+                            <td>
+                                ${f.status === 'Open' ? `<button class="btn btn-sm btn-success" onclick="respondFeedback('${f._id}')">Respond</button>` : ''}
+                                ${f.status !== 'Resolved' ? `<button class="btn btn-sm btn-outline-secondary" onclick="resolveFeedback('${f._id}')">Resolve</button>` : ''}
+                            </td>
+                        </tr>
+                    `).join('') || '<tr><td colspan="7" class="text-center">No feedback</td></tr>';
+                }
+                const stats = await api.get('/crm/feedback/statistics');
+                if (stats.success) {
+                    document.getElementById('fbOpen').textContent = stats.data.open;
+                    document.getElementById('fbResponded').textContent = stats.data.responded;
+                    document.getElementById('fbResolved').textContent = stats.data.resolved;
+                    document.getElementById('fbAvgRating').textContent = (stats.data.averageRating || 0).toFixed(1);
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function filterFeedback(status) { loadFeedback(status); }
+
+        function respondFeedback(id) {
+            document.getElementById('modalTitle').textContent = 'Respond to Feedback';
+            document.getElementById('modalBody').innerHTML = `
+                <div class="mb-3"><label class="form-label">Response</label><textarea class="form-control" id="fbResponse" rows="4"></textarea></div>
+                <button class="btn btn-success" onclick="submitResponse('${id}')">Send Response</button>
+            `;
+            new bootstrap.Modal(document.getElementById('formModal')).show();
+        }
+
+        async function submitResponse(id) {
+            try {
+                await api.put(`/crm/feedback/${id}/respond`, { response: document.getElementById('fbResponse').value });
+                bootstrap.Modal.getInstance(document.getElementById('formModal')).hide();
+                loadFeedback();
+            } catch (e) { alert('Error'); }
+        }
+
+        async function resolveFeedback(id) {
+            try {
+                await api.put(`/crm/feedback/${id}/resolve`, {});
+                loadFeedback();
+            } catch (e) { alert('Error'); }
+        }
+
+        async function loadCampaigns() {
+            try {
+                const result = await api.get('/crm/campaigns');
+                if (result.success) {
+                    allCampaigns = result.data;
+                    document.getElementById('campaignsBody').innerHTML = allCampaigns.map(c => `
+                        <tr>
+                            <td>${escapeHtml(c.name)}</td>
+                            <td>${escapeHtml(c.type)}</td>
+                            <td>${escapeHtml(c.channel)}</td>
+                            <td>${c.discount || 0}%</td>
+                            <td><span class="badge-status status-${c.status.toLowerCase()}">${escapeHtml(c.status)}</span></td>
+                            <td>${c.stats?.sent || 0}</td>
+                            <td>
+                                ${c.status === 'Draft' ? `<button class="btn btn-sm btn-success" onclick="activateCampaign('${c._id}')">Activate</button>` : ''}
+                                ${c.status === 'Active' ? `<button class="btn btn-sm btn-warning" onclick="pauseCampaign('${c._id}')">Pause</button>` : ''}
+                            </td>
+                        </tr>
+                    `).join('') || '<tr><td colspan="7" class="text-center">No campaigns</td></tr>';
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function showCreateCampaign() {
+            document.getElementById('modalTitle').textContent = 'New Campaign';
+            document.getElementById('modalBody').innerHTML = `
+                <div class="mb-2"><label class="form-label">Name</label><input type="text" class="form-control" id="campName"></div>
+                <div class="mb-2"><label class="form-label">Description</label><textarea class="form-control" id="campDesc"></textarea></div>
+                <div class="row mb-2">
+                    <div class="col"><label class="form-label">Type</label><select class="form-select" id="campType"><option value="discount">Discount</option><option value="promotion">Promotion</option><option value="newsletter">Newsletter</option><option value="announcement">Announcement</option></select></div>
+                    <div class="col"><label class="form-label">Channel</label><select class="form-select" id="campChannel"><option value="email">Email</option><option value="sms">SMS</option><option value="both">Both</option></select></div>
+                </div>
+                <div class="mb-2"><label class="form-label">Subject</label><input type="text" class="form-control" id="campSubject"></div>
+                <div class="mb-2"><label class="form-label">Content</label><textarea class="form-control" id="campContent" rows="3"></textarea></div>
+                <div class="mb-2"><label class="form-label">Discount %</label><input type="number" class="form-control" id="campDiscount" value="0"></div>
+                <button class="btn btn-success" onclick="createCampaign()">Create Campaign</button>
+            `;
+            new bootstrap.Modal(document.getElementById('formModal')).show();
+        }
+
+        async function createCampaign() {
+            try {
+                await api.post('/crm/campaigns', {
+                    name: document.getElementById('campName').value,
+                    description: document.getElementById('campDesc').value,
+                    type: document.getElementById('campType').value,
+                    channel: document.getElementById('campChannel').value,
+                    subject: document.getElementById('campSubject').value,
+                    content: document.getElementById('campContent').value,
+                    discount: parseInt(document.getElementById('campDiscount').value)
+                });
+                bootstrap.Modal.getInstance(document.getElementById('formModal')).hide();
+                loadCampaigns();
+            } catch (e) { alert('Error'); }
+        }
+
+        async function activateCampaign(id) { await api.put(`/crm/campaigns/${id}/activate`, {}); loadCampaigns(); }
+        async function pauseCampaign(id) { await api.put(`/crm/campaigns/${id}/pause`, {}); loadCampaigns(); }
+
+        function exportCustomers() { window.open('http://localhost:5000/api/crm/customers/export/csv', '_blank'); }
+
+        function loadPageData(page) {
+            switch(page) {
+                case 'dashboard': loadDashboard(); break;
+                case 'customers': loadCustomers(); break;
+                case 'loyalty': loadLoyalty(); break;
+                case 'feedback': loadFeedback(); break;
+                case 'campaigns': loadCampaigns(); break;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => { if (checkAuth()) loadDashboard(); });
+    </script>
+</body>
+</html>

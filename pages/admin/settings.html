@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Bohloko Family Farm</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../../assets/images/icons/favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body>
+    <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-brand"><img src="../../assets/images/logo.png" alt="Logo"><h5>Bohloko Family Farm</h5><small>System Settings</small></div>
+        <div class="sidebar-menu">
+            <div class="menu-header">Main</div>
+            <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Admin Panel</a>
+            <div class="menu-header">Management</div>
+            <a href="products.html"><i class="fas fa-box"></i> Products</a>
+            <a href="inventory.html"><i class="fas fa-warehouse"></i> Inventory</a>
+            <a href="production.html"><i class="fas fa-egg"></i> Production</a>
+            <a href="payments.html"><i class="fas fa-credit-card"></i> Payments</a>
+            <div class="menu-header">People</div>
+            <a href="employees.html"><i class="fas fa-users"></i> Employees</a>
+            <a href="crm.html"><i class="fas fa-heart"></i> CRM</a>
+            <div class="menu-header">System</div>
+            <a href="settings.html" class="active"><i class="fas fa-cog"></i> Settings</a>
+            <a href="system-logs.html"><i class="fas fa-file-alt"></i> System Logs</a>
+            <a href="api-keys.html"><i class="fas fa-key"></i> API Keys</a>
+        </div>
+        <div style="padding:20px;position:absolute;bottom:0;width:100%;"><button class="logout-btn w-100" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</button></div>
+    </div>
+    <div class="main-content">
+        <div class="top-bar"><h4><i class="fas fa-cog me-2"></i>System Settings</h4></div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card"><div class="card-header"><i class="fas fa-dollar-sign me-2"></i>Pricing & Tax</div><div class="card-body">
+                    <div class="mb-3"><label class="form-label">Tax Rate (%)</label><input type="number" class="form-control" id="taxRate" step="0.1" min="0" max="100"></div>
+                    <div class="mb-3"><label class="form-label">Local Delivery Fee (ZAR)</label><input type="number" class="form-control" id="shippingLocal" step="0.01" min="0"></div>
+                    <div class="mb-3"><label class="form-label">Free Shipping Threshold (ZAR)</label><input type="number" class="form-control" id="shippingThreshold" step="0.01" min="0"></div>
+                    <button class="btn btn-success" onclick="savePricing()"><i class="fas fa-save me-1"></i>Save Pricing</button>
+                </div></div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card"><div class="card-header"><i class="fas fa-box me-2"></i>Inventory Thresholds</div><div class="card-body">
+                    <div class="mb-3"><label class="form-label">Low Stock Threshold</label><input type="number" class="form-control" id="lowStockThreshold" min="1"></div>
+                    <div class="mb-3"><label class="form-label">Bulk Discount 5% (kg)</label><input type="number" class="form-control" id="bulkThreshold1" min="0"></div>
+                    <div class="mb-3"><label class="form-label">Bulk Discount 10% (kg)</label><input type="number" class="form-control" id="bulkThreshold2" min="0"></div>
+                    <div class="mb-3"><label class="form-label">Bulk Discount 15% (kg)</label><input type="number" class="form-control" id="bulkThreshold3" min="0"></div>
+                    <button class="btn btn-success" onclick="saveInventory()"><i class="fas fa-save me-1"></i>Save Thresholds</button>
+                </div></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card"><div class="card-header"><i class="fas fa-shield-alt me-2"></i>Security</div><div class="card-body">
+                    <div class="mb-3"><label class="form-label">Session Timeout (minutes)</label><input type="number" class="form-control" id="sessionTimeout" min="5"></div>
+                    <div class="mb-3"><label class="form-label">Max Login Attempts</label><input type="number" class="form-control" id="maxLoginAttempts" min="3"></div>
+                    <div class="mb-3"><label class="form-label">Lock Duration (minutes)</label><input type="number" class="form-control" id="lockDuration" min="5"></div>
+                    <button class="btn btn-success" onclick="saveSecurity()"><i class="fas fa-save me-1"></i>Save Security</button>
+                </div></div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card"><div class="card-header"><i class="fas fa-lock me-2"></i>Password Policy</div><div class="card-body">
+                    <div class="mb-3"><label class="form-label">Minimum Length</label><input type="number" class="form-control" id="passwordMinLength" min="6"></div>
+                    <div class="mb-3"><div class="form-check"><input class="form-check-input" type="checkbox" id="requireUppercase"><label class="form-check-label">Require Uppercase</label></div></div>
+                    <div class="mb-3"><div class="form-check"><input class="form-check-input" type="checkbox" id="requireNumber"><label class="form-check-label">Require Number</label></div></div>
+                    <div class="mb-3"><div class="form-check"><input class="form-check-input" type="checkbox" id="requireSpecialChar"><label class="form-check-label">Require Special Character</label></div></div>
+                    <button class="btn btn-success" onclick="savePasswordPolicy()"><i class="fas fa-save me-1"></i>Save Policy</button>
+                </div></div>
+            </div>
+        </div>
+        <div class="alert alert-success" id="saveAlert" style="display:none;position:fixed;bottom:20px;right:20px;z-index:1000;"><i class="fas fa-check-circle me-1"></i>Settings saved successfully!</div>
+    </div>
+    <script src="../../assets/js/api.js"></script>
+    <script src="../../assets/js/admin.js"></script>
+    <script>
+        async function loadSettings() {
+            const res = await api.config.getAll();
+            if (res.success) {
+                const c = res.data;
+                document.getElementById('taxRate').value = c.taxRate || 15;
+                document.getElementById('shippingLocal').value = c.shippingLocal || 50;
+                document.getElementById('shippingThreshold').value = c.shippingThreshold || 1000;
+                document.getElementById('lowStockThreshold').value = c.lowStockThreshold || 10;
+                document.getElementById('bulkThreshold1').value = c.bulkThreshold1 || 100;
+                document.getElementById('bulkThreshold2').value = c.bulkThreshold2 || 500;
+                document.getElementById('bulkThreshold3').value = c.bulkThreshold3 || 1000;
+                document.getElementById('sessionTimeout').value = c.sessionTimeout || 30;
+                document.getElementById('maxLoginAttempts').value = c.maxLoginAttempts || 5;
+                document.getElementById('lockDuration').value = c.lockDuration || 30;
+                document.getElementById('passwordMinLength').value = c.passwordMinLength || 8;
+                document.getElementById('requireUppercase').checked = c.requireUppercase !== false;
+                document.getElementById('requireNumber').checked = c.requireNumber !== false;
+                document.getElementById('requireSpecialChar').checked = c.requireSpecialChar !== false;
+            }
+        }
+        function showSaved() { const el = document.getElementById('saveAlert'); el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 3000); }
+        async function savePricing() { await api.config.update({ taxRate: parseFloat(document.getElementById('taxRate').value), shippingLocal: parseFloat(document.getElementById('shippingLocal').value), shippingThreshold: parseFloat(document.getElementById('shippingThreshold').value) }); showSaved(); }
+        async function saveInventory() { await api.config.update({ lowStockThreshold: parseInt(document.getElementById('lowStockThreshold').value), bulkThreshold1: parseInt(document.getElementById('bulkThreshold1').value), bulkThreshold2: parseInt(document.getElementById('bulkThreshold2').value), bulkThreshold3: parseInt(document.getElementById('bulkThreshold3').value) }); showSaved(); }
+        async function saveSecurity() { await api.config.update({ sessionTimeout: parseInt(document.getElementById('sessionTimeout').value), maxLoginAttempts: parseInt(document.getElementById('maxLoginAttempts').value), lockDuration: parseInt(document.getElementById('lockDuration').value) }); showSaved(); }
+        async function savePasswordPolicy() { await api.config.update({ passwordMinLength: parseInt(document.getElementById('passwordMinLength').value), requireUppercase: document.getElementById('requireUppercase').checked, requireNumber: document.getElementById('requireNumber').checked, requireSpecialChar: document.getElementById('requireSpecialChar').checked }); showSaved(); }
+        loadSettings();
+    </script>
+</body>
+</html>

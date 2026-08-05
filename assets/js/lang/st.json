@@ -1,0 +1,100 @@
+{
+  "nav": {
+    "home": "Lapeng",
+    "about": "Ka Rona",
+    "products": "Di-products",
+    "contact": "Ikopanela",
+    "login": "Kena",
+    "signup": "Ingwetla"
+  },
+  "hero": {
+    "badge": "E hloekileng, e sa kgobloanywa - Tlotliswa Free State",
+    "title1": "Di-nkha tsa Koloi tse Hloekileng",
+    "title2": "tse Tsubilweng ka Lehare",
+    "subtitle": "Re fanang ka di-nkha tsa koloi tse hloekileng, tse sa kollwang ke meriana kapa di-hormone, tse tswileng ka mapolasing a rona a Free State.",
+    "shop_now": "Reka Hona Joale",
+    "learn_more": "Tlhakisa Hlakana"
+  },
+  "why": {
+    "title": "Ke ka Hobaneng ha O Re Tšhebe?",
+    "antibiotic_free": "E sa Meriana",
+    "antibiotic_desc": "Di-nkha tsa rona di tšelwa ke bophelo bo botle ka tlhaho, di sa kollwang ke meriana kapa di-hormone.",
+    "quality": "Boleng bo Phahameng",
+    "quality_desc": "Re latele melao ya boleng ya SA mme re netefatsa hore di-nkha tsa rona di fihla ka nako.",
+    "fresh": "E Feshi",
+    "fresh_desc": "Di-nkha tsa rona di rekisa ka nako e tseneileng, di tswileng ka mapolasing a rona a Bloemfontein.",
+    "community": "Setsha sa Bantu",
+    "community_desc": "Re thusa boditlhabyadi ba batho ba Bafile ka ho thusa ba bang."
+  },
+  "products": {
+    "title": "Di-products tsa Rona",
+    "subtitle": "Di-nkha tsa koloi tse hloekileng tse tswileng ka lehare",
+    "whole": "Nkha e Feletseng",
+    "portions": "Dikarolo tsa Nkha",
+    "value_added": "Di-products tse Eketsitsweng",
+    "bulk": "Teng-boleng"
+  },
+  "how": {
+    "title": "Ke Tsamaiso e Tsamaiso?",
+    "step1": "1. Netefatsa",
+    "step1_desc": "Netefatsa odara ya hao mme o tswele pele.",
+    "step2": "2. Tlhama",
+    "step2_desc": "Re tlhama di-nkha tsa hao ka lehare la rona.",
+    "step3": "3. Feshi",
+    "step3_desc": "Di-nkha tsa hao di phethahatsoa mme di lokolohile.",
+    "step4": "4. Phepha",
+    "step4_desc": "Fihlella nako ya ho fihlella kapa re romese koanyeng."
+  },
+  "testimonials": {
+    "title": "Batho ba Rona ba Bolela"
+  },
+  "cta": {
+    "title": "O Iketsehile ho Reka Di-nkha tse Hloekileng?",
+    "subtitle": "Ingwetla kajeno mme u amohelwe ke boleng bo botle ba di-nkha tsa rona.",
+    "order": "Reka Hona Joale"
+  },
+  "footer": {
+    "about": "Koloi ya batho ba Bafile e ntšetsa pele bomodimodi, ho hlatsoa, le ho arolelana di-nkha tsa koloi Free State.",
+    "products": "Di-products",
+    "quick_links": "Dikolo tse Sebelesang",
+    "stay_connected": "Kopana le Rona"
+  },
+  "auth": {
+    "login_title": "Kena Akhaonteng ya Hao",
+    "email": "Email",
+    "password": "Password",
+    "remember_me": "Hopola",
+    "forgot_password": "Lebetse Password?",
+    "login_btn": "Kena",
+    "or_continue": "kgoba tswelela ka",
+    "google": "Google",
+    "no_account": "Ha o na akhaonte?",
+    "signup_link": "Ingwetla fa."
+  },
+  "shop": {
+    "title": "Di-products tsa Rona",
+    "add_to_cart": "Eketsa Cart",
+    "cart": "Cart",
+    "checkout": "Fihlella",
+    "subtotal": "Subtotal",
+    "vat": "VAT (15%)",
+    "shipping": "Shipping",
+    "total": "Total",
+    "empty_cart": "Cart e se nang di-products",
+    "delivery": "Kgetho ya ho Phepha",
+    "pickup": "Tseleng",
+    "farm_gate": "Mapolasing",
+    "local": "Ho Phepha koanyeng"
+  },
+  "contact": {
+    "title": "Ikopanela le Rona",
+    "name": "Lebitso",
+    "email": "Email",
+    "subject": "Thaeko",
+    "message": "Molaetsa",
+    "send": "Romela",
+    "address": "Tulo",
+    "phone": "Mobilefono",
+    "hours": "Nako ya Ho Etsa"
+  }
+}

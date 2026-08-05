@@ -1,0 +1,100 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "products": "Products",
+    "contact": "Contact",
+    "login": "Login",
+    "signup": "Sign Up"
+  },
+  "hero": {
+    "badge": "Antibiotic Free & Farm Fresh - Proudly Free State",
+    "title1": "Farm-Fresh Poultry",
+    "title2": "Raised Right",
+    "subtitle": "Premium, antibiotic-free poultry products raised with care on our Free State farms. Hormone-free, community-rooted, and delivered fresh to your door.",
+    "shop_now": "Shop Now",
+    "learn_more": "Learn More"
+  },
+  "why": {
+    "title": "Why Choose Bohloko?",
+    "antibiotic_free": "Antibiotic Free",
+    "antibiotic_desc": "Our poultry is raised naturally without antibiotics or hormones, ensuring healthier meat for your family.",
+    "quality": "Quality Assured",
+    "quality_desc": "We comply with South African food safety standards. Every product is inspected and certified.",
+    "fresh": "Always Fresh",
+    "fresh_desc": "Processed and delivered within 24 hours from our Bloemfontein farm to your doorstep.",
+    "community": "Community Roots",
+    "community_desc": "Creating 12+ local jobs and empowering youth and women in our community."
+  },
+  "products": {
+    "title": "Our Products",
+    "subtitle": "Premium quality poultry, farm fresh and antibiotic free",
+    "whole": "Whole Chickens",
+    "portions": "Chicken Portions",
+    "value_added": "Value-Added Products",
+    "bulk": "Bulk Orders"
+  },
+  "how": {
+    "title": "How It Works",
+    "step1": "1. Order",
+    "step1_desc": "Browse our products and place your order online or via WhatsApp.",
+    "step2": "2. Prepare",
+    "step2_desc": "We process your fresh poultry with care at our farm facility.",
+    "step3": "3. Quality Check",
+    "step3_desc": "Every batch passes strict quality and safety inspection.",
+    "step4": "4. Delivery",
+    "step4_desc": "Fresh delivery to your door or collect at our farm gate."
+  },
+  "testimonials": {
+    "title": "What Our Customers Say"
+  },
+  "cta": {
+    "title": "Ready to Taste the Difference?",
+    "subtitle": "Order today and experience premium, antibiotic-free poultry from the Free State.",
+    "order": "Order Now"
+  },
+  "footer": {
+    "about": "Community-based poultry production, processing, and distribution in the Free State, South Africa.",
+    "products": "Products",
+    "quick_links": "Quick Links",
+    "stay_connected": "Stay Connected"
+  },
+  "auth": {
+    "login_title": "Login to Your Account",
+    "email": "Email Address",
+    "password": "Password",
+    "remember_me": "Remember me",
+    "forgot_password": "Forgot Password?",
+    "login_btn": "Login",
+    "or_continue": "or continue with",
+    "google": "Google",
+    "no_account": "Don't have an account?",
+    "signup_link": "Sign up here"
+  },
+  "shop": {
+    "title": "Our Products",
+    "add_to_cart": "Add to Cart",
+    "cart": "Cart",
+    "checkout": "Checkout",
+    "subtotal": "Subtotal",
+    "vat": "VAT (15%)",
+    "shipping": "Shipping",
+    "total": "Total",
+    "empty_cart": "Your cart is empty",
+    "delivery": "Delivery Option",
+    "pickup": "Pickup",
+    "farm_gate": "Farm Gate",
+    "local": "Local Delivery"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "name": "Your Name",
+    "email": "Email Address",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send Message",
+    "address": "Address",
+    "phone": "Phone",
+    "hours": "Business Hours"
+  }
+}

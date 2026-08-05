@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>About Us - Bohloko Family Farm</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Learn about Bohloko Family Farm - a community-based poultry enterprise in the Free State, South Africa.">
+    <link rel="shortcut icon" type="image/x-icon" href="../../assets/images/icons/favicon.png">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="../../assets/css/about.css">
+</head>
+
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar d-none d-lg-block">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="mailto:orders@bohlokofamilyfarm.co.za" class="me-3"><i class="fas fa-envelope me-1"></i> orders@bohlokofamilyfarm.co.za</a>
+                    <a href="tel:+27511234567"><i class="fas fa-phone me-1"></i> +27 51 123 4567</a>
+                </div>
+                <div>
+                    <a href="#" class="me-2"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="me-2"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="me-2"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg main-nav sticky-top">
+        <div class="container">
+            <a class="navbar-brand logo" href="index.html">
+                <img src="../../assets/images/logo.png" alt="Bohloko Family Farm Logo" style="height:120px;width:auto;">
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="shop.html">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="login.html" class="btn-primary-custom btn-sm" style="padding:10px 20px;font-size:0.9rem;border-radius:50px;">
+                        <i class="fas fa-sign-in-alt me-1"></i> Login
+                    </a>
+                    <a href="signup.html" class="btn-primary-custom btn-sm" style="padding:10px 20px;font-size:0.9rem;border-radius:50px;">
+                        <i class="fas fa-user-plus me-1"></i> Sign Up
+                    </a>
+                    <a href="shop.html" class="btn-primary-custom btn-sm" style="padding:10px 20px;font-size:0.9rem;border-radius:50px;">
+                        <i class="fas fa-shopping-cart me-1"></i> Order
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- About Hero -->
+    <section class="about-hero">
+        <div class="container about-hero-content">
+            <div class="row align-items-center">
+                <div class="col-lg-7 text-white">
+                    <h1 class="display-4 mb-3" style="font-weight:700;">About Bohloko Family Farm</h1>
+                    <p class="lead" style="opacity:0.9;max-width:600px;">A community-based agricultural enterprise dedicated to producing affordable, high-quality poultry products for the Free State and beyond.</p>
+                </div>
+                <div class="col-lg-5 text-center mt-4 mt-lg-0">
+                    <img src="Documentation/BohlokoFamilyFarmLogo.png" alt="Bohloko Farm Logo" class="img-fluid" style="max-height:200px;filter:drop-shadow(0 10px 30px rgba(0,0,0,0.3));">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission & Vision -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="story-card">
+                        <h3><i class="fas fa-bullseye"></i>Our Mission</h3>
+                        <p>To strengthen food security, create local employment, and stimulate the township economy through sustainable poultry production. We aim to provide affordable access to quality protein while building a profitable, scalable agricultural enterprise.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="story-card">
+                        <h3><i class="fas fa-eye"></i>Our Vision</h3>
+                        <p>To become the Free State's leading poultry producer, creating sustainable employment and contributing to local economic development. We envision a future where every community has access to fresh, affordable, locally-produced poultry products.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Story -->
+    <section class="section-padding" style="background:var(--white)">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <img src="https://images.unsplash.com/photo-1580748141549-73282e82b837?w=400&h=300&fit=crop&q=80" 
+                                 alt="Chickens in Coop" class="img-fluid rounded-4 shadow-sm" style="height:200px;width:100%;object-fit:cover;"
+                                 onerror="this.src='../../assets/images/products/whole-chicken.png';this.style.objectFit='contain';">
+                        </div>
+                        <div class="col-6">
+                            <img src="https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=400&h=300&fit=crop&q=80" 
+                                 alt="Farm Workers" class="img-fluid rounded-4 shadow-sm" style="height:200px;width:100%;object-fit:cover;"
+                                 onerror="this.src='../../assets/images/products/chicken-breast.png';this.style.objectFit='contain';">
+                        </div>
+                        <div class="col-12">
+                            <img src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&h=300&fit=crop&q=80" 
+                                 alt="Free State Farm Landscape" class="img-fluid rounded-4 shadow-sm" style="height:220px;width:100%;object-fit:cover;"
+                                 onerror="this.src='../../assets/images/products/chicken-sausages.png';this.style.objectFit='contain';">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <h2 class="section-title" style="text-align:left;">Our Story</h2>
+                    <div style="width:60px;height:3px;background:var(--accent);margin:16px 0 20px;border-radius:2px;"></div>
+                    <p style="color:var(--text-muted);font-size:1.05rem;line-height:1.8;margin-bottom:15px;">
+                        Bohloko Family Farm - Poultry Department is a community-based agricultural enterprise located in the Free State, South Africa. We focus on the production, slaughtering, processing, and distribution of high-quality poultry products for Bloemfontein, surrounding townships, and the broader Free State market.
+                    </p>
+                    <p style="color:var(--text-muted);font-size:1.05rem;line-height:1.8;margin-bottom:25px;">
+                        The project aims to strengthen food security, create local employment, and stimulate the township economy through sustainable poultry production.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem & Solution -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="story-card">
+                        <h3><i class="fas fa-exclamation-triangle" style="color:#E67E22"></i>The Challenge</h3>
+                        <p>Bloemfontein and surrounding townships experience high unemployment, rising food prices, and limited participation in agricultural value chains. Most poultry consumed in the area is transported from other provinces, leading to high costs, unstable supply, and limited local economic benefit.</p>
+                        <p class="mt-3">There is a critical need for a locally rooted poultry production and processing enterprise that ensures affordable access to quality protein.</p>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="story-card">
+                        <h3><i class="fas fa-check-circle"></i>Our Solution</h3>
+                        <p>Bohloko Family Farm addresses these challenges by establishing a certified slaughtering and processing facility that produces affordable, high-quality poultry products.</p>
+                        <ul class="list-unstyled mt-3">
+                            <li><i class="fas fa-check"></i> Affordable, quality poultry for all</li>
+                            <li><i class="fas fa-check"></i> Local job creation in townships</li>
+                            <li><i class="fas fa-check"></i> Strengthened food security</li>
+                            <li><i class="fas fa-check"></i> Sustainable farming practices</li>
+                            <li><i class="fas fa-check"></i> Youth and skills development</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section class="section-padding" style="background:var(--white)">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">What We Offer</h2>
+                <div class="section-accent"></div>
+                <p class="section-subtitle">From live birds to processed chicken products, we provide a complete poultry solution.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="team-card">
+                        <div class="team-icon"><i class="fas fa-drumstick-bite"></i></div>
+                        <h5>Live Broilers</h5>
+                        <p>Fresh live broiler chickens available for purchase directly from the farm.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="team-card">
+                        <div class="team-icon"><i class="fas fa-cut"></i></div>
+                        <h5>Processing</h5>
+                        <p>Certified slaughtering and processing facility with strict quality controls.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="team-card">
+                        <div class="team-icon"><i class="fas fa-truck"></i></div>
+                        <h5>Distribution</h5>
+                        <p>Farm gate sales, local markets, and delivery across the Free State.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="team-card">
+                        <div class="team-icon"><i class="fas fa-store"></i></div>
+                        <h5>Retail Supply</h5>
+                        <p>Supplying butcheries, restaurants, schools, and institutions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Farm Life & Team -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Life on the Farm</h2>
+                <div class="section-accent"></div>
+                <p class="section-subtitle">Meet the people and places behind every chicken we deliver.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="story-card" style="padding:0;overflow:hidden;">
+                        <img src="https://images.unsplash.com/photo-1580748141549-73282e82b837?w=500&h=300&fit=crop&q=80" 
+                             alt="Chickens in Chicken Coop" style="width:100%;height:200px;object-fit:cover;"
+                             onerror="this.src='../../assets/images/products/whole-chicken.png';this.style.objectFit='contain';">
+                        <div style="padding:25px;">
+                            <h5><i class="fas fa-home me-2" style="color:var(--accent)"></i>Our Chicken Coops</h5>
+                            <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;">Spacious, well-ventilated coops where our chickens live comfortably with proper lighting and temperature control for optimal growth.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="story-card" style="padding:0;overflow:hidden;">
+                        <img src="https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=500&h=300&fit=crop&q=80" 
+                             alt="Farm Workers Feeding Chickens" style="width:100%;height:200px;object-fit:cover;"
+                             onerror="this.src='../../assets/images/products/chicken-breast.png';this.style.objectFit='contain';">
+                        <div style="padding:25px;">
+                            <h5><i class="fas fa-users me-2" style="color:var(--accent)"></i>Our Farm Team</h5>
+                            <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;">Dedicated local workers who care for the birds daily, ensuring they're healthy, well-fed, and stress-free from hatch to harvest.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="story-card" style="padding:0;overflow:hidden;">
+                        <img src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=500&h=300&fit=crop&q=80" 
+                             alt="Free State Farm Land" style="width:100%;height:200px;object-fit:cover;"
+                             onerror="this.src='../../assets/images/products/chicken-sausages.png';this.style.objectFit='contain';">
+                        <div style="padding:25px;">
+                            <h5><i class="fas fa-leaf me-2" style="color:var(--accent)"></i>Free State Land</h5>
+                            <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;">Our farm sits on prime Free State land with clean water, fresh air, and the open space our chickens need to thrive naturally.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Operations -->
+    <section class="section-padding" style="background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title text-white">Our Operations</h2>
+                <div class="section-accent"></div>
+                <p style="color:rgba(255,255,255,0.7);">Sustainable poultry production with capacity for growth.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="ops-stat">
+                        <i class="fas fa-calendar-alt fa-2x mb-3" style="color:var(--accent)"></i>
+                        <div class="ops-number">5-6 Weeks</div>
+                        <p>Broiler growth period from chick to harvest</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ops-stat">
+                        <i class="fas fa-feather-alt fa-2x mb-3" style="color:var(--accent)"></i>
+                        <div class="ops-number">500-1000</div>
+                        <p>Birds per production cycle</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ops-stat">
+                        <i class="fas fa-sync-alt fa-2x mb-3" style="color:var(--accent)"></i>
+                        <div class="ops-number">6-8 Cycles</div>
+                        <p>Annual production cycles per year</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Our Team</h2>
+                <div class="section-accent"></div>
+                <p class="section-subtitle">Dedicated professionals committed to quality poultry production.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="team-card">
+                        <div class="team-icon"><i class="fas fa-user-tie"></i></div>
+                        <h5>Farm Manager</h5>
+                        <p>Oversees all farm operations, production planning, and business strategy.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="team-card">
+                        <div class="team-icon"><i class="fas fa-users"></i></div>
+                        <h5>Poultry Attendants</h5>
+                        <p>Manage daily bird care, feeding, health monitoring, and housing.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="team-card">
+                        <div class="team-icon"><i class="fas fa-hands"></i></div>
+                        <h5>Processing Staff</h5>
+                        <p>Handle slaughtering, processing, packaging, and quality control.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section section-padding">
+        <div class="container text-center cta-content">
+            <h2 style="color:var(--white);font-size:2.2rem;margin-bottom:15px;">Partner With Us</h2>
+            <p style="color:rgba(255,255,255,0.8);font-size:1.1rem;margin-bottom:30px;max-width:600px;margin-left:auto;margin-right:auto;">
+                Whether you're a restaurant, retailer, or institution, we offer competitive wholesale pricing and reliable supply.
+            </p>
+            <a href="contact.html" class="btn-primary-custom me-3"><i class="fas fa-envelope me-2"></i>Contact Us</a>
+            <a href="shop.html" class="btn-outline-light-custom"><i class="fas fa-tag me-2"></i>View Products</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container py-5">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5><i class="fas fa-feather-alt me-2"></i>Bohloko Family Farm</h5>
+                    <p style="color:rgba(253,248,240,0.7);font-size:0.9rem;line-height:1.7;">Community-based poultry production, processing, and distribution in the Free State, South Africa.</p>
+                    <ul class="list-unstyled mt-3">
+                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2" style="color:var(--accent)"></i> Bloemfontein, Free State</li>
+                        <li class="mb-2"><i class="fas fa-phone me-2" style="color:var(--accent)"></i> <a href="tel:+27511234567">+27 51 123 4567</a></li>
+                        <li><i class="fas fa-envelope me-2" style="color:var(--accent)"></i> <a href="mailto:orders@bohlokofamilyfarm.co.za">orders@bohlokofamilyfarm.co.za</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h5>Products</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="shop.html">Whole Chickens</a></li>
+                        <li class="mb-2"><a href="shop.html">Chicken Portions</a></li>
+                        <li class="mb-2"><a href="shop.html">Marinated Chicken</a></li>
+                        <li class="mb-2"><a href="shop.html">Sausages</a></li>
+                        <li><a href="shop.html">Giblets & Feet</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="index.html">Home</a></li>
+                        <li class="mb-2"><a href="about.html">About Us</a></li>
+                        <li class="mb-2"><a href="shop.html">Products & Pricing</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                    <h5>Stay Connected</h5>
+                    <p style="color:rgba(253,248,240,0.7);font-size:0.9rem;">Subscribe for updates on new products and special offers.</p>
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control" placeholder="Your email" style="border:none;padding:12px 16px;">
+                        <button class="btn" style="background:var(--accent);color:var(--primary-dark);font-weight:600;">Subscribe</button>
+                    </div>
+                    <div class="d-flex gap-3 mt-3">
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom"><div class="container text-center"><p>&copy; 2026 Bohloko Family Farm. All rights reserved. | Poultry Department. Developed by Mokgatla Musapelo</p></div></div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

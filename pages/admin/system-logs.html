@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Logs - Bohloko Family Farm</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../../assets/images/icons/favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="../../assets/css/admin.css">
+    <style>.log-entry { font-family: 'Courier New', monospace; font-size: 0.8rem; } .filter-group { display: flex; gap: 8px; flex-wrap: wrap; }</style>
+</head>
+<body>
+    <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-brand"><img src="../../assets/images/logo.png" alt="Logo"><h5>Bohloko Family Farm</h5><small>System Logs</small></div>
+        <div class="sidebar-menu">
+            <div class="menu-header">Main</div>
+            <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="analytics.html"><i class="fas fa-chart-bar"></i> Analytics</a>
+            <div class="menu-header">Management</div>
+            <a href="products.html"><i class="fas fa-box"></i> Products</a>
+            <a href="inventory.html"><i class="fas fa-warehouse"></i> Inventory</a>
+            <a href="production.html"><i class="fas fa-egg"></i> Production</a>
+            <a href="payments.html"><i class="fas fa-credit-card"></i> Payments</a>
+            <div class="menu-header">People</div>
+            <a href="employees.html"><i class="fas fa-users"></i> Employees</a>
+            <a href="crm.html"><i class="fas fa-heart"></i> CRM</a>
+            <div class="menu-header">System</div>
+            <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+            <a href="system-logs.html" class="active"><i class="fas fa-file-alt"></i> System Logs</a>
+            <a href="api-keys.html"><i class="fas fa-key"></i> API Keys</a>
+        </div>
+        <div style="padding:20px;position:absolute;bottom:0;width:100%;"><button class="logout-btn w-100" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</button></div>
+    </div>
+    <div class="main-content">
+        <div class="top-bar"><h4><i class="fas fa-file-alt me-2"></i>System Logs</h4><button class="btn btn-outline-danger btn-sm" onclick="clearOldLogs()"><i class="fas fa-trash me-1"></i>Clear Old Logs</button></div>
+        <div class="card mb-4">
+            <div class="card-header">
+                <span>Filters</span>
+                <div class="filter-group">
+                    <select class="form-select form-select-sm" style="width:auto" id="logLevel" onchange="loadLogs()">
+                        <option value="">All Levels</option>
+                        <option value="info">Info</option>
+                        <option value="warn">Warning</option>
+                        <option value="error">Error</option>
+                    </select>
+                    <input type="text" class="form-control form-control-sm" placeholder="Search logs..." id="logSearch" style="width:200px" onkeyup="loadLogs()">
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead><tr><th>Timestamp</th><th>Level</th><th>Category</th><th>Message</th><th>User</th><th>IP</th></tr></thead>
+                        <tbody id="logsTable"><tr><td colspan="6" class="text-center">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../../assets/js/api.js"></script>
+    <script src="../../assets/js/admin.js"></script>
+    <script>
+        async function loadLogs() {
+            const level = document.getElementById('logLevel').value;
+            const search = document.getElementById('logSearch').value;
+            const params = new URLSearchParams();
+            if (level) params.append('level', level);
+            if (search) params.append('search', search);
+            const res = await api.systemLogs.getAll(params.toString());
+            if (res.success) renderLogs(res.data);
+        }
+        function renderLogs(logs) {
+            const tbody = document.getElementById('logsTable');
+            if (!logs.length) { tbody.innerHTML = '<tr><td colspan="6" class="text-center">No logs found</td></tr>'; return; }
+            const badgeMap = { info: 'badge-info', warn: 'badge-warning', error: 'badge-danger' };
+            tbody.innerHTML = logs.map(l => `<tr><td class="log-entry">${l.createdAt ? new Date(l.createdAt).toLocaleString() : 'N/A'}</td><td><span class="badge ${badgeMap[l.level] || 'badge-info'}">${escapeHtml(l.level)}</span></td><td>${escapeHtml(l.category || 'general')}</td><td>${escapeHtml(l.message || 'N/A')}</td><td>${escapeHtml(l.userId || 'System')}</td><td class="log-entry">${escapeHtml(l.ip || 'N/A')}</td></tr>`).join('');
+        }
+        async function clearOldLogs() {
+            if (!confirm('Delete logs older than 30 days?')) return;
+            await api.systemLogs.clearOld(30);
+            loadLogs();
+        }
+        loadLogs();
+    </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Keys - Bohloko Family Farm</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../../assets/images/icons/favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="../../assets/css/admin.css">
+    <style>.api-key-item { background: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; } .api-key-item .key-value { font-family: 'Courier New', monospace; background: #e9ecef; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; }</style>
+</head>
+<body>
+    <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-brand"><img src="../../assets/images/logo.png" alt="Logo"><h5>Bohloko Family Farm</h5><small>API Keys</small></div>
+        <div class="sidebar-menu">
+            <div class="menu-header">Main</div>
+            <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="analytics.html"><i class="fas fa-chart-bar"></i> Analytics</a>
+            <div class="menu-header">Management</div>
+            <a href="products.html"><i class="fas fa-box"></i> Products</a>
+            <a href="inventory.html"><i class="fas fa-warehouse"></i> Inventory</a>
+            <a href="production.html"><i class="fas fa-egg"></i> Production</a>
+            <a href="payments.html"><i class="fas fa-credit-card"></i> Payments</a>
+            <div class="menu-header">People</div>
+            <a href="employees.html"><i class="fas fa-users"></i> Employees</a>
+            <a href="crm.html"><i class="fas fa-heart"></i> CRM</a>
+            <div class="menu-header">System</div>
+            <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+            <a href="system-logs.html"><i class="fas fa-file-alt"></i> System Logs</a>
+            <a href="api-keys.html" class="active"><i class="fas fa-key"></i> API Keys</a>
+        </div>
+        <div style="padding:20px;position:absolute;bottom:0;width:100%;"><button class="logout-btn w-100" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</button></div>
+    </div>
+    <div class="main-content">
+        <div class="top-bar"><h4><i class="fas fa-key me-2"></i>API Keys</h4><button class="btn btn-success btn-sm" onclick="showCreateModal()"><i class="fas fa-plus me-1"></i>Generate New Key</button></div>
+        <div class="card mb-4">
+            <div class="card-header">Active Keys</div>
+            <div class="card-body">
+                <div id="apiKeysList"><p class="text-muted">Loading...</p></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">API Usage (Last 30 Days)</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead><tr><th>Key Name</th><th>Total Requests</th><th>Success Rate</th><th>Avg Response</th></tr></thead>
+                        <tbody id="usageTable"><tr><td colspan="4" class="text-center">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="createKeyModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Generate New API Key</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label class="form-label">Key Name</label><input type="text" class="form-control" id="keyName" placeholder="e.g., Mobile App"></div><div class="mb-3"><label class="form-label">Permissions</label><select class="form-select" id="keyPermissions"><option value="read">Read Only</option><option value="readwrite">Read & Write</option><option value="admin">Admin</option></select></div><div class="mb-3"><label class="form-label">Expires (days)</label><input type="number" class="form-control" id="keyExpiry" value="365"></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-success" onclick="generateKey()">Generate</button></div></div></div></div>
+    <div class="modal fade" id="keyCreatedModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">API Key Generated</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p>Copy this key now - it won't be shown again:</p><div class="alert alert-warning"><code id="newKeyDisplay"></code></div></div><div class="modal-footer"><button class="btn btn-success" onclick="copyKey()">Copy Key</button></div></div></div></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/js/api.js"></script>
+    <script src="../../assets/js/admin.js"></script>
+    <script>
+        let lastGeneratedKey = '';
+        async function loadApiKeys() {
+            const res = await api.apiKeys.getAll();
+            if (res.success) renderApiKeys(res.data);
+        }
+        function renderApiKeys(keys) {
+            const el = document.getElementById('apiKeysList');
+            if (!keys.length) { el.innerHTML = '<p class="text-muted">No API keys generated yet</p>'; return; }
+            el.innerHTML = keys.map(k => `<div class="api-key-item"><div><strong>${escapeHtml(k.name)}</strong><br><span class="key-value">${escapeHtml(k.keyPrefix || k.key?.substring(0, 8))}****</span><br><small class="text-muted">Permissions: ${escapeHtml(k.permissions)} | Created: ${k.createdAt ? new Date(k.createdAt).toLocaleDateString() : 'N/A'}</small></div><div><span class="badge badge-${k.status === 'active' ? 'active' : 'revoked'}">${escapeHtml(k.status || 'active')}</span>${k.status === 'active' ? `<button class="btn btn-outline-danger btn-sm ms-2" onclick="revokeKey('${k._id}')"><i class="fas fa-ban"></i></button>` : ''}</div></div>`).join('');
+            const tbody = document.getElementById('usageTable');
+            tbody.innerHTML = keys.map(k => `<tr><td>${escapeHtml(k.name)}</td><td>${k.totalRequests || 0}</td><td>${escapeHtml(k.successRate || '100%')}</td><td>${escapeHtml(k.avgResponse || '<50ms')}</td></tr>`).join('');
+        }
+        function showCreateModal() { document.getElementById('keyName').value = ''; new bootstrap.Modal(document.getElementById('createKeyModal')).show(); }
+        async function generateKey() {
+            const res = await api.apiKeys.create({ name: document.getElementById('keyName').value, permissions: document.getElementById('keyPermissions').value, expiryDays: parseInt(document.getElementById('keyExpiry').value) });
+            if (res.success) {
+                bootstrap.Modal.getInstance(document.getElementById('createKeyModal')).hide();
+                lastGeneratedKey = res.data.key;
+                document.getElementById('newKeyDisplay').textContent = res.data.key;
+                new bootstrap.Modal(document.getElementById('keyCreatedModal')).show();
+                loadApiKeys();
+            }
+        }
+        function copyKey() { navigator.clipboard.writeText(lastGeneratedKey); alert('Key copied!'); }
+        async function revokeKey(id) { if (confirm('Revoke this key?')) { await api.apiKeys.revoke(id); loadApiKeys(); } }
+        loadApiKeys();
+    </script>
+</body>
+</html>
