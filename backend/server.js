@@ -162,40 +162,72 @@ try {
     res.status(500).json({ success: false, message: 'Something went wrong!' });
   });
 
+  // Run migrations and seed in production (replaces Render pre-deploy command)
+  async function runMigrationsAndSeed() {
+    if (process.env.NODE_ENV !== 'production') return;
+    if (!process.env.DATABASE_URL) {
+      console.error('[DB] No DATABASE_URL — skipping migrations');
+      return;
+    }
+    try {
+      console.log('[DB] Running migrations...');
+      const knex = require('knex')(require('./knexfile').production);
+      await knex.migrate.latest();
+      console.log('[DB] Migrations complete');
+
+      const userCount = await knex('users').count('id as count').first();
+      if (parseInt(userCount.count) === 0) {
+        console.log('[DB] Empty database — running seed...');
+        await knex.destroy();
+        require('./seed-pg');
+      } else {
+        console.log(`[DB] Database already seeded (${userCount.count} users). Skipping.`);
+        await knex.destroy();
+      }
+    } catch (err) {
+      console.error('[DB] Migration/seed error:', err.message);
+      console.error('[DB] Server will start anyway — API endpoints may fail');
+    }
+  }
+
   // Server Startup
   const PORT = process.env.PORT || 5000;
   console.log(`Attempting to start server on port ${PORT}...`);
 
-  try {
-    const server = app.listen(PORT, '0.0.0.0', () => {
-      console.log(`SUCCESS: Server running on port ${PORT}`);
-      console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log('Server is ready to accept connections');
-      
-      // Log database connection status
-      if (process.env.DATABASE_URL) {
-        const masked = process.env.DATABASE_URL.replace(/\/\/([^:]+):([^@]+)@/, '//$1:****@');
-        console.log('[DB] DATABASE_URL is set:', masked);
-      } else {
-        console.error('[DB] WARNING: DATABASE_URL is NOT set. Database operations will fail.');
-      }
-    });
-
-    server.on('error', (err) => {
-      console.error('Server error:', err);
-      process.exit(1);
-    });
-
-    process.on('SIGTERM', () => {
-      console.log('SIGTERM received');
-      server.close(() => process.exit(0));
-    });
-
-    console.log('Server listen initiated successfully');
-  } catch (error) {
-    console.error('FAILED to start server:', error);
-    process.exit(1);
+  // Log database URL status
+  if (process.env.DATABASE_URL) {
+    const masked = process.env.DATABASE_URL.replace(/\/\/([^:]+):([^@]+)@/, '//$1:****@');
+    console.log('[DB] DATABASE_URL is set:', masked);
+  } else {
+    console.error('[DB] WARNING: DATABASE_URL is NOT set. Database operations will fail.');
   }
+
+  function startServer() {
+    try {
+      const server = app.listen(PORT, '0.0.0.0', () => {
+        console.log(`SUCCESS: Server running on port ${PORT}`);
+        console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+        console.log('Server is ready to accept connections');
+      });
+
+      server.on('error', (err) => {
+        console.error('Server error:', err);
+        process.exit(1);
+      });
+
+      process.on('SIGTERM', () => {
+        console.log('SIGTERM received');
+        server.close(() => process.exit(0));
+      });
+
+      console.log('Server listen initiated successfully');
+    } catch (error) {
+      console.error('FAILED to start server:', error);
+      process.exit(1);
+    }
+  }
+
+  runMigrationsAndSeed().then(() => startServer());
 
 } catch (error) {
   console.error('FATAL: Server failed to start:', error);

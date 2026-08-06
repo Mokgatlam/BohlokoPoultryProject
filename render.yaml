@@ -1,10 +1,9 @@
 services:
   - type: web
-    name: bohloko-family-farm-backend
+    name: bohlokopoultryproject
     runtime: node
     plan: free
     buildCommand: cd backend && npm install
-    preStartCommand: cd backend && npx knex migrate:latest && node seed-pg.js
     startCommand: cd backend && node server.js
     envVars:
       - key: NODE_ENV
@@ -15,11 +14,6 @@ services:
         generateValue: true
       - key: JWT_EXPIRES_IN
         value: 1h
-      - key: BASE_URL
-        fromService:
-          type: web
-          name: bohloko-family-farm-backend
-          property: host
       - key: DATABASE_URL
         fromDatabase:
           name: bohloko-db
