@@ -4,7 +4,7 @@ services:
     runtime: node
     plan: free
     buildCommand: cd backend && npm install
-    startCommand: cd backend && node -e "console.log('Node works!'); console.log('PORT:', process.env.PORT); process.exit(1)"
+    startCommand: cd backend && node minimal-test.js
     envVars:
       - key: NODE_ENV
         value: production
