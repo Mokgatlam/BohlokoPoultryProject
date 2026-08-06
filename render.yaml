@@ -4,7 +4,8 @@ services:
     runtime: node
     plan: free
     buildCommand: cd backend && npm install
-    startCommand: cd backend && node minimal-test.js
+    preStartCommand: cd backend && npx knex migrate:latest
+    startCommand: cd backend && node server.js
     envVars:
       - key: NODE_ENV
         value: production
@@ -19,6 +20,10 @@ services:
           type: web
           name: bohloko-family-farm-backend
           property: host
+      - key: DATABASE_URL
+        fromDatabase:
+          name: bohloko-db
+          property: connectionString
     autoDeploy: true
     healthCheckPath: /api/health
 
