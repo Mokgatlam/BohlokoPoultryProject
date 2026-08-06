@@ -22,6 +22,9 @@ try {
 
   const app = express();
 
+  // Trust proxy (Render uses a reverse proxy; needed for rate-limiting & IP detection)
+  app.set('trust proxy', 1);
+
   // Security Headers
   app.use(helmet({
     contentSecurityPolicy: false,
