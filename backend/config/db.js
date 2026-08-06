@@ -24,9 +24,21 @@ const knexConfig = require('../knexfile');
 const environment = process.env.NODE_ENV || 'development';
 const config = knexConfig[environment];
 
+// Log database connection info (masked)
+const dbUrl = process.env.DATABASE_URL;
+if (environment === 'production') {
+  if (dbUrl) {
+    const masked = dbUrl.replace(/\/\/([^:]+):([^@]+)@/, '//$1:****@');
+    console.log(`Database URL: ${masked}`);
+  } else {
+    console.error('WARNING: DATABASE_URL is not set!');
+  }
+  console.log(`Environment: ${environment}, Client: ${config.client}`);
+}
+
 // Warn if DATABASE_URL is missing in production
 if (environment === 'production' && !process.env.DATABASE_URL) {
-  console.error('⚠️  WARNING: DATABASE_URL is not set. Database operations will fail.');
+  console.error('CRITICAL: DATABASE_URL is not set. Database operations will fail.');
 }
 
 // Create Knex instance
@@ -48,43 +60,23 @@ try {
   db = {
     raw: async () => { throw new Error('Database not configured'); },
     fn: { now: () => new Date().toISOString() },
-    // Add mock collections for all tables
-    users: mockCollection,
-    products: mockCollection,
-    orders: mockCollection,
-    carts: mockCollection,
-    payments: mockCollection,
-    inventory: mockCollection,
-    productionCycles: mockCollection,
-    dailyLogs: mockCollection,
-    medications: mockCollection,
-    healthChecks: mockCollection,
-    vaccinations: mockCollection,
-    weightRecords: mockCollection,
-    feedRecords: mockCollection,
-    environmentRecords: mockCollection,
-    harvestBatches: mockCollection,
-    processingBatches: mockCollection,
-    processingSteps: mockCollection,
-    yieldRecords: mockCollection,
-    processingQualityChecks: mockCollection,
-    processingStaff: mockCollection,
-    systemConfig: mockCollection,
-    systemLogs: mockCollection,
-    notifications: mockCollection,
-    notificationConfigs: mockCollection,
-    employees: mockCollection,
-    apiKeys: mockCollection,
-    customerProfiles: mockCollection,
-    loyaltyPrograms: mockCollection,
-    customerEnrollments: mockCollection,
-    pointsTransactions: mockCollection,
-    feedbackComplaints: mockCollection,
-    promotionalCampaigns: mockCollection,
-    qualityChecks: mockCollection,
-    complianceRecords: mockCollection,
-    audits: mockCollection,
-    passwordResets: mockCollection,
+    users: mockCollection, products: mockCollection, orders: mockCollection,
+    carts: mockCollection, payments: mockCollection, inventory: mockCollection,
+    productionCycles: mockCollection, dailyLogs: mockCollection,
+    medications: mockCollection, healthChecks: mockCollection,
+    vaccinations: mockCollection, weightRecords: mockCollection,
+    feedRecords: mockCollection, environmentRecords: mockCollection,
+    harvestBatches: mockCollection, processingBatches: mockCollection,
+    processingSteps: mockCollection, yieldRecords: mockCollection,
+    processingQualityChecks: mockCollection, processingStaff: mockCollection,
+    systemConfig: mockCollection, systemLogs: mockCollection,
+    notifications: mockCollection, notificationConfigs: mockCollection,
+    employees: mockCollection, apiKeys: mockCollection,
+    customerProfiles: mockCollection, loyaltyPrograms: mockCollection,
+    customerEnrollments: mockCollection, pointsTransactions: mockCollection,
+    feedbackComplaints: mockCollection, promotionalCampaigns: mockCollection,
+    qualityChecks: mockCollection, complianceRecords: mockCollection,
+    audits: mockCollection, passwordResets: mockCollection,
     contactMessages: mockCollection
   };
 }
@@ -94,14 +86,14 @@ const testConnection = async () => {
   try {
     const result = await db.raw('SELECT 1');
     if (environment === 'production') {
-      console.log('✅ PostgreSQL database connected successfully');
+      console.log('PostgreSQL database connected successfully');
     } else {
-      console.log('✅ MySQL database connected successfully');
+      console.log('MySQL database connected successfully');
     }
     return true;
   } catch (err) {
-    console.error('❌ Database connection failed:', err.message);
-    console.log('📝 Make sure database is running and credentials are correct');
+    console.error('Database connection failed:', err.message);
+    console.log('Make sure DATABASE_URL is set and database is running on Render');
     return false;
   }
 };
@@ -215,37 +207,37 @@ const tableMap = {
   carts: 'carts',
   payments: 'payments',
   inventory: 'inventory',
-  productionCycles: 'productioncycles',
-  dailyLogs: 'dailylogs',
+  productionCycles: 'productionCycles',
+  dailyLogs: 'dailyLogs',
   medications: 'medications',
-  healthChecks: 'healthchecks',
+  healthChecks: 'healthChecks',
   vaccinations: 'vaccinations',
-  weightRecords: 'weightrecords',
-  feedRecords: 'feedrecords',
-  environmentRecords: 'environmentrecords',
-  harvestBatches: 'harvestbatches',
-  processingBatches: 'processingbatches',
-  processingSteps: 'processingsteps',
-  yieldRecords: 'yieldrecords',
-  processingQualityChecks: 'processingqualitychecks',
-  processingStaff: 'processingstaff',
-  systemConfig: 'systemconfig',
-  systemLogs: 'systemlogs',
+  weightRecords: 'weightRecords',
+  feedRecords: 'feedRecords',
+  environmentRecords: 'environmentRecords',
+  harvestBatches: 'harvestBatches',
+  processingBatches: 'processingBatches',
+  processingSteps: 'processingSteps',
+  yieldRecords: 'yieldRecords',
+  processingQualityChecks: 'processingQualityChecks',
+  processingStaff: 'processingStaff',
+  systemConfig: 'systemConfig',
+  systemLogs: 'systemLogs',
   notifications: 'notifications',
-  notificationConfigs: 'notificationconfigs',
+  notificationConfigs: 'notificationConfigs',
   employees: 'employees',
-  apiKeys: 'apikeys',
-  customerProfiles: 'customerprofiles',
-  loyaltyPrograms: 'loyaltyprograms',
-  customerEnrollments: 'customerenrollments',
-  pointsTransactions: 'pointstransactions',
-  feedbackComplaints: 'feedbackcomplaints',
-  promotionalCampaigns: 'promotionalcampaigns',
-  qualityChecks: 'qualitychecks',
-  complianceRecords: 'compliancerecords',
+  apiKeys: 'apiKeys',
+  customerProfiles: 'customerProfiles',
+  loyaltyPrograms: 'loyaltyPrograms',
+  customerEnrollments: 'customerEnrollments',
+  pointsTransactions: 'pointsTransactions',
+  feedbackComplaints: 'feedbackComplaints',
+  promotionalCampaigns: 'promotionalCampaigns',
+  qualityChecks: 'qualityChecks',
+  complianceRecords: 'complianceRecords',
   audits: 'audits',
-  passwordResets: 'passwordresets',
-  contactMessages: 'contactmessages'
+  passwordResets: 'passwordResets',
+  contactMessages: 'contactMessages'
 };
 
 // Create collection instances
