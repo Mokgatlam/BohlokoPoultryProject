@@ -77,10 +77,9 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
         var mymap = L.map('mapid').setView([-29.0852, 26.1596], 13);
-        L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=YOUR_MAPBOX_ACCESS_TOKEN', {
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18,
-            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-            id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(mymap);
         L.marker([-29.0852, 26.1596]).addTo(mymap)
             .bindPopup("<b>Bohloko Family Farm</b><br />Bloemfontein, Free State").openPopup();
