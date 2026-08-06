@@ -4,7 +4,7 @@ services:
     runtime: node
     plan: free
     buildCommand: cd backend && npm install
-    preStartCommand: cd backend && npx knex migrate:latest && node seed-products-pg.js
+    preStartCommand: cd backend && npx knex migrate:latest && node seed-pg.js
     startCommand: cd backend && node server.js
     envVars:
       - key: NODE_ENV
