@@ -37,7 +37,15 @@ try {
   ];
 
   if (process.env.NODE_ENV === 'production' && process.env.BASE_URL) {
-    allowedOrigins.push(process.env.BASE_URL);
+    let baseUrl = process.env.BASE_URL;
+    // Render's fromService.host returns just the hostname (no protocol)
+    // Browsers send full origin like https://bohloko-family-farm-backend.onrender.com
+    if (!baseUrl.startsWith('http://') && !baseUrl.startsWith('https://')) {
+      baseUrl = 'https://' + baseUrl;
+      console.log('[CORS] BASE_URL was missing protocol, prepended https://:', baseUrl);
+    }
+    allowedOrigins.push(baseUrl);
+    console.log('[CORS] Allowed origins:', allowedOrigins);
   }
 
   const corsOptions = {
@@ -163,6 +171,14 @@ try {
       console.log(`SUCCESS: Server running on port ${PORT}`);
       console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
       console.log('Server is ready to accept connections');
+      
+      // Log database connection status
+      if (process.env.DATABASE_URL) {
+        const masked = process.env.DATABASE_URL.replace(/\/\/([^:]+):([^@]+)@/, '//$1:****@');
+        console.log('[DB] DATABASE_URL is set:', masked);
+      } else {
+        console.error('[DB] WARNING: DATABASE_URL is NOT set. Database operations will fail.');
+      }
     });
 
     server.on('error', (err) => {

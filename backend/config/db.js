@@ -29,25 +29,30 @@ const dbUrl = process.env.DATABASE_URL;
 if (environment === 'production') {
   if (dbUrl) {
     const masked = dbUrl.replace(/\/\/([^:]+):([^@]+)@/, '//$1:****@');
-    console.log(`Database URL: ${masked}`);
+    console.log(`[DB] Database URL: ${masked}`);
   } else {
-    console.error('WARNING: DATABASE_URL is not set!');
+    console.error('[DB] CRITICAL: DATABASE_URL is not set!');
+    console.error('[DB] Check render.yaml envVars → fromDatabase → connectionString');
+    console.error('[DB] Current NODE_ENV:', environment);
+    console.error('[DB] Available DB env vars:', Object.keys(process.env).filter(k => k.includes('DB') || k.includes('DATABASE')).join(', ') || 'NONE');
   }
-  console.log(`Environment: ${environment}, Client: ${config.client}`);
+  console.log(`[DB] Environment: ${environment}, Client: ${config.client}`);
 }
 
 // Warn if DATABASE_URL is missing in production
 if (environment === 'production' && !process.env.DATABASE_URL) {
-  console.error('CRITICAL: DATABASE_URL is not set. Database operations will fail.');
+  console.error('[DB] CRITICAL: DATABASE_URL is not set. All database operations will fail.');
+  console.error('[DB] The server will start but all API endpoints that need data will fail.');
 }
 
 // Create Knex instance
 let db;
 try {
   db = knex(config);
-  console.log('Knex instance created successfully');
+  console.log('[DB] Knex instance created successfully');
 } catch (err) {
-  console.error('Failed to create Knex instance:', err.message);
+  console.error('[DB] Failed to create Knex instance:', err.message);
+  console.error('[DB] Stack:', err.stack);
   // Create a minimal mock so the app can still start and serve health checks
   const mockCollection = {
     findOne: async () => null,
@@ -86,14 +91,20 @@ const testConnection = async () => {
   try {
     const result = await db.raw('SELECT 1');
     if (environment === 'production') {
-      console.log('PostgreSQL database connected successfully');
+      console.log('[DB] PostgreSQL database connected successfully');
     } else {
-      console.log('MySQL database connected successfully');
+      console.log('[DB] MySQL database connected successfully');
     }
     return true;
   } catch (err) {
-    console.error('Database connection failed:', err.message);
-    console.log('Make sure DATABASE_URL is set and database is running on Render');
+    console.error('[DB] Database connection FAILED:', err.message);
+    if (environment === 'production') {
+      console.error('[DB] Troubleshooting:');
+      console.error('[DB]   1. Check that DATABASE_URL is set in Render env vars');
+      console.error('[DB]   2. Check that the database "bohloko-db" exists on Render');
+      console.error('[DB]   3. Check Render logs for connection errors');
+      console.error('[DB]   4. DATABASE_URL format: postgres://user:pass@host:5432/dbname');
+    }
     return false;
   }
 };

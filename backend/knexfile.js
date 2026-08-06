@@ -1,32 +1,23 @@
 /**
- * Knex Configuration — MySQL Database
- * 
- * Configuration for MySQL database connection.
- * Update the credentials below to match your MySQL setup.
+ * Knex Configuration — MySQL (development) / PostgreSQL (production)
  */
 
 require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 
-const productionConfig = process.env.DATABASE_URL ? {
+// Production: always prefer DATABASE_URL from Render env vars
+// dotenv never overrides existing process.env values, so Render's
+// DATABASE_URL takes priority even if .env is loaded first.
+const dbUrl = process.env.DATABASE_URL;
+if (!dbUrl) {
+  console.error('KNEXFILE WARNING: DATABASE_URL is not set. Falling back to individual DB_* vars.');
+}
+
+const productionConfig = {
   client: 'pg',
-  connection: {
-    connectionString: process.env.DATABASE_URL,
+  connection: dbUrl ? {
+    connectionString: dbUrl,
     ssl: { rejectUnauthorized: false }
-  },
-  pool: {
-    min: 2,
-    max: 20,
-    acquireTimeoutMillis: 30000,
-    createTimeoutMillis: 30000,
-    idleTimeoutMillis: 30000
-  },
-  migrations: {
-    directory: './migrations',
-    tableName: 'knex_migrations'
-  }
-} : {
-  client: 'pg',
-  connection: {
+  } : {
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || 5432,
     user: process.env.DB_USER || 'postgres',
@@ -36,7 +27,10 @@ const productionConfig = process.env.DATABASE_URL ? {
   },
   pool: {
     min: 2,
-    max: 20
+    max: 10,
+    acquireTimeoutMillis: 30000,
+    createTimeoutMillis: 30000,
+    idleTimeoutMillis: 30000
   },
   migrations: {
     directory: './migrations',

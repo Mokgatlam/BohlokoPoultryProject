@@ -61,7 +61,9 @@
  */
 
 // Base URL for all API requests
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = window.location.hostname === 'localhost'
+  ? 'http://localhost:5000/api'
+  : '/api';
 
 // Session timeout: 30 minutes in milliseconds
 const SESSION_TIMEOUT = 30 * 60 * 1000;

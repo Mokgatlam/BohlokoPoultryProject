@@ -9,10 +9,10 @@
 exports.up = function(knex) {
   return knex.schema
     // ========== ORDERS ==========
-    // paymentStatus enum needs 'Unpaid' added (OrderService sets it for non-cash)
+    // paymentStatus enum needs to be converted to VARCHAR so 'Unpaid' can be added (OrderService sets it for non-cash)
     .raw(`ALTER TABLE orders DROP CONSTRAINT IF EXISTS orders_paymentstatus_enum`)
-    .raw(`ALTER TABLE orders ADD COLUMN paymentStatus VARCHAR(20) DEFAULT 'Pending'`)
-    .raw(`ALTER TABLE orders ALTER COLUMN paymentstatus TYPE VARCHAR(20)`)
+    .raw(`ALTER TABLE orders ALTER COLUMN paymentstatus TYPE VARCHAR(20) USING paymentstatus::text`)
+    .raw(`ALTER TABLE orders ALTER COLUMN paymentstatus SET DEFAULT 'Pending'`)
 
     // ========== PAYMENTS ==========
     .alterTable('payments', table => {
