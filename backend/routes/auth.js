@@ -37,10 +37,15 @@ const { body, validationResult } = require('express-validator');
 const userService = require('../services/UserService');
 const PasswordReset = require('../models/PasswordReset');
 const { protect, blacklistToken } = require('../middleware/auth');
-const { OAuth2Client } = require('google-auth-library');
 const systemLogService = require('../services/SystemLogService');
 
-const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+let googleClient = null;
+try {
+  const { OAuth2Client } = require('google-auth-library');
+  googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+} catch (e) {
+  console.warn('[AUTH] google-auth-library not available — Google OAuth disabled:', e.message);
+}
 
 /**
  * POST /api/auth/register
@@ -150,6 +155,9 @@ router.post('/google', [
   body('credential').notEmpty().withMessage('Google credential is required')
 ], async (req, res) => {
   try {
+    if (!googleClient) {
+      return res.status(503).json({ success: false, message: 'Google sign-in is not available' });
+    }
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ success: false, errors: errors.array() });
