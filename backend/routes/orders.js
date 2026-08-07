@@ -40,6 +40,7 @@ const { body, validationResult } = require('express-validator');
 const validate = require('../middleware/validate');
 const orderService = require('../services/OrderService');
 const { protect, authorize } = require('../middleware/auth');
+const systemLogService = require('../services/SystemLogService');
 
 /**
  * POST /api/orders
@@ -84,8 +85,39 @@ router.post('/', protect, [
       return res.status(400).json({ success: false, errors: errors.array() });
     }
     const order = await orderService.create(req.body, req.user);
+    try {
+      await systemLogService.create({
+        level: 'info',
+        message: `Order created: ${order.orderNumber}`,
+        category: 'order',
+        userId: req.user._id || req.user.id,
+        userName: `${req.user.firstName} ${req.user.lastName}`,
+        action: 'create_order',
+        resource: 'order',
+        resourceId: order._id || order.id,
+        details: { orderNumber: order.orderNumber, total: order.total },
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        method: req.method,
+        path: req.originalUrl
+      });
+    } catch (e) { /* logging failure should not break the request */ }
     res.status(201).json({ success: true, data: order });
   } catch (error) {
+    try {
+      await systemLogService.create({
+        level: 'error',
+        message: `Order creation failed: ${error.message}`,
+        category: 'order',
+        userId: req.user._id || req.user.id,
+        userName: `${req.user.firstName} ${req.user.lastName}`,
+        action: 'create_order',
+        ipAddress: req.ip,
+        method: req.method,
+        path: req.originalUrl,
+        error: error.message
+      });
+    } catch (e) { /* logging failure should not break the request */ }
     res.status(400).json({ success: false, message: error.message || 'Server error' });
   }
 });
@@ -177,6 +209,23 @@ router.put('/:id/status', protect, authorize('Farm Manager', 'Sales Assistant'),
     if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
     const order = await orderService.updateStatus(req.params.id, req.body.status);
     if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
+    try {
+      await systemLogService.create({
+        level: 'info',
+        message: `Order ${order.orderNumber || req.params.id} status updated to ${req.body.status}`,
+        category: 'order',
+        userId: req.user._id || req.user.id,
+        userName: `${req.user.firstName} ${req.user.lastName}`,
+        action: 'update_order_status',
+        resource: 'order',
+        resourceId: req.params.id,
+        details: { status: req.body.status },
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        method: req.method,
+        path: req.originalUrl
+      });
+    } catch (e) { /* logging failure should not break the request */ }
     res.json({ success: true, data: { ...order, status: req.body.status } });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Server error' });
@@ -208,6 +257,23 @@ router.put('/:id/cancel', protect, [
 ], validate, async (req, res) => {
   try {
     const order = await orderService.cancel(req.params.id, req.body.reason, req.user);
+    try {
+      await systemLogService.create({
+        level: 'info',
+        message: `Order ${order.orderNumber || req.params.id} cancelled`,
+        category: 'order',
+        userId: req.user._id || req.user.id,
+        userName: `${req.user.firstName} ${req.user.lastName}`,
+        action: 'cancel_order',
+        resource: 'order',
+        resourceId: req.params.id,
+        details: { reason: req.body.reason },
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        method: req.method,
+        path: req.originalUrl
+      });
+    } catch (e) { /* logging failure should not break the request */ }
     res.json({ success: true, data: order });
   } catch (error) {
     const statusCode = error.message.includes('Not authorized') ? 403 :

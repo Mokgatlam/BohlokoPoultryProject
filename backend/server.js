@@ -151,6 +151,32 @@ try {
 
   console.log('All routes loaded successfully');
 
+  // Request Logging Middleware
+  const systemLogService = require('./services/SystemLogService');
+  app.use(async (req, res, next) => {
+    const start = Date.now();
+    res.on('finish', async () => {
+      const duration = Date.now() - start;
+      if (req.path.startsWith('/api') && !req.path.includes('/api/health')) {
+        try {
+          await systemLogService.create({
+            level: res.statusCode >= 400 ? 'warn' : 'info',
+            message: `${req.method} ${req.originalUrl} ${res.statusCode}`,
+            category: 'system',
+            action: 'http_request',
+            method: req.method,
+            path: req.originalUrl,
+            statusCode: res.statusCode,
+            responseTime: duration,
+            ipAddress: req.ip,
+            userAgent: req.get('user-agent')
+          });
+        } catch (e) { /* don't let logging errors break the request */ }
+      }
+    });
+    next();
+  });
+
   // Root Redirect
   app.get('/', (req, res) => {
     res.redirect('/pages/public/index.html');

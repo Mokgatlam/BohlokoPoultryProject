@@ -40,6 +40,7 @@ const { body, validationResult } = require('express-validator');
 const paymentService = require('../services/PaymentService');
 const { protect, authorize } = require('../middleware/auth');
 const { PAYMENT_METHODS } = require('../config/constants');
+const systemLogService = require('../services/SystemLogService');
 
 /**
  * GET /api/payments
@@ -152,6 +153,23 @@ router.post('/', protect, [
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
     const payment = await paymentService.create({ ...req.body, userId: req.user._id });
+    try {
+      await systemLogService.create({
+        level: 'info',
+        message: `Payment created: ${payment.paymentNumber}`,
+        category: 'payment',
+        userId: req.user._id || req.user.id,
+        userName: `${req.user.firstName} ${req.user.lastName}`,
+        action: 'create_payment',
+        resource: 'payment',
+        resourceId: payment._id || payment.id,
+        details: { paymentNumber: payment.paymentNumber, amount: payment.amount, method: payment.method },
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        method: req.method,
+        path: req.originalUrl
+      });
+    } catch (e) { /* logging failure should not break the request */ }
     res.status(201).json({ success: true, data: payment });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -176,6 +194,23 @@ router.post('/', protect, [
 router.put('/:id/process', protect, authorize('Farm Manager', 'Sales Assistant'), async (req, res) => {
   try {
     const payment = await paymentService.processPayment(req.params.id);
+    try {
+      await systemLogService.create({
+        level: 'info',
+        message: `Payment processed: ${payment.paymentNumber || req.params.id}`,
+        category: 'payment',
+        userId: req.user._id || req.user.id,
+        userName: `${req.user.firstName} ${req.user.lastName}`,
+        action: 'process_payment',
+        resource: 'payment',
+        resourceId: req.params.id,
+        details: { paymentNumber: payment.paymentNumber },
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        method: req.method,
+        path: req.originalUrl
+      });
+    } catch (e) { /* logging failure should not break the request */ }
     res.json({ success: true, data: payment });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
@@ -207,6 +242,23 @@ router.put('/:id/refund', protect, authorize('Farm Manager'), [
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
     const payment = await paymentService.refund(req.params.id, req.body.reason);
+    try {
+      await systemLogService.create({
+        level: 'warn',
+        message: `Payment refunded: ${payment.paymentNumber || req.params.id}`,
+        category: 'payment',
+        userId: req.user._id || req.user.id,
+        userName: `${req.user.firstName} ${req.user.lastName}`,
+        action: 'refund_payment',
+        resource: 'payment',
+        resourceId: req.params.id,
+        details: { paymentNumber: payment.paymentNumber, reason: req.body.reason },
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        method: req.method,
+        path: req.originalUrl
+      });
+    } catch (e) { /* logging failure should not break the request */ }
     res.json({ success: true, data: payment });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
