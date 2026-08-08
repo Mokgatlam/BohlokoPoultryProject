@@ -17,30 +17,40 @@ exports.up = async function(knex) {
     const hasUpdatedAt = await knex.schema.hasColumn(table, 'updated_at');
 
     if (hasCreatedAt) {
-      await knex.raw('ALTER TABLE `' + table + '` CHANGE `created_at` `createdAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP');
+      await knex.schema.alterTable(table, (builder) => {
+        builder.renameColumn('created_at', 'createdAt');
+      });
     }
     if (hasUpdatedAt) {
-      await knex.raw('ALTER TABLE `' + table + '` CHANGE `updated_at` `updatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP');
+      await knex.schema.alterTable(table, (builder) => {
+        builder.renameColumn('updated_at', 'updatedAt');
+      });
     }
   }
 
-  // Users table: drop old snake_case columns (already has camelCase from first migration attempt)
   const usersHasCreatedAt = await knex.schema.hasColumn('users', 'created_at');
   const usersHasUpdatedAt = await knex.schema.hasColumn('users', 'updated_at');
   if (usersHasCreatedAt) {
-    await knex.raw('ALTER TABLE `users` DROP COLUMN `created_at`');
+    await knex.schema.alterTable('users', (builder) => {
+      builder.dropColumn('created_at');
+    });
   }
   if (usersHasUpdatedAt) {
-    await knex.raw('ALTER TABLE `users` DROP COLUMN `updated_at`');
+    await knex.schema.alterTable('users', (builder) => {
+      builder.dropColumn('updated_at');
+    });
   }
-  // Ensure users has camelCase columns
   const usersHasCamelCreated = await knex.schema.hasColumn('users', 'createdAt');
   const usersHasCamelUpdated = await knex.schema.hasColumn('users', 'updatedAt');
   if (!usersHasCamelCreated) {
-    await knex.raw('ALTER TABLE `users` ADD COLUMN `createdAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP');
+    await knex.schema.alterTable('users', (builder) => {
+      builder.timestamp('createdAt').defaultTo(knex.fn.now());
+    });
   }
   if (!usersHasCamelUpdated) {
-    await knex.raw('ALTER TABLE `users` ADD COLUMN `updatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP');
+    await knex.schema.alterTable('users', (builder) => {
+      builder.timestamp('updatedAt').defaultTo(knex.fn.now());
+    });
   }
 };
 
@@ -55,17 +65,21 @@ exports.down = async function(knex) {
     'processingBatches', 'processingQualityChecks', 'processingStaff',
     'processingSteps', 'productionCycles', 'products',
     'promotionalCampaigns', 'qualityChecks', 'systemConfig',
-    'systemLogs', 'users', 'vaccinations', 'weightRecords', 'yieldRecords'
+    'systemLogs', 'vaccinations', 'weightRecords', 'yieldRecords'
   ];
 
   for (const table of tables) {
     const hasCreatedAt = await knex.schema.hasColumn(table, 'createdAt');
     const hasUpdatedAt = await knex.schema.hasColumn(table, 'updatedAt');
     if (hasCreatedAt) {
-      await knex.raw('ALTER TABLE `' + table + '` CHANGE `createdAt` `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP');
+      await knex.schema.alterTable(table, (builder) => {
+        builder.renameColumn('createdAt', 'created_at');
+      });
     }
     if (hasUpdatedAt) {
-      await knex.raw('ALTER TABLE `' + table + '` CHANGE `updatedAt` `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP');
+      await knex.schema.alterTable(table, (builder) => {
+        builder.renameColumn('updatedAt', 'updated_at');
+      });
     }
   }
 };
