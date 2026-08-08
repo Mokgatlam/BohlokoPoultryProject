@@ -1,228 +1,393 @@
 # Payment System Implementation
 
+**Last Updated:** August 2026  
+**Status:** Production-ready (PayFast sandbox)
+
+---
+
 ## Overview
-The payment transaction system has been successfully implemented for the Chicken Processing & Packaging Sales Platform. The system handles all requirements specified in the task.
 
-## Requirements Met
+The Bohloko Family Farm payment system uses **PayFast** as the sole online payment gateway. Customers are redirected to PayFast's secure checkout to pay via credit/debit card, EFT, or mobile wallet. PayFast sends an IPN (Instant Transaction Notification) webhook to confirm payment status.
 
-### 1. Support multiple payment methods
-- **CASH**: In-person cash payments at the farm
-- **CREDIT_CARD**: Online credit card payments
-- **DEBIT_CARD**: Online debit card payments  
-- **BANK_TRANSFER**: Bank transfer payments with reference numbers
-- **MOBILE_MONEY**: Mobile money payments (popular in South Africa)
-- **CASH_ON_DELIVERY**: Cash payment upon delivery
-
-### 2. Integrate with payment gateways for online payments
-- **Stripe**: International card payments
-- **PayFast**: South African payment gateway
-- **Yoco**: South African card payments
-- **Mock implementations**: Ready for real API integration
-- **Gateway configuration**: Environment-based configuration
-
-### 3. Generate payment receipts and invoices
-- **Payment receipts**: Auto-generated after successful payments (RCPT- prefix)
-- **Invoices**: Generated for orders (INV- prefix)
-- **Content includes**: Order details, customer information, business info, tax calculations
-- **Storage**: Saved to Firestore for record-keeping
-
-### 4. Track payment status
-- **PENDING**: Payment initiated but not completed
-- **PAID**: Payment successfully completed
-- **FAILED**: Payment failed or declined
-- **REFUNDED**: Full refund processed
-- **PARTIALLY_REFUNDED**: Partial refund processed
-
-### 5. Handle partial payments and payment plans
-- **Partial payments**: Multiple payments towards a single order
-- **Payment plans**: Installment-based payments with scheduled due dates
-- **Installment tracking**: Individual installment status tracking
-- **Automatic status updates**: Order status updates based on payment progress
-
-### 6. Support cash-on-delivery verification
-- **Verification codes**: Generated for each COD order
-- **Delivery verification**: Code verification upon delivery
-- **Status update**: Automatic status update to PAID upon verification
-- **Security**: Simple verification system (can be enhanced)
+---
 
 ## Architecture
 
-### Files Created/Modified
+```
+Customer → Shop Checkout → Order Created (paymentStatus: Pending)
+                                        ↓
+                              POST /api/payfast/init → Builds signed PayFast URL
+                                        ↓
+                              Browser redirects to sandbox.payfast.co.za
+                                        ↓
+                              Customer pays (card/EFT/wallet)
+                                        ↓
+                    ┌───────────────────┴───────────────────┐
+                    ↓                                       ↓
+          payment-success.html                    payment-cancel.html
+          (return_url)                            (cancel_url)
+                    ↓
+          PayFast POSTs IPN → /api/payfast/notify
+                    ↓
+          Backend verifies signature + confirms with PayFast
+                    ↓
+          Updates order.paymentStatus → Paid
+```
 
-#### New Files:
-1. **`src/services/paymentService.ts`** - Core payment processing logic
-   - Payment processing for all methods
-   - Receipt and invoice generation
-   - Partial payment handling
-   - Payment plan management
-   - Refund processing
-   - Cash-on-delivery verification
+---
 
-2. **`src/controllers/paymentController.ts`** - API controllers
-   - RESTful endpoints for payment operations
-   - Input validation and error handling
-   - Response formatting
+## Environment Variables
 
-3. **`src/routes/payments.ts`** - Payment API routes
-   - `/api/payments/process` - Process payment
-   - `/api/payments/partial` - Record partial payment
-   - `/api/payments/plans` - Create payment plan
-   - `/api/payments/receipts/:receiptNumber` - Get receipt
-   - `/api/payments/invoices/:invoiceNumber` - Get invoice
-   - `/api/payments/refund` - Process refund
-   - `/api/payments/cod/verify` - Verify COD
+Add to `backend/.env` (and `.env.example` for production):
 
-4. **`test-payment.js`** - Test script
-   - Validates all payment methods
-   - Simulates payment scenarios
-   - Tests validation logic
+```env
+# PayFast Payment Gateway
+PAYFAST_MERCHANT_ID=10000100
+PAYFAST_MERCHANT_KEY=46f0cd694581a
+PAYFAST_PASSPHRASE=jt7NOE43FZPn
+PAYFAST_MODE=sandbox
+PAYFAST_RETURN_URL=http://localhost:5000/pages/public/payment-success.html
+PAYFAST_CANCEL_URL=http://localhost:5000/pages/public/payment-cancel.html
+PAYFAST_NOTIFY_URL=http://localhost:5000/api/payfast/notify
+```
 
-#### Modified Files:
-1. **`src/models/Order.ts`** - Added CASH payment method
-   - Updated PaymentMethod enum to include CASH
-   - Maintains backward compatibility
+| Variable | Description |
+|----------|-------------|
+| `PAYFAST_MERCHANT_ID` | 8-character merchant ID from PayFast |
+| `PAYFAST_MERCHANT_KEY` | Merchant key from PayFast |
+| `PAYFAST_PASSPHRASE` | Passphrase set in PayFast dashboard (optional but recommended) |
+| `PAYFAST_MODE` | `sandbox` for testing, `live` for production |
+| `PAYFAST_RETURN_URL` | Redirect after successful payment |
+| `PAYFAST_CANCEL_URL` | Redirect if customer cancels |
+| `PAYFAST_NOTIFY_URL` | IPN webhook endpoint (PayFast POSTs here) |
 
-2. **`src/app.ts`** - Integrated payment routes
-   - Added payment routes to API
-   - Updated endpoint documentation
+### Sandbox vs Live URLs
 
-### Data Models
+| Environment | Checkout URL | ITN Validation URL |
+|-------------|-------------|-------------------|
+| Sandbox | `https://sandbox.payfast.co.za/eng/process` | `https://sandbox.payfast.co.za/eng/query/validate` |
+| Live | `https://www.payfast.co.za/eng/process` | `https://www.payfast.co.za/eng/query/validate` |
 
-#### Payment Receipt:
-```typescript
-interface PaymentReceipt {
-  receiptNumber: string;
-  orderId: string;
-  orderNumber: string;
-  transactionId: string;
-  paymentMethod: PaymentMethod;
-  amount: number;
-  currency: string;
-  customerName: string;
-  customerEmail: string;
-  paymentDate: Date;
-  status: PaymentStatus;
-  items: Array<{ description: string; quantity: number; unitPrice: number; totalPrice: number }>;
-  subtotal: number;
-  taxAmount: number;
-  shippingCost: number;
-  totalAmount: number;
-  businessInfo: { name: string; address: string; phone: string; email: string; taxId?: string };
+### Sandbox Test Credentials
+
+```
+Merchant ID:  10000100
+Merchant Key: 46f0cd694581a
+Passphrase:   jt7NOE43FZPn
+Test Buyer:   sbtu01@payfast.io / clientpass
+Test Card:    4000 0000 0000 0002 (any future expiry, CVV 123)
+```
+
+---
+
+## Files Reference
+
+### Backend
+
+| File | Purpose |
+|------|---------|
+| `backend/services/PayFastService.js` | Signature generation, checkout URL building, ITN verification, status mapping |
+| `backend/routes/payfast.js` | API routes: `/init`, `/notify`, `/status/:orderId` |
+| `backend/services/PaymentService.js` | Payment CRUD (create, process, refund, stats) |
+| `backend/routes/payments.js` | Payment CRUD routes |
+| `backend/config/constants.js` | `PAYMENT_METHODS = ['payfast']` |
+| `backend/services/OrderService.js` | Creates orders with `paymentStatus: 'Pending'` |
+
+### Frontend
+
+| File | Purpose |
+|------|---------|
+| `pages/public/shop.html` | Checkout with PayFast redirect |
+| `pages/public/payment-success.html` | Landing page after successful payment |
+| `pages/public/payment-cancel.html` | Landing page if payment cancelled |
+| `pages/public/payment-pending.html` | Landing page for EFT awaiting clearance |
+| `assets/js/api.js` | `api.payfast.init()` and `api.payfast.getStatus()` |
+
+### Tests
+
+| File | Tests |
+|------|-------|
+| `backend/tests/PayFastService.test.js` | 30 tests — signature, ITN verification, status mapping, source validation |
+
+---
+
+## API Endpoints
+
+### POST /api/payfast/init
+
+Initialize PayFast checkout for an order.
+
+**Auth:** Required (Bearer token)  
+**Request Body:**
+```json
+{ "orderId": "uuid-of-order" }
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "checkoutUrl": "https://sandbox.payfast.co.za/eng/process?merchant_id=...",
+    "paymentId": "uuid-of-payment"
+  }
 }
 ```
 
-#### Invoice:
-```typescript
-interface Invoice {
-  invoiceNumber: string;
-  orderId: string;
-  orderNumber: string;
-  customerName: string;
-  customerEmail: string;
-  customerAddress: string;
-  issueDate: Date;
-  dueDate: Date;
-  items: Array<{ description: string; quantity: number; unitPrice: number; totalPrice: number }>;
-  subtotal: number;
-  taxAmount: number;
-  shippingCost: number;
-  discountAmount: number;
-  totalAmount: number;
-  paymentStatus: PaymentStatus;
-  notes?: string;
-  businessInfo: { name: string; address: string; phone: string; email: string; taxId?: string };
+**Business Rules:**
+- Order must exist and not already be paid
+- User must own the order (or be Farm Manager/Sales Assistant)
+- Creates a payment record with status `Pending`
+
+### POST /api/payfast/notify
+
+ITN (Instant Transaction Notification) webhook from PayFast servers.
+
+**Auth:** None (verified by signature)  
+**Always returns HTTP 200** to prevent PayFast retries.
+
+**Processing Steps:**
+1. Verify MD5 signature matches
+2. Confirm with PayFast server (`POST /eng/query/validate`)
+3. Update payment status (Paid/Failed/Pending/Refunded)
+4. Update order paymentStatus
+5. Store full gateway response in `payments.gatewayResponse` JSON column
+
+### GET /api/payfast/status/:orderId
+
+Check payment status for an order.
+
+**Auth:** Required  
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "paymentStatus": "Paid",
+    "orderStatus": "Confirmed",
+    "payment": { ... }
+  }
 }
 ```
 
-## Integration with Existing System
+---
 
-### Order System Integration
-- **Seamless integration**: Works with existing Order model and OrderService
-- **Status synchronization**: Automatic order payment status updates
-- **Inventory management**: Respects existing inventory validation
-- **User management**: Works with both authenticated users and guest customers
+## PayFast Signature Algorithm
 
-### API Integration
-- **RESTful endpoints**: Consistent with existing API patterns
-- **Error handling**: Uses existing middleware and error handlers
-- **Authentication**: Ready for auth middleware integration
-- **CORS**: Works with existing CORS configuration
+```
+1. Remove empty values and 'signature' field
+2. Sort remaining fields alphabetically by key
+3. Concatenate as key=value pairs joined by &
+4. URL-encode values (spaces as +, not %20)
+5. Append &passphrase=<passphrase> if set
+6. MD5 hash the result (lowercase hex)
+```
 
-## Security Features
+**Node.js implementation:**
+```js
+const crypto = require('crypto');
+const querystring = require('querystring');
 
-### Payment Gateway Security
-- **API key management**: Environment variable based
-- **Secret management**: Secure storage of gateway secrets
-- **Webhook support**: Ready for payment gateway webhooks
-- **Mock mode**: Safe development/testing without real payments
+function generateSignature(data, passphrase) {
+  const filtered = [];
+  for (const [key, value] of Object.entries(data)) {
+    if (key !== 'signature' && value !== '' && value != null) {
+      filtered.push({ key, value: String(value) });
+    }
+  }
+  filtered.sort((a, b) => a.key.localeCompare(b.key));
+  let paramString = filtered
+    .map(({ key, value }) => `${key}=${querystring.escape(value)}`)
+    .join('&');
+  if (passphrase) {
+    paramString += `&passphrase=${querystring.escape(passphrase)}`;
+  }
+  return crypto.createHash('md5').update(paramString).digest('hex');
+}
+```
 
-### Transaction Security
-- **Transaction IDs**: Unique identifiers for all payments
-- **Reference numbers**: For bank transfers and cash payments
-- **Verification codes**: For cash-on-delivery
-- **Audit trail**: All payments logged to Firestore
+---
+
+## Payment Status Mapping
+
+| PayFast Status | System Status | Description |
+|----------------|---------------|-------------|
+| `COMPLETE` | `Paid` | Payment successful |
+| `FAILED` | `Failed` | Payment failed |
+| `PENDING` | `Pending` | Payment pending (EFT awaiting clearance) |
+| `CANCELLED` | `Failed` | Payment cancelled by buyer |
+| `REFUNDED` | `Refunded` | Payment refunded |
+| `STOPPED` | `Failed` | Subscription stopped |
+
+---
+
+## Database Schema
+
+### payments table (relevant columns)
+
+```sql
+CREATE TABLE payments (
+  id VARCHAR(36) PRIMARY KEY,
+  orderId VARCHAR(36) NOT NULL,
+  transactionId VARCHAR(100),           -- PayFast pf_payment_id
+  amount DECIMAL(10,2) NOT NULL,
+  currency VARCHAR(3) DEFAULT 'ZAR',
+  method ENUM('payfast'),
+  status ENUM('pending','completed','failed','refunded') DEFAULT 'pending',
+  gatewayResponse JSON,                  -- Full ITN payload from PayFast
+  created_at TIMESTAMP,
+  updated_at TIMESTAMP,
+  INDEX (orderId),
+  INDEX (transactionId)
+);
+```
+
+### orders table (relevant columns)
+
+```sql
+paymentMethod ENUM('cash','bank_transfer','mobile_money','credit_card','debit_card','eft') DEFAULT 'cash'
+paymentStatus ENUM('Pending','Paid','Refunded','Failed') DEFAULT 'Pending'
+```
+
+---
+
+## Checkout Flow (Frontend)
+
+1. Customer adds products to cart
+2. Clicks "Proceed to Checkout" → login required
+3. Fills delivery info, selects delivery option
+4. Sees single payment option: **PayFast Secure Payment** (Card, EFT, or Mobile Wallet)
+5. Clicks "Place Order"
+6. `placeOrder()` calls `POST /api/orders` → order created
+7. Then calls `POST /api/payfast/init` → receives checkout URL
+8. Browser redirects to PayFast
+9. Customer completes payment
+10. PayFast redirects to `payment-success.html?id=<orderId>`
+11. Page auto-redirects to invoice after 10 seconds
+
+---
+
+## IPN Verification (5 Steps)
+
+```js
+// 1. Verify signature matches
+const calculated = generateSignature(postData, passphrase);
+if (calculated !== postData.signature) return; // reject
+
+// 2. Confirm with PayFast server
+const response = await fetch('https://sandbox.payfast.co.za/eng/query/validate', {
+  method: 'POST',
+  body: paramBody
+});
+if (response !== 'VALID') return; // reject
+
+// 3. Update payment record
+await paymentService.updateStatus(paymentId, mappedStatus, pfPaymentId);
+
+// 4. Store gateway response
+await db('payments').where('id', paymentId).update({
+  gatewayResponse: JSON.stringify(postData)
+});
+
+// 5. Update order paymentStatus
+await db('orders').where('id', orderId).update({
+  paymentStatus: mappedStatus
+});
+```
+
+### Known PayFast IP Ranges
+
+```
+197.97.*.*   (primary)
+41.0.*.*
+196.216.*.*
+102.130.*.*
+```
+
+---
 
 ## Testing
 
-### Test Coverage
-1. **Payment method validation** - All 6 payment methods validated
-2. **Payment status validation** - All 5 statuses validated
-3. **Payment processing simulation** - Realistic payment scenarios
-4. **Error handling** - Invalid inputs and failed payments
-5. **Integration testing** - Works with order system
+### Running PayFast Tests
 
-### Test Results
-- ✅ All payment methods supported and validated
-- ✅ Payment status tracking working correctly
-- ✅ Receipt and invoice generation functional
-- ✅ Partial payments and payment plans implemented
-- ✅ Cash-on-delivery verification working
-- ✅ Refund processing implemented
-
-## Deployment Considerations
-
-### Environment Variables
-```env
-# Payment Gateway Configuration
-STRIPE_API_KEY=your_stripe_api_key
-STRIPE_SECRET_KEY=your_stripe_secret_key
-STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
-PAYFAST_MERCHANT_ID=your_payfast_merchant_id
-PAYFAST_MERCHANT_KEY=your_payfast_merchant_key
-YOCO_API_KEY=your_yoco_api_key
-YOCO_SECRET_KEY=your_yoco_secret_key
+```bash
+cd backend
+npx jest tests/PayFastService.test.js --no-coverage
 ```
 
-### Firestore Collections
-- `payments` - Payment transaction records
-- `payment_receipts` - Generated payment receipts
-- `invoices` - Generated invoices
-- `partial_payments` - Partial payment records
-- `payment_plans` - Payment plan records
+**30 tests covering:**
+- Signature generation (sorted fields, passphrase, empty values, special chars)
+- Checkout data building (required fields, optional customer data)
+- Checkout URL building (sandbox URL, signature in URL)
+- ITN verification (valid/invalid signature, missing signature, invalid amount)
+- Status mapping (COMPLETE, FAILED, PENDING, CANCELLED, REFUNDED, STOPPED)
+- Source IP validation (PayFast ranges, IPv6 mapped, non-PayFast IPs)
 
-## Future Enhancements
+### Manual Sandbox Test
 
-### Immediate Improvements
-1. **Real payment gateway integration** - Connect to actual Stripe/PayFast/Yoco APIs
-2. **Webhook handlers** - Process payment gateway webhooks
-3. **Email notifications** - Send receipts/invoices via email
-4. **PDF generation** - Generate downloadable PDF receipts/invoices
+1. Start server: `cd backend && node server.js`
+2. Open `http://localhost:5000/pages/public/shop.html`
+3. Add product to cart → checkout → place order
+4. Redirected to `sandbox.payfast.co.za`
+5. Enter test card: `4000 0000 0000 0002`, expiry: any future, CVV: `123`
+6. Complete payment → redirected to `payment-success.html`
+7. Check order status: `GET /api/payfast/status/<orderId>` → `Paid`
 
-### Advanced Features
-1. **Multi-currency support** - Support for ZAR, USD, EUR, etc.
-2. **Payment analytics** - Dashboard with payment metrics
-3. **Fraud detection** - Basic fraud prevention rules
-4. **Recurring payments** - Subscription-based payments
-5. **Payment reconciliation** - Bank statement reconciliation
+---
 
-## Conclusion
+## Deployment (Production)
 
-The payment transaction system has been successfully implemented meeting all specified requirements. The system is:
+### Step 1: Update Environment Variables
 
-1. **Comprehensive**: Supports all required payment methods
-2. **Secure**: Implements security best practices
-3. **Scalable**: Ready for production use
-4. **Integrable**: Works seamlessly with existing order system
-5. **Maintainable**: Clean code structure with proper separation of concerns
+```env
+PAYFAST_MODE=live
+PAYFAST_RETURN_URL=https://yourdomain.com/pages/public/payment-success.html
+PAYFAST_CANCEL_URL=https://yourdomain.com/pages/public/payment-cancel.html
+PAYFAST_NOTIFY_URL=https://yourdomain.com/api/payfast/notify
+PAYFAST_MERCHANT_ID=<your-live-merchant-id>
+PAYFAST_MERCHANT_KEY=<your-live-merchant-key>
+PAYFAST_PASSPHRASE=<your-live-passphrase>
+```
 
-The system is ready for integration with real payment gateways and can be deployed to production with minimal configuration.
+### Step 2: Update PayFast Dashboard
+
+Set the **ITN URL** in your PayFast dashboard to:
+```
+https://yourdomain.com/api/payfast/notify
+```
+
+### Step 3: Enable Live Mode
+
+Change `PAYFAST_MODE=live` and verify the merchant credentials are for the live account.
+
+### Important: ITN URL Must Be HTTPS
+
+PayFast requires the notify URL to be HTTPS in production. Ensure your deployment uses SSL.
+
+---
+
+## Security Considerations
+
+| Concern | Mitigation |
+|---------|-----------|
+| Signature verification | MD5 signature validated on every ITN |
+| Server confirmation | ITN confirmed by POSTing back to PayFast validate URL |
+| Idempotent processing | Check payment status before updating |
+| Amount verification | `amount_gross` compared with expected order total |
+| Source IP validation | Verify request originates from PayFast IP ranges |
+| Auth on /init | Only authenticated users can initiate checkout |
+| Ownership check | Users can only checkout their own orders |
+| No secrets in frontend | All PayFast credentials stay in backend |
+
+---
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| PayFast redirects but doesn't come back | Check `PAYFAST_RETURN_URL` is correct and accessible |
+| ITN not received | Check `PAYFAST_NOTIFY_URL`, ensure HTTPS in production, check firewall |
+| Signature mismatch | Ensure `PAYFAST_PASSPHRASE` matches PayFast dashboard setting |
+| Payment stays Pending | Check ITN processing logs — signature may be failing |
+| Sandbox not working | Verify you're using sandbox credentials, not live |
+| "Order already paid" | Order has `paymentStatus: Paid` — check ITN was processed |

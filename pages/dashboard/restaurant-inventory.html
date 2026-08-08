@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Inventory - Bohloko Family Farm</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../../assets/images/icons/favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../assets/css/public.css">
+    <style>
+        :root { --primary: #1B4332; --accent: #D4A843; }
+        .dashboard-header { background: linear-gradient(135deg, var(--primary) 0%, #0d2818 100%); color: white; padding: 30px 0; }
+        .stat-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 15px rgba(0,0,0,0.05); transition: transform 0.3s; }
+        .stat-card:hover { transform: translateY(-2px); }
+        .stat-card .icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 12px; }
+        .stat-card h3 { font-size: 1.8rem; font-weight: 700; }
+        .stat-card p { color: #666; margin: 0; font-size: 0.85rem; }
+        .inventory-table { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .inventory-table th { background: #f8f9fa; font-size: 0.82rem; font-weight: 600; color: #666; }
+        .inventory-table td { vertical-align: middle; font-size: 0.9rem; }
+        .stock-badge { padding: 4px 10px; border-radius: 15px; font-size: 0.75rem; font-weight: 500; }
+        .stock-available { background: #d1fae5; color: #065f46; }
+        .stock-low { background: #fef3c7; color: #92400e; }
+        .stock-out { background: #fee2e2; color: #991b1b; }
+        .filter-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+        .filter-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid #ddd; background: white; font-size: 0.82rem; cursor: pointer; transition: all 0.3s; }
+        .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .empty-state { text-align: center; padding: 40px; color: #888; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="mb-1"><i class="fas fa-warehouse me-2"></i>Inventory Availability</h4>
+                    <p class="mb-0 opacity-75">Real-time stock levels for wholesale ordering</p>
+                </div>
+                <div>
+                    <a href="restaurant.html" class="btn btn-outline-light btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
+                    <a href="../public/shop.html" class="btn btn-light btn-sm ms-2"><i class="fas fa-shopping-cart me-1"></i>Order</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-4">
+        <div class="row g-4 mb-4">
+            <div class="col-6 col-lg-3">
+                <div class="stat-card">
+                    <div class="icon" style="background:rgba(27,67,50,0.1);color:var(--primary)"><i class="fas fa-boxes"></i></div>
+                    <h3 id="totalProducts">0</h3><p>Total Products</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="stat-card">
+                    <div class="icon" style="background:rgba(16,185,129,0.1);color:#10b981"><i class="fas fa-check-circle"></i></div>
+                    <h3 id="inStockCount">0</h3><p>In Stock</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="stat-card">
+                    <div class="icon" style="background:rgba(245,158,11,0.1);color:#f59e0b"><i class="fas fa-exclamation-triangle"></i></div>
+                    <h3 id="lowStockCount">0</h3><p>Low Stock</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="stat-card">
+                    <div class="icon" style="background:rgba(239,68,68,0.1);color:#ef4444"><i class="fas fa-times-circle"></i></div>
+                    <h3 id="outOfStockCount">0</h3><p>Out of Stock</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <button class="filter-btn active" onclick="setFilter('')">All</button>
+            <button class="filter-btn" onclick="setFilter('in-stock')">In Stock</button>
+            <button class="filter-btn" onclick="setFilter('low-stock')">Low Stock</button>
+            <button class="filter-btn" onclick="setFilter('out-of-stock')">Out of Stock</button>
+        </div>
+
+        <div class="inventory-table">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock Level</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="inventoryBody">
+                    <tr><td colspan="6" class="text-center py-4"><div class="spinner-border text-success" role="status"></div><p class="mt-2 text-muted">Loading inventory...</p></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="../../assets/js/api.js"></script>
+    <script src="../../assets/js/admin.js"></script>
+    <script>
+        let allProducts = [];
+        let currentFilter = '';
+
+        async function loadInventory() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const res = await api.products.getAll();
+            if (res.success) {
+                allProducts = res.data || [];
+                updateStats();
+                filterInventory();
+            } else {
+                document.getElementById('inventoryBody').innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">Unable to load inventory.</td></tr>';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('totalProducts').textContent = allProducts.length;
+            document.getElementById('inStockCount').textContent = allProducts.filter(p => p.available !== false).length;
+            document.getElementById('lowStockCount').textContent = 0;
+            document.getElementById('outOfStockCount').textContent = allProducts.filter(p => p.available === false).length;
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                const label = filter === '' ? 'All' : filter === 'in-stock' ? 'In Stock' : filter === 'low-stock' ? 'Low Stock' : 'Out of Stock';
+                btn.classList.toggle('active', btn.textContent.trim() === label);
+            });
+            filterInventory();
+        }
+
+        function filterInventory() {
+            let filtered = allProducts;
+            if (currentFilter === 'in-stock') filtered = allProducts.filter(p => p.available !== false);
+            else if (currentFilter === 'low-stock') filtered = [];
+            else if (currentFilter === 'out-of-stock') filtered = allProducts.filter(p => p.available === false);
+            renderInventory(filtered);
+        }
+
+        function renderInventory(products) {
+            const el = document.getElementById('inventoryBody');
+            if (!products.length) {
+                el.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">No products found.</td></tr>';
+                return;
+            }
+            el.innerHTML = products.map(p => {
+                const inStock = p.available !== false;
+                const statusClass = inStock ? 'stock-available' : 'stock-out';
+                const statusText = inStock ? 'In Stock' : 'Out of Stock';
+                return `
+                <tr>
+                    <td><strong>${escapeHtml(p.name)}</strong><br><small class="text-muted">${escapeHtml(p.sku || '')}</small></td>
+                    <td>${escapeHtml(p.category || 'N/A')}</td>
+                    <td>R${parseFloat(p.price || 0).toFixed(2)}</td>
+                    <td>${inStock ? 'Available' : 'Unavailable'}</td>
+                    <td><span class="stock-badge ${statusClass}">${statusText}</span></td>
+                    <td><a href="../public/shop.html?product=${p.id}" class="btn btn-sm btn-outline-success"><i class="fas fa-shopping-cart me-1"></i>Order</a></td>
+                </tr>`;
+            }).join('');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        loadInventory();
+    </script>
+</body>
+</html>

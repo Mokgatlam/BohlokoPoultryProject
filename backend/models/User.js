@@ -133,10 +133,7 @@ class User {
    * @returns {Array} Array of user objects (without passwords)
    */
   static async find(query = {}, options = {}) {
-    let cursor = db.users.find(query);
-    if (options.sort) cursor = cursor.sort(options.sort);
-    if (options.limit) cursor = cursor.limit(options.limit);
-    const users = await cursor.exec();
+    const users = await db.users.find(query, options);
     // Strip password from all returned users (security)
     return users.map(({ password, ...user }) => user);
   }

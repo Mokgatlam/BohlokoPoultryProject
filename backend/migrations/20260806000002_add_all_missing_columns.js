@@ -10,8 +10,8 @@ exports.up = function(knex) {
   return knex.schema
     // ========== ORDERS ==========
     // paymentStatus enum needs to be converted to VARCHAR so 'Unpaid' can be added (OrderService sets it for non-cash)
-    .raw(`DO $$ BEGIN ALTER TABLE orders ALTER COLUMN "paymentStatus" TYPE VARCHAR(20) USING "paymentStatus"::text; EXCEPTION WHEN undefined_column THEN NULL; END $$;`)
-    .raw(`DO $$ BEGIN ALTER TABLE orders ALTER COLUMN "paymentStatus" SET DEFAULT 'Pending'; EXCEPTION WHEN undefined_column THEN NULL; END $$;`)
+    .raw(`ALTER TABLE orders ALTER COLUMN paymentStatus TYPE VARCHAR(20) USING paymentStatus::VARCHAR`)
+    .raw(`ALTER TABLE orders ALTER COLUMN paymentStatus SET DEFAULT 'Pending'`)
 
     // ========== PAYMENTS ==========
     .alterTable('payments', table => {
@@ -194,6 +194,8 @@ exports.up = function(knex) {
 
 exports.down = function(knex) {
   return knex.schema
+    .raw(`ALTER TABLE orders ALTER COLUMN paymentStatus TYPE VARCHAR(20) USING paymentStatus::VARCHAR`)
+    .raw(`ALTER TABLE orders ALTER COLUMN paymentStatus SET DEFAULT 'Pending'`)
     .alterTable('contactMessages', table => {
       table.dropColumn('phone');
     })

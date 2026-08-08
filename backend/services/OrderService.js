@@ -85,7 +85,7 @@ class OrderService {
       shippingCost,
       total,
       status: 'Pending',
-      paymentStatus: paymentMethod === 'cash' ? 'Pending' : 'Unpaid',
+      paymentStatus: 'Pending',
       deliveryOption,
       deliveryAddress: deliveryAddress ? JSON.stringify(deliveryAddress) : null,
       paymentMethod,

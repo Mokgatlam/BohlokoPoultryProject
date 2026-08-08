@@ -378,29 +378,25 @@
                         </div>
                         <div class="col-md-6">
                             <div class="checkout-section">
-                                <h6><i class="fas fa-credit-card me-2"></i>Payment Method</h6>
+                                <h6><i class="fas fa-credit-card me-2"></i>Payment</h6>
                                 <div class="payment-options">
                                     <label class="payment-option active">
-                                        <input type="radio" name="payment" id="payCash" value="cash" checked onchange="selectPayment(this)">
+                                        <input type="radio" name="payment" id="payFast" value="payfast" checked style="display:none;">
                                         <div class="payment-option-content">
-                                            <i class="fas fa-money-bill-wave"></i>
-                                            <span>Cash on Delivery</span>
+                                            <div class="d-flex align-items-center gap-3">
+                                                <i class="fas fa-shield-alt text-success" style="font-size:1.5rem;"></i>
+                                                <div>
+                                                    <span class="d-block fw-bold">PayFast Secure Payment</span>
+                                                    <small class="text-muted">Card, EFT, or Mobile Wallet</small>
+                                                </div>
+                                            </div>
                                         </div>
                                     </label>
-                                    <label class="payment-option">
-                                        <input type="radio" name="payment" id="payEFT" value="bank_transfer" onchange="selectPayment(this)">
-                                        <div class="payment-option-content">
-                                            <i class="fas fa-university"></i>
-                                            <span>Bank Transfer / EFT</span>
-                                        </div>
-                                    </label>
-                                    <label class="payment-option">
-                                        <input type="radio" name="payment" id="payMobile" value="mobile_money" onchange="selectPayment(this)">
-                                        <div class="payment-option-content">
-                                            <i class="fas fa-mobile-alt"></i>
-                                            <span>Mobile Money</span>
-                                        </div>
-                                    </label>
+                                </div>
+                                <div class="mt-2">
+                                    <small class="text-muted d-flex align-items-center gap-1">
+                                        <i class="fas fa-lock"></i> 256-bit SSL encrypted by PayFast
+                                    </small>
                                 </div>
                             </div>
                             <div class="checkout-section">
@@ -940,7 +936,6 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
             btn.disabled = true;
 
-            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
             const deliveryOption = document.getElementById('checkDelivery').value;
 
             try {
@@ -952,7 +947,7 @@
                         productName: item.name
                     })),
                     deliveryOption,
-                    paymentMethod,
+                    paymentMethod: 'payfast',
                     deliveryAddress: deliveryOption === 'local_delivery' ? {
                         street: document.getElementById('checkStreet').value,
                         city: document.getElementById('checkCity').value,
@@ -962,8 +957,20 @@
 
                 if (result.success) {
                     bootstrap.Modal.getInstance(document.getElementById('checkoutModal')).hide();
+
+                    try {
+                        const payResult = await api.payfast.init(result.data.id);
+                        if (payResult.success && payResult.data.checkoutUrl) {
+                            clearCart();
+                            window.location.href = payResult.data.checkoutUrl;
+                            return;
+                        }
+                    } catch (payErr) {
+                        console.error('PayFast init error:', payErr);
+                    }
+
                     document.getElementById('confirmOrderNumber').textContent = 'Order #: ' + (result.data.orderNumber || result.data.id);
-                    document.getElementById('viewInvoiceBtn').href = '../admin/invoice.html?id=' + result.data.id;
+                    document.getElementById('viewInvoiceBtn').href = '../dashboard/customer-invoice.html?id=' + result.data.id;
                     new bootstrap.Modal(document.getElementById('confirmationModal')).show();
                     clearCart();
                 } else {

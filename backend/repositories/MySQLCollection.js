@@ -36,18 +36,24 @@ class MySQLCollection {
     if (!insertDoc._id) {
       insertDoc._id = uuidv4();
     }
-    // Convert _id to id for MySQL and convert all keys to snake_case
     const mysqlDoc = this.toSnakeCaseObj({ ...insertDoc });
     if (mysqlDoc._id && !mysqlDoc.id) {
       mysqlDoc.id = mysqlDoc._id;
       delete mysqlDoc._id;
+    }
+    // Stringify JSON objects/arrays for MySQL JSON columns
+    for (const [key, value] of Object.entries(mysqlDoc)) {
+      if (value !== null && typeof value === 'object' && !Array.isArray(value) && !(value instanceof Date)) {
+        mysqlDoc[key] = JSON.stringify(value);
+      } else if (Array.isArray(value)) {
+        mysqlDoc[key] = JSON.stringify(value);
+      }
     }
     
     try {
       await this.db(this.tableName).insert(mysqlDoc);
       return insertDoc;
     } catch (error) {
-      // If id column doesn't exist, try without it
       if (error.message.includes('Unknown column')) {
         delete mysqlDoc.id;
         await this.db(this.tableName).insert(mysqlDoc);
@@ -96,10 +102,11 @@ class MySQLCollection {
    */
   async update(query, update, options = {}) {
     const updates = this.extractUpdates(update);
+    const mysqlUpdates = this.toSnakeCaseObj(updates);
     let knexQuery = this.db(this.tableName);
     knexQuery = this.applyWhere(knexQuery, query);
     
-    const count = await knexQuery.update(this.toSnakeCaseObj(updates));
+    const count = await knexQuery.update(mysqlUpdates);
     return options.multi ? count : Math.min(count, 1);
   }
 
@@ -159,13 +166,11 @@ class MySQLCollection {
             case '$ne': knexQuery = knexQuery.where(this.toSnakeCase(key), '!=', opValue); break;
             case '$in': knexQuery = knexQuery.whereIn(this.toSnakeCase(key), opValue); break;
             case '$nin': knexQuery = knexQuery.whereNotIn(this.toSnakeCase(key), opValue); break;
-            case '$regex': knexQuery = knexQuery.where(this.toSnakeCase(key), 'like', opValue); break;
+            case '$regex': knexQuery = knexQuery.whereRaw(`?? ILIKE ?`, [this.toSnakeCase(key), `%${opValue}%`]); break;
+            case '$exists': knexQuery = opValue ? knexQuery.whereNotNull(this.toSnakeCase(key)) : knexQuery.whereNull(this.toSnakeCase(key)); break;
             default: knexQuery = knexQuery.where(this.toSnakeCase(key), opValue);
           }
         }
-      } else if (key === 'status' && value === 'active') {
-        // Special case: handle 'active' status for products table
-        knexQuery = knexQuery.where('available', true);
       } else {
         knexQuery = knexQuery.where(this.toSnakeCase(key), value);
       }
@@ -177,48 +182,45 @@ class MySQLCollection {
    * Extract update operations from NeDB-style update object.
    */
   extractUpdates(update) {
+    let updates;
     if (update.$set) {
-      return { ...update.$set };
+      updates = { ...update.$set };
+    } else {
+      updates = { ...update };
     }
-    return { ...update };
+    // Stringify nested objects for MySQL JSON columns
+    for (const [key, value] of Object.entries(updates)) {
+      if (value !== null && typeof value === 'object' && !Array.isArray(value) && !(value instanceof Date)) {
+        updates[key] = JSON.stringify(value);
+      } else if (Array.isArray(value)) {
+        updates[key] = JSON.stringify(value);
+      }
+    }
+    return updates;
   }
 
   /**
    * Convert camelCase key to snake_case for MySQL.
    */
   toSnakeCase(str) {
-    // Map known field names
+    // Map known field names that don't follow standard conventions
     const fieldMap = {
       '_id': 'id',
-      'userId': 'userId',
-      'productId': 'productId',
-      'cycleName': 'cycleName',
-      'productionType': 'productionType',
-      'expectedBirds': 'expectedBirds',
-      'startDate': 'startDate',
-      'expectedEndDate': 'expectedEndDate',
-      'birdCount': 'birdCount',
-      'feedConsumption': 'feedConsumption',
-      'waterConsumption': 'waterConsumption',
-      'medicationName': 'medicationName',
-      'vaccineName': 'vaccineName',
-      'scheduledDate': 'scheduledDate',
-      'batchNumber': 'batchNumber',
-      'productType': 'productType',
-      'orderNumber': 'orderNumber',
-      'customer': 'customer',
-      'paymentMethod': 'paymentMethod',
-      'paymentStatus': 'paymentStatus',
-      'deliveryOption': 'deliveryOption',
-      'deliveryAddress': 'deliveryAddress',
-      'shippingCost': 'shippingCost',
       'totalAmount': 'total',
-      'createdAt': 'created_at',
-      'updatedAt': 'updated_at'
     };
     
     if (fieldMap[str]) return fieldMap[str];
     if (str.startsWith('$')) return str;
+    
+    // PostgreSQL uses snake_case columns, MySQL uses camelCase
+    const isPostgres = this.db && this.db.client && this.db.client.config && 
+                       this.db.client.config.client === 'pg';
+    
+    if (isPostgres) {
+      // Convert camelCase to snake_case for PostgreSQL
+      return str.replace(/([A-Z])/g, '_$1').toLowerCase();
+    }
+    // MySQL: return as-is (columns are camelCase)
     return str;
   }
 
@@ -228,9 +230,16 @@ class MySQLCollection {
   toCamelCaseRow(row) {
     if (!row) return row;
     const result = { ...row };
-    // Ensure _id is set for backward compatibility
     if (result.id && !result._id) {
       result._id = result.id;
+    }
+    // Parse JSON string columns back to objects
+    for (const [key, value] of Object.entries(result)) {
+      if (typeof value === 'string' && value.startsWith('{') || (typeof value === 'string' && value.startsWith('['))) {
+        try {
+          result[key] = JSON.parse(value);
+        } catch (e) { /* not valid JSON, leave as string */ }
+      }
     }
     return result;
   }

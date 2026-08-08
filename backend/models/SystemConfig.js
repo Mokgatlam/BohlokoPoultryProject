@@ -4,22 +4,26 @@ const { v4: uuidv4 } = require('uuid');
 class SystemConfig {
   static async get(key) {
     const config = await db.systemConfig.findOne({ key });
-    return config ? config.value : null;
+    if (!config) return null;
+    try { return JSON.parse(config.value); } catch { return config.value; }
   }
 
   static async set(key, value, updatedBy) {
+    const jsonValue = JSON.stringify(value);
     const existing = await db.systemConfig.findOne({ key });
     if (existing) {
-      await db.systemConfig.update({ key }, { $set: { value, updatedAt: new Date(), updatedBy } });
+      await db.systemConfig.update({ key }, { $set: { value: jsonValue, updatedAt: new Date(), updatedBy } });
     } else {
-      await db.systemConfig.insert({ _id: uuidv4(), key, value, createdAt: new Date(), updatedAt: new Date(), updatedBy });
+      await db.systemConfig.insert({ _id: uuidv4(), key, value: jsonValue, createdAt: new Date(), updatedAt: new Date(), updatedBy });
     }
   }
 
   static async getAll() {
     const configs = await db.systemConfig.find({});
     const result = {};
-    configs.forEach(c => { result[c.key] = c.value; });
+    configs.forEach(c => {
+      try { result[c.key] = JSON.parse(c.value); } catch { result[c.key] = c.value; }
+    });
     return result;
   }
 

@@ -128,6 +128,7 @@ try {
     { path: '/api/harvest', module: './routes/harvest' },
     { path: '/api/products', module: './routes/products' },
     { path: '/api/payments', module: './routes/payments' },
+    { path: '/api/payfast', module: './routes/payfast' },
     { path: '/api/employees', module: './routes/employees' },
     { path: '/api/notifications', module: './routes/notifications' },
     { path: '/api/system-logs', module: './routes/system-logs' },
@@ -208,7 +209,8 @@ try {
       if (parseInt(userCount.count) === 0) {
         console.log('[DB] Empty database — running seed...');
         await knex.destroy();
-        require('./seed-pg');
+        const seedFn = require('./seed-pg');
+        await seedFn();
       } else {
         console.log(`[DB] Database already seeded (${userCount.count} users). Skipping.`);
         await knex.destroy();

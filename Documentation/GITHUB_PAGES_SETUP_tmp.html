@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>GITHUB_PAGES_SETUP.md</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+html,footer,header{
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Custom MD PDF CSS
+ */
+html,footer,header{
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+
+ }
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+<link rel="stylesheet" href="file:///r%3A/2.Travail/1.Enseignement/Cours/_1.Outils/2.Developpement/1.SCSS/main.css" type="text/css"><link rel="stylesheet" href="file:///d%3A/rdaros/Cours/_1.Outils/2.Developpement/1.SCSS/main.css" type="text/css">
+</head>
+
+<body>
+    <h1 id="github-pages-deployment-guide">GitHub Pages Deployment Guide</h1>
+<p>This guide explains how to deploy the Bohloko Family Farm frontend to GitHub Pages.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>GitHub repository: https://github.com/Mokgatlam/BohlokoPoultryProject.git</li>
+<li>Admin access to the repository settings</li>
+</ul>
+<h2 id="setup-steps">Setup Steps</h2>
+<h3 id="1-enable-github-pages">1. Enable GitHub Pages</h3>
+<ol>
+<li>Go to your repository on GitHub: https://github.com/Mokgatlam/BohlokoPoultryProject</li>
+<li>Click <strong>Settings</strong> tab</li>
+<li>In the left sidebar, click <strong>Pages</strong></li>
+<li>Under <strong>Build and deployment</strong>:
+<ul>
+<li><strong>Source</strong>: Select <strong>GitHub Actions</strong></li>
+</ul>
+</li>
+<li>Save settings</li>
+</ol>
+<h3 id="2-configure-repository-permissions">2. Configure Repository Permissions</h3>
+<ol>
+<li>In <strong>Settings</strong>, go to <strong>Actions</strong> → <strong>General</strong></li>
+<li>Scroll to <strong>Workflow permissions</strong></li>
+<li>Enable: <strong>Read and write permissions</strong></li>
+<li>Enable: <strong>Allow GitHub Actions to create and approve pull requests</strong></li>
+<li>Click <strong>Save</strong></li>
+</ol>
+<h3 id="3-push-the-deployment-configuration">3. Push the Deployment Configuration</h3>
+<p>The following files have been added to enable GitHub Pages deployment:</p>
+<ul>
+<li><code>.github/workflows/deploy.yml</code> - GitHub Actions workflow</li>
+<li><code>.nojekyll</code> - Disables Jekyll processing</li>
+</ul>
+<p>Commit and push these files:</p>
+<pre class="hljs"><code><div>git add .github/workflows/deploy.yml .nojekyll
+git commit -m <span class="hljs-string">"Add GitHub Pages deployment configuration"</span>
+git push origin main
+</div></code></pre>
+<h3 id="4-monitor-deployment">4. Monitor Deployment</h3>
+<p>After pushing, GitHub Actions will automatically deploy your site:</p>
+<ol>
+<li>Go to your repository on GitHub</li>
+<li>Click the <strong>Actions</strong> tab</li>
+<li>You should see a workflow run named &quot;Deploy to GitHub Pages&quot;</li>
+<li>Wait for it to complete (usually 1-2 minutes)</li>
+<li>Once complete, your site will be live at:</li>
+</ol>
+<pre class="hljs"><code><div>https://mokgatlam.github.io/BohlokoPoultryProject/
+</div></code></pre>
+<h2 id="important-notes">Important Notes</h2>
+<h3 id="static-site-limitations">Static Site Limitations</h3>
+<p>GitHub Pages hosts <strong>static files only</strong>. This means:</p>
+<p><strong>What works:</strong></p>
+<ul>
+<li>Public-facing pages (homepage, shop, about, contact)</li>
+<li>Static content and images</li>
+<li>Bootstrap/JavaScript interactions</li>
+<li>Service worker for offline caching</li>
+</ul>
+<p><strong>What doesn't work:</strong></p>
+<ul>
+<li>Backend API routes (Node.js server)</li>
+<li>Database operations (NeDB)</li>
+<li>User authentication (login/signup)</li>
+<li>Dynamic order processing</li>
+<li>Payment processing</li>
+</ul>
+<h3 id="handling-backend-features">Handling Backend Features</h3>
+<p>For full functionality, you have two options:</p>
+<h4 id="option-1-mock-data-recommended-for-demo">Option 1: Mock Data (Recommended for Demo)</h4>
+<p>The frontend can display static mock data for demonstration purposes.</p>
+<h4 id="option-2-separate-backend-hosting">Option 2: Separate Backend Hosting</h4>
+<p>Host the backend separately on:</p>
+<ul>
+<li><strong>Render</strong> (render.com) - Free tier available</li>
+<li><strong>Railway</strong> (railway.app) - Free tier with $5 credit</li>
+<li><strong>Fly.io</strong> - Free tier available</li>
+</ul>
+<p>Then update API endpoints in <code>assets/js/api.js</code> to point to your hosted backend.</p>
+<h3 id="file-structure">File Structure</h3>
+<p>Your public pages are located in:</p>
+<pre class="hljs"><code><div>pages/
+├── public/           # Customer-facing pages
+│   ├── index.html    # Homepage
+│   ├── shop.html     # Product listings
+│   ├── about.html    # About page
+│   ├── contact.html  # Contact page
+│   ├── login.html    # Login (static version)
+│   ├── signup.html   # Sign up (static version)
+│   ├── orders.html   # Orders (static version)
+│   └── 404.html      # 404 error page
+├── dashboard/        # Dashboard pages (require auth)
+├── admin/            # Admin pages (require auth)
+└── staff/            # Staff pages (require auth)
+</div></code></pre>
+<p>GitHub Pages will serve the entire repository as static files.</p>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="pages-not-loading">Pages Not Loading</h3>
+<ol>
+<li>Check the <strong>Actions</strong> tab for deployment errors</li>
+<li>Ensure <code>.nojekyll</code> file exists in the root directory</li>
+<li>Verify all file paths in HTML use relative paths (not absolute)</li>
+</ol>
+<h3 id="404-errors-on-refresh">404 Errors on Refresh</h3>
+<p>GitHub Pages doesn't support server-side routing. If you refresh a subpage:</p>
+<ul>
+<li>It may show a 404 error</li>
+<li>Solution: Add a custom 404.html page (already included)</li>
+</ul>
+<h3 id="images-not-loading">Images Not Loading</h3>
+<ul>
+<li>Ensure images are in the <code>assets/images/</code> directory</li>
+<li>Use relative paths like <code>../../assets/images/products/whole-chicken.png</code></li>
+</ul>
+<h2 id="updating-the-site">Updating the Site</h2>
+<p>Every time you push to the <code>main</code> branch, GitHub Actions will automatically:</p>
+<ol>
+<li>Rebuild the site</li>
+<li>Deploy the latest version</li>
+<li>Update the live URL within 1-2 minutes</li>
+</ol>
+<p>No manual intervention required!</p>
+<h2 id="custom-domain-optional">Custom Domain (Optional)</h2>
+<p>To use a custom domain like <code>bohlokofarm.co.za</code>:</p>
+<ol>
+<li>In repository <strong>Settings</strong> → <strong>Pages</strong></li>
+<li>Under <strong>Custom domain</strong>, enter your domain</li>
+<li>Update your domain's DNS settings:
+<ul>
+<li>Add an A record pointing to GitHub's IP addresses:
+<ul>
+<li>185.199.108.153</li>
+<li>185.199.109.153</li>
+<li>185.199.110.153</li>
+<li>185.199.111.153</li>
+</ul>
+</li>
+<li>Or add a CNAME record pointing to <code>mokgatlam.github.io</code></li>
+</ul>
+</li>
+</ol>
+<h2 id="live-url">Live URL</h2>
+<p>Once deployed, your site will be available at:</p>
+<p><strong>GitHub Pages URL:</strong></p>
+<pre class="hljs"><code><div>https://mokgatlam.github.io/BohlokoPoultryProject/
+</div></code></pre>
+<h2 id="next-steps">Next Steps</h2>
+<ol>
+<li>Enable GitHub Pages in repository settings</li>
+<li>Push the deployment files</li>
+<li>Wait for deployment to complete</li>
+<li>Visit your live site</li>
+<li>Share the URL with stakeholders</li>
+</ol>
+<p>For backend functionality, consider deploying the Node.js server separately using Render or Railway.</p>
+
+</body>
+
+</html>

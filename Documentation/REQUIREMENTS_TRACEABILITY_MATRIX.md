@@ -198,9 +198,9 @@
 | Receipt/invoice generation | FOUND | `pages/admin/invoice.html` | 1-212 |
 | Payment status tracking | FOUND | `backend/services/PaymentService.js` | 48-59 |
 | Refund processing | FOUND | `backend/services/PaymentService.js` | 61-69 |
-| **Payment gateway integration** | **NOT FOUND** | - | - |
+| **Payment gateway integration** | **IMPLEMENTED** | `backend/services/PayFastService.js`, `backend/routes/payfast.js` | Full PayFast integration with ITN verification |
 
-**Gap**: No external payment gateway (PayFast, Yoco, Stripe). Manual tracking only.
+**Status**: PayFast payment gateway fully integrated (sandbox mode). Supports card, EFT, and mobile wallet payments.
 
 ---
 
@@ -350,11 +350,10 @@
 | 7 | FR-010 | Shop page uses hardcoded static data | Medium |
 | 8 | FR-011 | No order draft saving | Low |
 | 9 | FR-012 | Order status notifications not wired | Medium |
-| 10 | FR-013 | No payment gateway integration | High |
-| 11 | FR-015 | No per-user activity log endpoint | Low |
-| 12 | FR-017 | No production yield forecasting | Low |
-| 13 | FR-018 | `revenueByCustomerType` never populated | Low |
-| 14 | FR-018 | No sales forecasting | Low |
+| 10 | FR-015 | No per-user activity log endpoint | Low |
+| 11 | FR-017 | No production yield forecasting | Low |
+| 12 | FR-018 | `revenueByCustomerType` never populated | Low |
+| 13 | FR-018 | No sales forecasting | Low |
 | 15 | FR-019 | `slowMoving` array never populated | Low |
 | 16 | FR-019 | No stockout frequency analysis | Low |
 | 17 | FR-019 | Reorder points are static | Medium |

@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="../../assets/css/admin.css">
-    <style>.chart-placeholder { height: 250px; background: linear-gradient(135deg, #f0f0f0, #e8e8e8); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #999; }</style>
+    <style>.chart-container { position: relative; height: 250px; }</style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
@@ -20,17 +21,25 @@
             <div class="menu-header">Main</div>
             <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
             <a href="analytics.html" class="active"><i class="fas fa-chart-bar"></i> Analytics</a>
-            <div class="menu-header">Management</div>
+            <div class="menu-header">Orders</div>
+            <a href="orders.html"><i class="fas fa-file-invoice"></i> Orders</a>
+            <a href="invoice.html"><i class="fas fa-receipt"></i> Invoices</a>
+            <a href="payments.html"><i class="fas fa-credit-card"></i> Payments</a>
+            <div class="menu-header">Operations</div>
             <a href="products.html"><i class="fas fa-box"></i> Products</a>
             <a href="inventory.html"><i class="fas fa-warehouse"></i> Inventory</a>
             <a href="production.html"><i class="fas fa-egg"></i> Production</a>
-            <a href="payments.html"><i class="fas fa-credit-card"></i> Payments</a>
+            <a href="quality.html"><i class="fas fa-award"></i> Quality</a>
+            <a href="medication.html"><i class="fas fa-pills"></i> Medication</a>
             <div class="menu-header">People</div>
             <a href="employees.html"><i class="fas fa-users"></i> Employees</a>
             <a href="crm.html"><i class="fas fa-heart"></i> CRM</a>
             <div class="menu-header">System</div>
             <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
-            <a href="system-logs.html"><i class="fas fa-file-alt"></i> System Logs</a>
+            <a href="notifications.html"><i class="fas fa-bell"></i> Notifications</a>
+            <a href="system-logs.html"><i class="fas fa-list-alt"></i> System Logs</a>
+            <a href="api-keys.html"><i class="fas fa-key"></i> API Keys</a>
+            <a href="data-management.html"><i class="fas fa-database"></i> Data Export</a>
         </div>
         <div style="padding:20px;position:absolute;bottom:0;width:100%;"><button class="logout-btn w-100" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</button></div>
     </div>
@@ -50,7 +59,7 @@
             <div class="col-6 col-lg-3"><div class="stat-card"><div class="icon red"><i class="fas fa-chart-line"></i></div><h3 id="avgOrderValue">R0</h3><p>Avg Order</p></div></div>
         </div>
         <div class="row g-4 mb-4">
-            <div class="col-lg-8"><div class="card"><div class="card-header">Revenue Trend</div><div class="card-body"><div class="chart-placeholder"><i class="fas fa-chart-line me-2"></i>Revenue Chart (Chart.js integration)</div></div></div></div>
+            <div class="col-lg-8"><div class="card"><div class="card-header">Revenue Trend</div><div class="card-body"><div class="chart-container"><canvas id="revenueChart"></canvas></div></div></div></div>
             <div class="col-lg-4"><div class="card"><div class="card-header">Top Products</div><div class="card-body"><div id="topProducts"><p class="text-muted">Loading...</p></div></div></div></div>
         </div>
         <div class="row g-4">
@@ -61,6 +70,8 @@
     <script src="../../assets/js/api.js"></script>
     <script src="../../assets/js/admin.js"></script>
     <script>
+        let revenueChart = null;
+
         async function loadAnalytics() {
             const days = parseInt(document.getElementById('periodSelect').value);
             const [ordersRes, dashboardRes, invRes] = await Promise.all([
@@ -76,6 +87,7 @@
                 document.getElementById('totalOrders').textContent = totalOrders;
                 document.getElementById('totalRevenue').textContent = 'R' + totalRevenue.toLocaleString();
                 document.getElementById('avgOrderValue').textContent = 'R' + avgOrderValue.toFixed(2);
+                renderRevenueChart(orders, days);
             }
             if (dashboardRes.success) {
                 const d = dashboardRes.data || {};
@@ -84,6 +96,50 @@
                 renderOrdersByStatus(d.ordersByStatus || {});
             }
             if (invRes.success) renderInventoryHealth(invRes.data);
+        }
+
+        function renderRevenueChart(orders, days) {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            const now = new Date();
+            const labels = [];
+            const data = [];
+            for (let i = days - 1; i >= 0; i--) {
+                const d = new Date(now);
+                d.setDate(d.getDate() - i);
+                const dateStr = d.toISOString().split('T')[0];
+                labels.push(d.toLocaleDateString('en-ZA', { month: 'short', day: 'numeric' }));
+                const dayRevenue = orders.filter(o => {
+                    const orderDate = (o.created_at || o.createdAt || '').split('T')[0];
+                    return orderDate === dateStr;
+                }).reduce((sum, o) => sum + (o.total || 0), 0);
+                data.push(dayRevenue);
+            }
+            if (revenueChart) revenueChart.destroy();
+            revenueChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Revenue (ZAR)',
+                        data,
+                        borderColor: '#1B4332',
+                        backgroundColor: 'rgba(27, 67, 50, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 2,
+                        pointHoverRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { callback: v => 'R' + v.toLocaleString() } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
         }
         function renderTopProducts(products) {
             const el = document.getElementById('topProducts');

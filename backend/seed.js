@@ -110,9 +110,10 @@ const seedDB = async () => {
       communication: 'email', newsletter: true, promotions: true
     });
     await CustomerProfile.update(profile1._id, {
-      'stats.totalOrders': 8, 'stats.totalSpent': 4800, 'stats.averageOrderValue': 600,
-      'stats.firstOrderDate': new Date('2025-01-15'), 'stats.lastOrderDate': new Date('2026-07-20'),
-      'stats.orderFrequency': 2, loyalty: { tier: 'Gold', points: 2800, programId: loyaltyProgram._id, enrolledAt: new Date('2025-02-01') },
+      stats: { totalOrders: 8, totalSpent: 4800, averageOrderValue: 600,
+        firstOrderDate: new Date('2025-01-15'), lastOrderDate: new Date('2026-07-20'),
+        orderFrequency: 2 },
+      loyalty: { tier: 'Gold', points: 2800, programId: loyaltyProgram._id, enrolledAt: new Date('2025-02-01') },
       lifetimeValue: { historical: 4800, predicted: 7200, retentionProbability: 0.75 },
       segment: 'Returning'
     });
@@ -124,9 +125,10 @@ const seedDB = async () => {
       communication: 'sms', newsletter: true, promotions: false
     });
     await CustomerProfile.update(profile2._id, {
-      'stats.totalOrders': 3, 'stats.totalSpent': 2100, 'stats.averageOrderValue': 700,
-      'stats.firstOrderDate': new Date('2026-03-10'), 'stats.lastOrderDate': new Date('2026-07-15'),
-      'stats.orderFrequency': 1, loyalty: { tier: 'Silver', points: 1200, programId: loyaltyProgram._id, enrolledAt: new Date('2026-04-01') },
+      stats: { totalOrders: 3, totalSpent: 2100, averageOrderValue: 700,
+        firstOrderDate: new Date('2026-03-10'), lastOrderDate: new Date('2026-07-15'),
+        orderFrequency: 1 },
+      loyalty: { tier: 'Silver', points: 1200, programId: loyaltyProgram._id, enrolledAt: new Date('2026-04-01') },
       lifetimeValue: { historical: 2100, predicted: 4200, retentionProbability: 0.55 },
       segment: 'Returning'
     });
@@ -138,9 +140,10 @@ const seedDB = async () => {
       communication: 'email', newsletter: true, promotions: true
     });
     await CustomerProfile.update(profile3._id, {
-      'stats.totalOrders': 25, 'stats.totalSpent': 45000, 'stats.averageOrderValue': 1800,
-      'stats.firstOrderDate': new Date('2025-06-01'), 'stats.lastOrderDate': new Date('2026-07-28'),
-      'stats.orderFrequency': 8, loyalty: { tier: 'Platinum', points: 5200, programId: loyaltyProgram._id, enrolledAt: new Date('2025-07-01') },
+      stats: { totalOrders: 25, totalSpent: 45000, averageOrderValue: 1800,
+        firstOrderDate: new Date('2025-06-01'), lastOrderDate: new Date('2026-07-28'),
+        orderFrequency: 8 },
+      loyalty: { tier: 'Platinum', points: 5200, programId: loyaltyProgram._id, enrolledAt: new Date('2025-07-01') },
       lifetimeValue: { historical: 45000, predicted: 112500, retentionProbability: 0.92 },
       segment: 'VIP'
     });
@@ -152,9 +155,10 @@ const seedDB = async () => {
       communication: 'email', newsletter: false, promotions: true
     });
     await CustomerProfile.update(profile4._id, {
-      'stats.totalOrders': 15, 'stats.totalSpent': 82000, 'stats.averageOrderValue': 5466.67,
-      'stats.firstOrderDate': new Date('2025-09-01'), 'stats.lastOrderDate': new Date('2026-07-25'),
-      'stats.orderFrequency': 5, loyalty: { tier: 'Diamond', points: 10500, programId: loyaltyProgram._id, enrolledAt: new Date('2025-10-01') },
+      stats: { totalOrders: 15, totalSpent: 82000, averageOrderValue: 5466.67,
+        firstOrderDate: new Date('2025-09-01'), lastOrderDate: new Date('2026-07-25'),
+        orderFrequency: 5 },
+      loyalty: { tier: 'Diamond', points: 10500, programId: loyaltyProgram._id, enrolledAt: new Date('2025-10-01') },
       lifetimeValue: { historical: 82000, predicted: 205000, retentionProbability: 0.95 },
       segment: 'VIP'
     });
@@ -166,9 +170,10 @@ const seedDB = async () => {
       communication: 'email', newsletter: true, promotions: true
     });
     await CustomerProfile.update(profile5._id, {
-      'stats.totalOrders': 6, 'stats.totalSpent': 18000, 'stats.averageOrderValue': 3000,
-      'stats.firstOrderDate': new Date('2026-01-10'), 'stats.lastOrderDate': new Date('2026-07-01'),
-      'stats.orderFrequency': 1, loyalty: { tier: 'Gold', points: 2600, programId: loyaltyProgram._id, enrolledAt: new Date('2026-02-01') },
+      stats: { totalOrders: 6, totalSpent: 18000, averageOrderValue: 3000,
+        firstOrderDate: new Date('2026-01-10'), lastOrderDate: new Date('2026-07-01'),
+        orderFrequency: 1 },
+      loyalty: { tier: 'Gold', points: 2600, programId: loyaltyProgram._id, enrolledAt: new Date('2026-02-01') },
       lifetimeValue: { historical: 18000, predicted: 45000, retentionProbability: 0.65 },
       segment: 'Returning'
     });

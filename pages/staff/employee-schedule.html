@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Schedule - Bohloko Family Farm</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../../assets/images/icons/favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <style>
+        :root { --primary: #1B4332; --accent: #D4A843; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f0f2f5; min-height: 100vh; }
+        .mobile-header { background: var(--primary); color: white; padding: 15px 20px; position: sticky; top: 0; z-index: 100; }
+        .mobile-header h5 { margin: 0; font-size: 1.1rem; }
+        .content { padding: 15px; padding-bottom: 80px; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 15px; }
+        .card-header { background: white; border-bottom: 1px solid #eee; padding: 12px 15px; font-weight: 600; font-size: 0.95rem; border-radius: 12px 12px 0 0 !important; }
+        .card-body { padding: 15px; }
+        .day-card { background: white; border-radius: 10px; padding: 12px 15px; margin-bottom: 10px; border-left: 4px solid var(--primary); }
+        .day-card.today { border-left-color: var(--accent); background: #fffdf5; }
+        .day-card h6 { font-size: 0.9rem; margin-bottom: 4px; }
+        .day-card small { color: #888; }
+        .shift-badge { padding: 3px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 500; }
+        .shift-morning { background: #fef3c7; color: #92400e; }
+        .shift-afternoon { background: #dbeafe; color: #1e40af; }
+        .shift-full { background: #d1fae5; color: #065f46; }
+        .week-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .week-nav h6 { margin: 0; font-size: 0.95rem; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #eee; display: flex; padding: 8px 0; z-index: 100; }
+        .bottom-nav a { flex: 1; text-align: center; color: #666; text-decoration: none; font-size: 0.7rem; padding: 5px; }
+        .bottom-nav a.active { color: var(--primary); }
+        .bottom-nav a i { display: block; font-size: 1.2rem; margin-bottom: 2px; }
+        .empty-state { text-align: center; padding: 30px; color: #888; }
+    </style>
+</head>
+<body>
+    <div class="mobile-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h5><i class="fas fa-calendar-alt me-2"></i>My Schedule</h5>
+            </div>
+            <a href="employee-dashboard.html" class="btn btn-sm btn-outline-light"><i class="fas fa-arrow-left"></i></a>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="card">
+            <div class="card-body">
+                <div class="week-nav">
+                    <button class="btn btn-sm btn-outline-secondary" onclick="prevWeek()"><i class="fas fa-chevron-left"></i></button>
+                    <h6 id="weekLabel">This Week</h6>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="nextWeek()"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div id="scheduleList">
+                    <div class="day-card today">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6><i class="fas fa-circle me-1" style="color:var(--accent);font-size:0.5rem"></i>Monday (Today)</h6>
+                                <small>06:00 - 15:00 &middot; Poultry House A</small>
+                            </div>
+                            <span class="shift-badge shift-full">Full Day</span>
+                        </div>
+                    </div>
+                    <div class="day-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6>Tuesday</h6>
+                                <small>06:00 - 12:00 &middot; Processing Unit</small>
+                            </div>
+                            <span class="shift-badge shift-morning">Morning</span>
+                        </div>
+                    </div>
+                    <div class="day-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6>Wednesday</h6>
+                                <small>06:00 - 15:00 &middot; Poultry House B</small>
+                            </div>
+                            <span class="shift-badge shift-full">Full Day</span>
+                        </div>
+                    </div>
+                    <div class="day-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6>Thursday</h6>
+                                <small>12:00 - 18:00 &middot; Sales Floor</small>
+                            </div>
+                            <span class="shift-badge shift-afternoon">Afternoon</span>
+                        </div>
+                    </div>
+                    <div class="day-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6>Friday</h6>
+                                <small>06:00 - 15:00 &middot; Poultry House A</small>
+                            </div>
+                            <span class="shift-badge shift-full">Full Day</span>
+                        </div>
+                    </div>
+                    <div class="day-card" style="border-left-color:#ccc; opacity:0.7;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6>Saturday</h6>
+                                <small>Off</small>
+                            </div>
+                            <span class="shift-badge" style="background:#f3f4f6;color:#6b7280;">Off</span>
+                        </div>
+                    </div>
+                    <div class="day-card" style="border-left-color:#ccc; opacity:0.7;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6>Sunday</h6>
+                                <small>Off</small>
+                            </div>
+                            <span class="shift-badge" style="background:#f3f4f6;color:#6b7280;">Off</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><i class="fas fa-clipboard-list me-2"></i>Upcoming Tasks</div>
+            <div class="card-body">
+                <div class="day-card" style="border-left-color:#f59e0b;">
+                    <h6><i class="fas fa-syringe me-1" style="color:#8b5cf6"></i>Vaccination - House A</h6>
+                    <small>Wednesday &middot; 09:00 - 11:00</small>
+                </div>
+                <div class="day-card" style="border-left-color:#3b82f6;">
+                    <h6><i class="fas fa-broom me-1" style="color:#3b82f6"></i>Deep Clean - Processing Unit</h6>
+                    <small>Friday &middot; 15:00 - 17:00</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="employee-dashboard.html"><i class="fas fa-home"></i>Home</a>
+        <a href="employee-schedule.html" class="active"><i class="fas fa-calendar"></i>Schedule</a>
+        <a href="employee-profile.html"><i class="fas fa-user"></i>Profile</a>
+        <a href="poultry.html"><i class="fas fa-egg"></i>Care</a>
+    </div>
+
+    <script>
+        let weekOffset = 0;
+
+        function prevWeek() { weekOffset--; updateWeekLabel(); }
+        function nextWeek() { weekOffset++; updateWeekLabel(); }
+
+        function updateWeekLabel() {
+            const now = new Date();
+            now.setDate(now.getDate() + weekOffset * 7);
+            const start = new Date(now);
+            start.setDate(now.getDate() - now.getDay() + 1);
+            const end = new Date(start);
+            end.setDate(start.getDate() + 6);
+            document.getElementById('weekLabel').textContent =
+                start.toLocaleDateString('en-ZA', { month: 'short', day: 'numeric' }) + ' - ' +
+                end.toLocaleDateString('en-ZA', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        updateWeekLabel();
+    </script>
+</body>
+</html>

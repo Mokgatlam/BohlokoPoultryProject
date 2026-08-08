@@ -37,7 +37,7 @@ async function seed() {
     if (parseInt(userCount.count) > 0) {
       console.log(`Database already seeded (${userCount.count} users). Skipping.`);
       await db.destroy();
-      process.exit(0);
+      return;
     }
 
     console.log('Seeding database...\n');
@@ -323,12 +323,15 @@ async function seed() {
     console.log('─────────────────────────────────────────\n');
 
     await db.destroy();
-    process.exit(0);
   } catch (error) {
     console.error('Seed error:', error.message);
     await db.destroy();
-    process.exit(1);
   }
 }
 
-seed();
+// Run if called directly (not required as module)
+if (require.main === module) {
+  seed().then(() => process.exit(0)).catch(() => process.exit(1));
+} else {
+  module.exports = seed;
+}

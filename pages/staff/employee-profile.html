@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Bohloko Family Farm</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../../assets/images/icons/favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <style>
+        :root { --primary: #1B4332; --accent: #D4A843; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f0f2f5; min-height: 100vh; }
+        .mobile-header { background: var(--primary); color: white; padding: 15px 20px; position: sticky; top: 0; z-index: 100; }
+        .mobile-header h5 { margin: 0; font-size: 1.1rem; }
+        .content { padding: 15px; padding-bottom: 80px; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 15px; }
+        .card-header { background: white; border-bottom: 1px solid #eee; padding: 12px 15px; font-weight: 600; font-size: 0.95rem; border-radius: 12px 12px 0 0 !important; }
+        .card-body { padding: 15px; }
+        .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 700; margin: 0 auto 15px; }
+        .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f5f5f5; font-size: 0.9rem; }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: #888; }
+        .info-value { font-weight: 500; }
+        .form-label { font-weight: 500; font-size: 0.85rem; }
+        .form-control { border-radius: 8px; border: 1px solid #ddd; padding: 10px 12px; font-size: 0.9rem; }
+        .btn-main { background: var(--primary); color: white; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 600; width: 100%; }
+        .btn-main:hover { background: #143a28; color: white; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #eee; display: flex; padding: 8px 0; z-index: 100; }
+        .bottom-nav a { flex: 1; text-align: center; color: #666; text-decoration: none; font-size: 0.7rem; padding: 5px; }
+        .bottom-nav a.active { color: var(--primary); }
+        .bottom-nav a i { display: block; font-size: 1.2rem; margin-bottom: 2px; }
+    </style>
+</head>
+<body>
+    <div class="mobile-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h5><i class="fas fa-user me-2"></i>My Profile</h5>
+            </div>
+            <a href="employee-dashboard.html" class="btn btn-sm btn-outline-light"><i class="fas fa-arrow-left"></i></a>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="card">
+            <div class="card-body text-center">
+                <div class="profile-avatar" id="profileAvatar">E</div>
+                <h5 id="profileName">Employee</h5>
+                <p class="text-muted mb-1" id="profileRole">Staff</p>
+                <span class="badge bg-success" id="profileStatus">Active</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><i class="fas fa-info-circle me-2"></i>Personal Information</div>
+            <div class="card-body">
+                <div class="info-row"><span class="info-label">Full Name</span><span class="info-value" id="infoName">N/A</span></div>
+                <div class="info-row"><span class="info-label">Email</span><span class="info-value" id="infoEmail">N/A</span></div>
+                <div class="info-row"><span class="info-label">Phone</span><span class="info-value" id="infoPhone">N/A</span></div>
+                <div class="info-row"><span class="info-label">Department</span><span class="info-value" id="infoDept">N/A</span></div>
+                <div class="info-row"><span class="info-label">Position</span><span class="info-value" id="infoPosition">N/A</span></div>
+                <div class="info-row"><span class="info-label">Employee ID</span><span class="info-value" id="infoEmpId">N/A</span></div>
+                <div class="info-row"><span class="info-label">Hire Date</span><span class="info-value" id="infoHireDate">N/A</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><i class="fas fa-edit me-2"></i>Edit Profile</div>
+            <div class="card-body">
+                <form id="profileForm">
+                    <div class="mb-3">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="editPhone" placeholder="+27">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <textarea class="form-control" id="editAddress" rows="2" placeholder="Your address"></textarea>
+                    </div>
+                    <button type="submit" class="btn-main"><i class="fas fa-save me-1"></i>Save Changes</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><i class="fas fa-chart-bar me-2"></i>Work Statistics</div>
+            <div class="card-body">
+                <div class="info-row"><span class="info-label">Days Worked This Month</span><span class="info-value" id="statDays">0</span></div>
+                <div class="info-row"><span class="info-label">Tasks Completed</span><span class="info-value" id="statTasks">0</span></div>
+                <div class="info-row"><span class="info-label">Attendance Rate</span><span class="info-value" id="statAttendance">N/A</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="employee-dashboard.html"><i class="fas fa-home"></i>Home</a>
+        <a href="employee-schedule.html"><i class="fas fa-calendar"></i>Schedule</a>
+        <a href="employee-profile.html" class="active"><i class="fas fa-user"></i>Profile</a>
+        <a href="poultry.html"><i class="fas fa-egg"></i>Care</a>
+    </div>
+
+    <script src="../../assets/js/api.js"></script>
+    <script>
+        let currentUser = null;
+
+        async function loadProfile() {
+            currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+            document.getElementById('profileAvatar').textContent = (currentUser.name || 'E').charAt(0).toUpperCase();
+            document.getElementById('profileName').textContent = currentUser.name || 'Employee';
+            document.getElementById('profileRole').textContent = currentUser.role || 'Staff';
+            document.getElementById('infoName').textContent = currentUser.name || 'N/A';
+            document.getElementById('infoEmail').textContent = currentUser.email || 'N/A';
+            document.getElementById('infoPhone').textContent = currentUser.phone || 'N/A';
+            document.getElementById('editPhone').value = currentUser.phone || '';
+            document.getElementById('editAddress').value = currentUser.address || '';
+
+            try {
+                const res = await api.employees.getByUser(currentUser.id);
+                if (res.success && res.data) {
+                    const emp = res.data;
+                    document.getElementById('infoDept').textContent = emp.department || 'N/A';
+                    document.getElementById('infoPosition').textContent = emp.position || 'N/A';
+                    document.getElementById('infoEmpId').textContent = emp.employeeId || emp.id || 'N/A';
+                    document.getElementById('infoHireDate').textContent = emp.hireDate ? new Date(emp.hireDate).toLocaleDateString() : 'N/A';
+                }
+            } catch (e) { /* Employee data not available */ }
+        }
+
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUser || !currentUser.id) return;
+            const data = {
+                phone: document.getElementById('editPhone').value,
+                address: document.getElementById('editAddress').value
+            };
+            const res = await api.users.updateProfile(currentUser.id, data);
+            if (res.success) {
+                localStorage.setItem('user', JSON.stringify({ ...currentUser, ...data }));
+                alert('Profile updated!');
+                loadProfile();
+            } else {
+                alert(res.message || 'Failed to update profile.');
+            }
+        });
+
+        loadProfile();
+    </script>
+</body>
+</html>

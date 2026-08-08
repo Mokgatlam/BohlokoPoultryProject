@@ -361,6 +361,7 @@ const api = {
   auth: {
     register: (data) => api.post('/auth/register', data),
     login: (data) => api.post('/auth/login', data),
+    googleLogin: (credential) => api.post('/auth/google', { credential }),
     getMe: () => api.get('/auth/me'),
     logout: () => api.post('/auth/logout'),
     forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
@@ -554,6 +555,12 @@ const api = {
     process: (id) => api.put(`/payments/${id}/process`),
     refund: (id, reason) => api.put(`/payments/${id}/refund`, { reason }),
     getStats: () => api.get('/payments/stats')
+  },
+
+  /** PayFast payment gateway endpoints */
+  payfast: {
+    init: (orderId) => api.post('/payfast/init', { orderId }),
+    getStatus: (orderId) => api.get(`/payfast/status/${orderId}`)
   },
 
   /** FR-015: Employee management endpoints */

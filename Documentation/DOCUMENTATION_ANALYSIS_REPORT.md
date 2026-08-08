@@ -46,13 +46,13 @@ Analysis of MD documentation files to ensure all pages have required features fo
 
 ### 5. PAYMENT_SYSTEM_IMPLEMENTATION.md ✅
 **Status:** COMPLETE
-- Multiple payment methods (CASH, CREDIT_CARD, DEBIT_CARD, BANK_TRANSFER, MOBILE_MONEY, CASH_ON_DELIVERY)
-- Payment gateway integration (Stripe, PayFast, Yoco)
+- PayFast payment gateway integration (sandbox/live)
+- Payment redirect flow (card, EFT, mobile wallet)
+- IPN (Instant Transaction Notification) verification
+- Signature generation and validation
+- Payment status tracking (Pending → Paid → Refunded)
 - Receipt and invoice generation
-- Payment status tracking
-- Partial payments and payment plans
-- Cash-on-delivery verification
-- Testing script (test-payment.js) provided
+- 30 unit tests for PayFast service
 
 ### 6. CRM_IMPLEMENTATION.md ✅
 **Status:** COMPLETE

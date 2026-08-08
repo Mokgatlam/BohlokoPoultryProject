@@ -89,7 +89,7 @@ const ORDER_STATUSES = ['Pending', 'Confirmed', 'Processing', 'Shipped', 'Delive
  * SRS: FR-012 - Payment processing
  * Used in: checkout, payment recording, financial reports
  */
-const PAYMENT_METHODS = ['cash', 'bank_transfer', 'mobile_money', 'credit_card'];
+const PAYMENT_METHODS = ['payfast'];
 
 /**
  * DELIVERY_OPTIONS - Available delivery/collection methods.
