@@ -230,14 +230,14 @@ const api = {
         method: 'GET',
         headers: api.headers()
       });
-      // Auto-logout on 401/403
+      const result = await response.json();
       if (response.status === 401 || response.status === 403) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         window.location.href = getLoginPath();
-        return { success: false, message: 'Unauthorized' };
+        return result;
       }
-      return response.json();
+      return result;
     } catch (e) {
       return { success: false, message: 'Network error. Please check your connection.' };
     }
@@ -257,13 +257,16 @@ const api = {
         headers: api.headers(),
         body: JSON.stringify(data)
       });
+      const result = await response.json();
       if (response.status === 401 || response.status === 403) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        window.location.href = getLoginPath();
-        return { success: false, message: 'Unauthorized' };
+        if (endpoint !== '/auth/login') {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          window.location.href = getLoginPath();
+        }
+        return result;
       }
-      return response.json();
+      return result;
     } catch (e) {
       return { success: false, message: 'Network error. Please check your connection.' };
     }
@@ -283,13 +286,14 @@ const api = {
         headers: api.headers(),
         body: JSON.stringify(data)
       });
+      const result = await response.json();
       if (response.status === 401 || response.status === 403) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         window.location.href = getLoginPath();
-        return { success: false, message: 'Unauthorized' };
+        return result;
       }
-      return response.json();
+      return result;
     } catch (e) {
       return { success: false, message: 'Network error. Please check your connection.' };
     }
@@ -307,13 +311,14 @@ const api = {
         method: 'DELETE',
         headers: api.headers()
       });
+      const result = await response.json();
       if (response.status === 401 || response.status === 403) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         window.location.href = getLoginPath();
-        return { success: false, message: 'Unauthorized' };
+        return result;
       }
-      return response.json();
+      return result;
     } catch (e) {
       return { success: false, message: 'Network error. Please check your connection.' };
     }
@@ -341,13 +346,14 @@ const api = {
         },
         body: JSON.stringify(data)
       });
+      const result = await response.json();
       if (response.status === 401 || response.status === 403) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         window.location.href = getLoginPath();
-        return { success: false, message: 'Unauthorized' };
+        return result;
       }
-      return response.json();
+      return result;
     } catch (e) {
       return { success: false, message: 'Network error. Please check your connection.' };
     }
