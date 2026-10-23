@@ -18,6 +18,8 @@ services:
         fromDatabase:
           name: bohloko-db
           property: connectionString
+      - key: BASE_URL
+        value: https://bohlokopoultryproject.onrender.com
     autoDeploy: true
     healthCheckPath: /api/health
 
